@@ -101,6 +101,28 @@ function onResize() {
     render();
 }
 
+function onKeyDown(e) {
+    'use strict';
+
+    switch (e.keyCode) {
+        case 65: //A
+        case 97: //a
+            scene.traverse(function (node) {
+                if (node instanceof THREE.Mesh) {
+                    node.material.wireframe = !node.material.wireframe;
+                }
+            });
+            break;
+
+        case 83: //S
+        case 115: //s
+            ball.userData.jumping = !ball.userData.jumping;
+            break;
+    }
+
+    render();
+}
+
 function init() {
     'use strict';
 
@@ -117,4 +139,5 @@ function init() {
     render();
 
     window.addEventListener("resize", onResize);
+    window.addEventListener("keydown", onKeyDown);
 }
