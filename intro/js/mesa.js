@@ -123,6 +123,19 @@ function onKeyDown(e) {
     render();
 }
 
+function animate() {
+    'use strict';
+
+    if (ball.userData.jumping) {
+        ball.userData.step += 0.04;
+        ball.position.y = Math.abs(30 * (Math.sin(ball.userDate.step)));
+        ball.position.z = 15 * (Math.cos(ball.userData.step));
+    }
+    render();
+
+    requestAnimationFrame(animate);
+}
+
 function init() {
     'use strict';
 
