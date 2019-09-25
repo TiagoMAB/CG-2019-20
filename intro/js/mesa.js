@@ -2,6 +2,7 @@
 
 var camera, scene, renderer;
 var geometry, material, mesh;
+var animate;
 
 function render() {
     'use strict';
@@ -98,7 +99,6 @@ function onResize() {
         camera.updateProjectionMatrix();
     }
 
-    render();
 }
 
 function onKeyDown(e) {
@@ -120,7 +120,6 @@ function onKeyDown(e) {
             break;
     }
 
-    render();
 }
 
 function animate() {
@@ -128,7 +127,7 @@ function animate() {
 
     if (ball.userData.jumping) {
         ball.userData.step += 0.04;
-        ball.position.y = Math.abs(30 * (Math.sin(ball.userDate.step)));
+        ball.position.y = Math.abs(30 * (Math.sin(ball.userData.step)));
         ball.position.z = 15 * (Math.cos(ball.userData.step));
     }
     render();
