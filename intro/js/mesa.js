@@ -1,5 +1,3 @@
-import { TetrahedronGeometry } from "./three";
-
 /*global THREE */
 
 var camera, scene, renderer;
@@ -18,6 +16,7 @@ function createScene() {
     scene.add(new THREE.AxisHelper(10));
 
 }
+
 function init() {
     'use strict';
 
@@ -28,6 +27,6 @@ function init() {
     document.body.appendChild(renderer.domElement);
 
     createScene();
-    
+
     render();
 }
