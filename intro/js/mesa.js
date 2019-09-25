@@ -88,6 +88,19 @@ function createScene() {
     createBall(0, 0, 15);
 }
 
+function onResize() {
+    'use strict';
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    if(window.innerHeight > 0 && window.innerWidth > 0) {
+        camera.aspect = renderer.getSize().width / renderer.getSize().height;
+        camera.updateProjectionMatrix();
+    }
+
+    render();
+}
+
 function init() {
     'use strict';
 
@@ -102,4 +115,6 @@ function init() {
     createCamera();
     
     render();
+
+    window.addEventListener("resize", onResize);
 }
