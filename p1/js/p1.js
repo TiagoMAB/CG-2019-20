@@ -1,5 +1,4 @@
 var camera, scene, renderer;
-var geometry, material, mesh;
 
 function render() {
     'use strict';
