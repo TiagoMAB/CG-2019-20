@@ -8,6 +8,23 @@ function render() {
     renderer.render(scene, camera);
 }
 
+function createBall(x, y, z) {
+    'use scrict';
+
+    ball = new THREE.Object3D();
+    ball.userData = { jumping: true, step: 0 };
+
+    material = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
+    geometry = new THREE.SphereGeometry(4, 10, 10);
+    mesh = new THREE.Mesh(geometry, material);
+
+    ball.add(mesh);
+    ball.position.set(x, y, z);
+
+    scene.add(ball);
+
+}
+
 function addTableTop(obj, x, y, z) {
     'use scrict';
 
@@ -67,6 +84,7 @@ function createScene() {
     scene.add(new THREE.AxisHelper(10));
 
     createTable(0, 0, 0);
+    createBall(0, 0, 15);
 }
 
 function init() {
