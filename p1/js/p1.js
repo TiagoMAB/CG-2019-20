@@ -62,7 +62,7 @@ function createScene() {
 
     scene.add(r);
 
-    var targetToroid = new Toroid(20, 25, 0);
+    var targetToroid = new Toroid(20, 22.5, 0);
     var targetBase = new Cylinder(20, 10, 0);
 
     scene.add(targetToroid);
