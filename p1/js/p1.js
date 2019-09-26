@@ -24,13 +24,13 @@ function createScene() {
 
     scene.add(new THREE.AxisHelper(10));
 
-    //createBase(0, 0, 0);
-
     //createRobot(0, 0, 0);
 
-    createTargetBase(20, 10, 0)
-    createTargetDonut(20, 25, 0);
+    var targetToroid = new Toroid(20, 25, 0);
+    var targetBase = new Cylinder(20, 10, 0);
 
+    scene.add(targetToroid);
+    scene.add(targetBase);
 }
 
 function init() {
