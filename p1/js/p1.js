@@ -24,11 +24,12 @@ function createScene() {
 
     scene.add(new THREE.AxisHelper(10));
 
-    createBase();
+    //createBase(0, 0, 0);
 
-    createRobot();
+    //createRobot(0, 0, 0);
 
-    createTarget();
+    createTargetBase(20, 10, 0)
+    createTargetDonut(20, 25, 0);
 
 }
 
@@ -42,6 +43,8 @@ function init() {
     document.body.appendChild(renderer.domElement);
 
     createScene();
+
+    createCamera();
     
     render();
 }
