@@ -70,6 +70,35 @@ function onKeyDown(e) {
     'use strict';
 
     switch (e.keyCode) {
+        /* Movement */
+        case 37: //left
+            break;
+
+        case 38: //up
+            break;
+
+        case 39: //right
+            break;
+
+        case 40: //down
+            break;    
+
+
+        /* Angles */
+        case 65: //a
+            break;
+
+        case 83: //s
+            break;
+
+        case 81: //q
+            break;
+
+        case 87: //w
+            break; 
+
+
+        /* Camera */
         case 49: //1
             camera = camera1;
             render();
