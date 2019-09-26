@@ -7,7 +7,7 @@ class Robot extends THREE.Object3D {
         this.addArm(x, y, z);
         this.addArmArticulation(x, y, z);
         this.addUpperArm(x, y, z);
-        this.addUpperArmArticulation(x, y, z);
+        this.addArmArticulation(x + 13, y, z);
         
     }
 
@@ -66,14 +66,4 @@ class Robot extends THREE.Object3D {
         this.add(mesh);
     }
 
-    addUpperArmArticulation(x, y, z) {
-        'use scrict';
-
-        var material = new THREE.MeshBasicMaterial( { color: 0x0000ff, wireframe: true });
-        var geometry = new THREE.SphereGeometry(1.25, 10, 10);
-        var mesh = new THREE.Mesh(geometry, material);
-        
-        mesh.position.set(x + 13, y + 17.5, z);
-        this.add(mesh);
-    }
 }
