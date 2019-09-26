@@ -72,31 +72,29 @@ function onKeyDown(e) {
     switch (e.keyCode) {
         case 49: //1
             camera = camera1;
-            console.log("help1");
+            render();
             break;
 
         case 50: //2
             camera = camera2;
-            console.log("help2");
+            render();
             break;
 
         case 51: //3
             camera = camera3;
-            console.log("help3");
+            render();
             break;
 
         case 52: //4
-            console.log("help4");
             scene.traverse(function (node) {
                 if (node instanceof THREE.Mesh) {
-                    console.log("help5");
                     node.material.wireframe = !node.material.wireframe;
                 }
             });
+            render();
             break;
 
     }
-    render();
 
 }
 
