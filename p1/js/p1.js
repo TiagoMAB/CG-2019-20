@@ -72,17 +72,17 @@ function onKeyDown(e) {
     switch (e.keyCode) {
         case 49: //1
             camera = camera1;
-            render();
+            console.log("help1");
             break;
 
         case 50: //2
             camera = camera2;
-            render();
+            console.log("help2");
             break;
 
         case 51: //3
             camera = camera3;
-            render();
+            console.log("help3");
             break;
 
         case 52: //4
@@ -93,10 +93,10 @@ function onKeyDown(e) {
                     node.material.wireframe = !node.material.wireframe;
                 }
             });
-            render();
             break;
 
     }
+    render();
 
 }
 
