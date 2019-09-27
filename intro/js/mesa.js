@@ -24,7 +24,6 @@ function createBall(x, y, z) {
     ball.position.set(x, y, z);
 
     scene.add(ball);
-
 }
 
 function addTableTop(obj, x, y, z) {
@@ -98,7 +97,6 @@ function onResize() {
         camera.aspect = renderer.getSize().width / renderer.getSize().height;
         camera.updateProjectionMatrix();
     }
-
 }
 
 function onKeyDown(e) {
@@ -119,7 +117,6 @@ function onKeyDown(e) {
             ball.userData.jumping = !ball.userData.jumping;
             break;
     }
-
 }
 
 function animate() {

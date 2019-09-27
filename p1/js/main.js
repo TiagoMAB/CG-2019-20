@@ -69,6 +69,19 @@ function createScene() {
     scene.add(targetBase);
 }
 
+function onResize() {
+    'use strict';
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    if(window.innerHeight > 0 && window.innerWidth > 0) {
+        camera.aspect = renderer.getSize().width / renderer.getSize().height;
+        camera.updateProjectionMatrix();
+    }
+
+    render();
+}
+
 function onKeyDown(e) {
     'use strict';
 
@@ -87,7 +100,7 @@ function onKeyDown(e) {
             break;    
 
 
-        /* Angles */
+        /* Arm movement */
         case 65: //a
             break;
 
@@ -148,5 +161,6 @@ function init() {
     
     render();
 
+    window.addEventListener("resize", onResize);
     window.addEventListener("keydown", onKeyDown);
 }
