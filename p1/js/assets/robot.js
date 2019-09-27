@@ -9,6 +9,10 @@ class Robot extends THREE.Object3D {
         this.addUpperArm(x, y, z);
         this.addArmArticulation(x + 13, y, z);
         
+        this.userData = { moveUp: false, step: 0 };
+        this.userData = { moveDown: false, step: 0 };
+        this.userData = { moveLeft: false, step: 0 };
+        this.userData = { moveRight: false, step: 0 };
     }
 
     addRobotBase(x, y, z) {
