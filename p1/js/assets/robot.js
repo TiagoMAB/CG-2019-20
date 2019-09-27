@@ -1,3 +1,5 @@
+'use strict'
+
 class Robot extends THREE.Object3D {
 
     constructor(x, y, z) {
@@ -72,6 +74,17 @@ class Robot extends THREE.Object3D {
     }
 
     addBaseHand(x, y, z) {
+        'use scrict';
+
+        var material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true });
+        var geometry = new THREE.CylinderGeometry(1.25, 1.25, 1);
+        var mesh = new THREE.Mesh(geometry, material);
+        mesh.rotation.z = Math.PI / 2;
+        mesh.position.set(x + 14.75, y + 17.5, z);
+        this.add(mesh);
+    }
+
+    addFinger(x, y, z) {
         'use scrict';
 
         var material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true });
