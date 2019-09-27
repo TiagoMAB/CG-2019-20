@@ -20,6 +20,7 @@ class Robot extends THREE.Object3D {
         
         mesh.position.set(x, y + 2.5, z);
         this.add(mesh);
+        //come
     }
 
     addArmSupport(x, y, z) {
