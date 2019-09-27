@@ -117,17 +117,14 @@ function onKeyDown(e) {
         /* Camera */
         case 49: //1
             camera = camera1;
-            render();
             break;
 
         case 50: //2
             camera = camera2;
-            render();
             break;
 
         case 51: //3
             camera = camera3;
-            render();
             break;
 
         case 52: //4
@@ -136,11 +133,14 @@ function onKeyDown(e) {
                     node.material.wireframe = !node.material.wireframe;
                 }
             });
-            render();
             break;
-
+        
+        
+        default:
+            return;
     }
 
+    render();
 }
 
 function init() {
