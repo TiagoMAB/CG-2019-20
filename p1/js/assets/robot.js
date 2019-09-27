@@ -1,7 +1,6 @@
 'use strict'
 
 class Robot extends THREE.Object3D {
-
     constructor(x, y, z) {
         super();
         this.addRobotBase(x, y, z);
@@ -94,5 +93,4 @@ class Robot extends THREE.Object3D {
         mesh.position.set(x + 14.75, y + 17.5, z);
         this.add(mesh);
     }
-
 }

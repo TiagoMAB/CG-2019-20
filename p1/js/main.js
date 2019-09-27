@@ -184,8 +184,11 @@ function onKeyUp(e) {
             break;
 
         case 40: //down
-        robot.userData.moveDown = !robot.userData.moveDown;
-            break;   
+            robot.userData.moveDown = !robot.userData.moveDown;
+            break;
+        
+        default:
+            return;
     }
 
     render();
