@@ -166,6 +166,31 @@ function onKeyDown(e) {
     render();
 }
 
+function onKeyUp(e) {
+    'use strict';
+
+    switch (e.keyCode) {
+        /* Movement */
+        case 37: //left
+            robot.userData.moveLeft = !robot.userData.moveLeft;
+            break;
+
+        case 38: //up
+            robot.userData.moveUp = !robot.userData.moveUp;
+            break;
+
+        case 39: //right
+            robot.userData.moveRight = !robot.userData.moveRight;
+            break;
+
+        case 40: //down
+        robot.userData.moveDown = !robot.userData.moveDown;
+            break;   
+    }
+
+    render();
+}
+
 function animate() {
     'use strict';
 
@@ -211,4 +236,5 @@ function init() {
 
     window.addEventListener("resize", onResize);
     window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("keyup", onKeyUp);    
 }
