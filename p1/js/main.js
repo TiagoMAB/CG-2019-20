@@ -1,4 +1,4 @@
-var camera, scene, renderer, camera1, camera2, camera3;
+var camera, scene, renderer, camera1, camera2, camera3, camera4;
 
 function render() {
     'use strict';
@@ -44,6 +44,20 @@ function createCamera3() {
     camera3.position.z = 0;
     camera3.lookAt(scene.position);
 }
+
+function createCamera4() {
+    'use scrict';
+
+    factor = 20
+    //camera4 = new THREE.OrthographicCamera( -window.innerWidth/factor, window.innerWidth/factor, window.innerHeight/factor, -window.innerHeight/factor, 1, 1000 );
+    camera4 = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
+
+    camera4.position.x = -50;
+    camera4.position.y = 50;
+    camera4.position.z = 50;
+    camera4.lookAt(scene.position);
+}
+
 
 function createCamera() {
     'use scrict';
@@ -135,7 +149,10 @@ function onKeyDown(e) {
                 }
             });
             break;
-        
+
+        case 53: //test camera
+            camera = camera4;
+            break;
         
         default:
             return;
@@ -170,6 +187,7 @@ function init() {
     createCamera1();
     createCamera2();
     createCamera3();
+    createCamera4();
     createCamera();
     
     render();
