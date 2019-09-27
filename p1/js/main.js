@@ -1,4 +1,6 @@
-var camera, scene, renderer, camera1, camera2, camera3, camera4;
+var camera, scene, renderer;
+var camera1, camera2, camera3, camera4;
+var robot, targetBase, targetToroid;
 
 function render() {
     'use strict';
@@ -72,12 +74,12 @@ function createScene() {
     scene.add(new THREE.AxisHelper(10));
 
     //createRobot(0, 0, 0);
-    r = new Robot(0, 0, 0);
+    robot = new Robot(0, 0, 0);
 
-    scene.add(r);
+    scene.add(robot);
 
-    var targetToroid = new Toroid(20, 22.5, 0);
-    var targetBase = new Cylinder(20, 10, 0);
+    targetToroid = new Toroid(20, 17.55, 0);
+    targetBase = new Cylinder(20, 7.5, 0);
 
     scene.add(targetToroid);
     scene.add(targetBase);
