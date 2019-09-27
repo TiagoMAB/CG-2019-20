@@ -107,7 +107,7 @@ function onKeyDown(e) {
             break;
 
         case 38: //up
-            r.userData.moveUp = !r.userData.moveUp;
+            robot.userData.moveUp = !robot.userData.moveUp;
             break;
 
         case 39: //right
@@ -166,8 +166,8 @@ function onKeyDown(e) {
 function animate() {
     'use strict';
 
-    if (r.userData.moveUp) {
-        r.position.z += 0.1;
+    if (robot.userData.moveUp) {
+        robot.position.z += 0.1;
     }
 
     render();
