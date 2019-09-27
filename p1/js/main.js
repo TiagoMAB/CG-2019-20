@@ -104,6 +104,7 @@ function onKeyDown(e) {
     switch (e.keyCode) {
         /* Movement */
         case 37: //left
+            robot.userData.moveLeft = !robot.userData.moveLeft;
             break;
 
         case 38: //up
@@ -111,9 +112,11 @@ function onKeyDown(e) {
             break;
 
         case 39: //right
+            robot.userData.moveRight = !robot.userData.moveRight;
             break;
 
         case 40: //down
+        robot.userData.moveDown = !robot.userData.moveDown;
             break;    
 
 
@@ -167,6 +170,18 @@ function animate() {
     'use strict';
 
     if (robot.userData.moveUp) {
+        robot.position.x += 0.1;
+    }
+
+    if (robot.userData.moveDown) {
+        robot.position.x-= 0.1;
+    }
+
+    if (robot.userData.moveLeft) {
+        robot.position.z -= 0.1;
+    }
+
+    if (robot.userData.moveRight) {
         robot.position.z += 0.1;
     }
 
