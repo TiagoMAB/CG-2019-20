@@ -94,8 +94,6 @@ function onResize() {
         camera.aspect = renderer.getSize().width / renderer.getSize().height;
         camera.updateProjectionMatrix();
     }
-
-    render();
 }
 
 function onKeyDown(e) {
@@ -117,7 +115,7 @@ function onKeyDown(e) {
 
         case 40: //down
         robot.userData.moveDown = !robot.userData.moveDown;
-            break;    
+            break;
 
 
         /* Arm movement */
@@ -148,22 +146,14 @@ function onKeyDown(e) {
             break;
 
         case 52: //4
-            scene.traverse(function (node) {
-                if (node instanceof THREE.Mesh) {
-                    node.material.wireframe = !node.material.wireframe;
-                }
-            });
+            targetBase.toggleWireframe();
+            targetToroid.toggleWireframe();
             break;
 
         case 53: //test camera
             camera = camera4;
             break;
-        
-        default:
-            return;
     }
-
-    render();
 }
 
 function onKeyUp(e) {
@@ -186,12 +176,7 @@ function onKeyUp(e) {
         case 40: //down
             robot.userData.moveDown = !robot.userData.moveDown;
             break;
-        
-        default:
-            return;
     }
-
-    render();
 }
 
 function animate() {
@@ -202,7 +187,7 @@ function animate() {
     }
 
     if (robot.userData.moveDown) {
-        robot.position.x-= 0.1;
+        robot.position.x -= 0.1;
     }
 
     if (robot.userData.moveLeft) {

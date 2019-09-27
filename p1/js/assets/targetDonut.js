@@ -8,4 +8,8 @@ class Toroid extends THREE.Object3D {
         this.add(this.mesh);
         this.position.set(x, y, z);
     }
+
+    toggleWireframe() {
+        this.material.wireframe = !this.material.wireframe;
+    }
 }
