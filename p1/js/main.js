@@ -104,19 +104,19 @@ function onKeyDown(e) {
     switch (e.keyCode) {
         /* Movement */
         case 37: //left
-            robot.userData.moveLeft = !robot.userData.moveLeft;
+            robot.userData.moveLeft = true;
             break;
 
         case 38: //up
-            robot.userData.moveUp = !robot.userData.moveUp;
+            robot.userData.moveUp = true;
             break;
 
         case 39: //right
-            robot.userData.moveRight = !robot.userData.moveRight;
+            robot.userData.moveRight = true;
             break;
 
         case 40: //down
-        robot.userData.moveDown = !robot.userData.moveDown;
+        robot.userData.moveDown = true;
             break;    
 
 
@@ -148,11 +148,11 @@ function onKeyDown(e) {
             break;
 
         case 52: //4
-            scene.traverse(function (node) {
+            /*scene.traverse(function (node) {
                 if (node instanceof THREE.Mesh) {
                     node.material.wireframe = !node.material.wireframe;
                 }
-            });
+            });*/
             break;
 
         case 53: //test camera
@@ -172,19 +172,19 @@ function onKeyUp(e) {
     switch (e.keyCode) {
         /* Movement */
         case 37: //left
-            robot.userData.moveLeft = !robot.userData.moveLeft;
+            robot.userData.moveLeft = false;
             break;
 
         case 38: //up
-            robot.userData.moveUp = !robot.userData.moveUp;
+            robot.userData.moveUp = false;
             break;
 
         case 39: //right
-            robot.userData.moveRight = !robot.userData.moveRight;
+            robot.userData.moveRight = false;
             break;
 
         case 40: //down
-            robot.userData.moveDown = !robot.userData.moveDown;
+            robot.userData.moveDown = false;
             break;
         
         default:
