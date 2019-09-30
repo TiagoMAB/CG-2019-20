@@ -12,15 +12,15 @@ class Robot extends THREE.Object3D {
 
         this.createRobot(x, y, z);
 
-        this.userData = { moveUp: false, step: 0 };
-        this.userData = { moveDown: false, step: 0 };
-        this.userData = { moveLeft: false, step: 0 };
-        this.userData = { moveRight: false, step: 0 };
+        this.userData = { moveUp: false };
+        this.userData = { moveDown: false };
+        this.userData = { moveLeft: false };
+        this.userData = { moveRight: false };
 
-        this.userData = { rotateBasePositive: false, step: 0 };
-        this.userData = { rotateBaseNegtive: false, step: 0 };
-        this.userData = { rotateArmPositive: false, step: 0 };
-        this.userData = { rotateArmNegative: false, step: 0 };
+        this.userData = { rotateBasePositive: false };
+        this.userData = { rotateBaseNegtive: false };
+        this.userData = { rotateArmPositive: false };
+        this.userData = { rotateArmNegative: false };
     }
 
     createRobot(x, y, z) {
@@ -30,6 +30,7 @@ class Robot extends THREE.Object3D {
         p13 = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 1.5), this.material);
         p13.rotation.z = Math.PI / 2;
         p13.position.set(x + 15.5, y + 14.4, z);
+        p13.material.color.setHex( 0x000fff );
     
         p12 = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 1.5), this.material);
         p12.rotation.z = Math.PI / 2;
@@ -90,10 +91,12 @@ class Robot extends THREE.Object3D {
         this.g1.add(p3);
         this.g1.add(p2);
         this.g1.add(p1);
-        this.g1.add(this.g2);
         
+        this.g1.add(this.g2);
+
         this.add(this.g1);
 
+        this.g3.rotation.z = Math.PI/6;
     }
 
     toggleWireframe() {

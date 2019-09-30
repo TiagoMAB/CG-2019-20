@@ -13,7 +13,6 @@ function createCamera1() {
 
     factor = 20
     camera1 = new THREE.OrthographicCamera( -window.innerWidth/factor, window.innerWidth/factor, window.innerHeight/factor, -window.innerHeight/factor, 1, 1000 );
-    //camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
 
     camera1.position.x = 0;
     camera1.position.y = 0;
@@ -26,7 +25,6 @@ function createCamera2() {
 
     factor = 20
     camera2 = new THREE.OrthographicCamera( -window.innerWidth/factor, window.innerWidth/factor, window.innerHeight/factor, -window.innerHeight/factor, 1, 1000 );
-    //camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
 
     camera2.position.x = 0;
     camera2.position.y = 50;
@@ -39,7 +37,6 @@ function createCamera3() {
 
     factor = 20
     camera3 = new THREE.OrthographicCamera( -window.innerWidth/factor, window.innerWidth/factor, window.innerHeight/factor, -window.innerHeight/factor, 1, 1000 );
-    //camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
 
     camera3.position.x = 50;
     camera3.position.y = 0;
@@ -51,7 +48,6 @@ function createCamera4() {
     'use scrict';
 
     factor = 20
-    //camera4 = new THREE.OrthographicCamera( -window.innerWidth/factor, window.innerWidth/factor, window.innerHeight/factor, -window.innerHeight/factor, 1, 1000 );
     camera4 = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
 
     camera4.position.x = -50;
@@ -73,13 +69,12 @@ function createScene() {
 
     scene.add(new THREE.AxisHelper(10));
 
-    //createRobot(0, 0, 0);
     robot = new Robot(0, 0, 0);
 
     scene.add(robot);
 
-    targetToroid = new Toroid(20, 17.55, 0);
-    targetBase = new Cylinder(20, 7.5, 0);
+    targetToroid = new Toroid(20, 22.5, 0);
+    targetBase = new Cylinder(20, 10, 0);
 
     scene.add(targetToroid);
     scene.add(targetBase);
@@ -206,36 +201,36 @@ function animate() {
 
     /* Movement */
     if (robot.userData.moveUp) {
-        robot.position.x += 0.1;
+        robot.position.x += 0.2;
     }
 
     if (robot.userData.moveDown) {
-        robot.position.x -= 0.1;
+        robot.position.x -= 0.2;
     }
 
     if (robot.userData.moveLeft) {
-        robot.position.z -= 0.1;
+        robot.position.z -= 0.2;
     }
 
     if (robot.userData.moveRight) {
-        robot.position.z += 0.1;
+        robot.position.z += 0.2;
     }
 
     /* Arm Movement */
     if (robot.userData.rotateBaseNegative) {
-        robot.rotateBase(0.1);
+        robot.rotateBase(0.05);
     }
 
     if (robot.userData.rotateBasePositive) {
-        robot.rotateBase(-0.1);
+        robot.rotateBase(-0.05);
     }
 
     if (robot.userData.rotateArmNegative && robot.currentRotationArmValue() < 1.5) {
-        robot.rotateArm(0.1);
+        robot.rotateArm(0.05);
     }
 
-    if (robot.userData.rotateArmPositive && robot.currentRotationArmValue() > -0.8) {
-        robot.rotateArm(-0.1);
+    if (robot.userData.rotateArmPositive && robot.currentRotationArmValue() > -0.75) {
+        robot.rotateArm(-0.05);
     }
 
     render();
