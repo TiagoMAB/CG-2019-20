@@ -120,15 +120,19 @@ function onKeyDown(e) {
 
         /* Arm movement */
         case 65: //a
+            robot.userData.rotateBaseNegative = true;
             break;
 
         case 83: //s
+            robot.userData.rotateBasePositive = true;
             break;
 
         case 81: //q
+            robot.userData.rotateArmNegative = true;
             break;
 
         case 87: //w
+            robot.userData.rotateArmPositive = true;
             break; 
 
 
@@ -177,12 +181,30 @@ function onKeyUp(e) {
         case 40: //down
             robot.userData.moveDown = false;
             break;
+
+        /* Arm movement */
+        case 65: //a
+            robot.userData.rotateBaseNegative = false;
+            break;
+
+        case 83: //s
+            robot.userData.rotateBasePositive = false;
+            break;
+
+        case 81: //q
+            robot.userData.rotateArmNegative = false;
+            break;
+
+        case 87: //w
+            robot.userData.rotateArmPositive = false;
+            break; 
     }
 }
 
 function animate() {
     'use strict';
 
+    /* Movement */
     if (robot.userData.moveUp) {
         robot.position.x += 0.1;
     }
@@ -197,6 +219,23 @@ function animate() {
 
     if (robot.userData.moveRight) {
         robot.position.z += 0.1;
+    }
+
+    /* Arm Movement */
+    if (robot.userData.rotateBaseNegative) {
+        robot.rotateBase(0.1);
+    }
+
+    if (robot.userData.rotateBasePositive) {
+        robot.rotateBase(-0.1);
+    }
+
+    if (robot.userData.rotateArmNegative && robot.currentRotationArmValue() < 1.5) {
+        robot.rotateArm(0.1);
+    }
+
+    if (robot.userData.rotateArmPositive && robot.currentRotationArmValue() > -0.8) {
+        robot.rotateArm(-0.1);
     }
 
     render();
