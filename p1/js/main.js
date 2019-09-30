@@ -146,8 +146,9 @@ function onKeyDown(e) {
             break;
 
         case 52: //4
-           // targetBase.toggleWireframe();
-           // targetToroid.toggleWireframe();
+            targetBase.toggleWireframe();
+            targetToroid.toggleWireframe();
+            robot.toggleWireframe();
             break;
 
         case 53: //test camera
