@@ -73,8 +73,8 @@ function createScene() {
 
     scene.add(robot);
 
-    targetToroid = new Toroid(20, 22.5, 0);
-    targetBase = new Cylinder(20, 10, 0);
+    targetToroid = new Toroid(20, 20.5, 0);
+    targetBase = new Cylinder(20, 9, 0);
 
     scene.add(targetToroid);
     scene.add(targetBase);
@@ -218,19 +218,19 @@ function animate() {
 
     /* Arm Movement */
     if (robot.userData.rotateBaseNegative) {
-        robot.rotateBase(0.05);
+        robot.rotateBase(0.02);
     }
 
     if (robot.userData.rotateBasePositive) {
-        robot.rotateBase(-0.05);
+        robot.rotateBase(-0.02);
     }
 
     if (robot.userData.rotateArmNegative && robot.currentRotationArmValue() < 1.5) {
-        robot.rotateArm(0.05);
+        robot.rotateArm(0.02);
     }
 
     if (robot.userData.rotateArmPositive && robot.currentRotationArmValue() > -0.75) {
-        robot.rotateArm(-0.05);
+        robot.rotateArm(-0.02);
     }
 
     render();
