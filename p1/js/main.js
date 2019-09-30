@@ -114,13 +114,8 @@ function onKeyDown(e) {
             break;
 
         case 40: //down
-<<<<<<< HEAD
-        robot.userData.moveDown = true;
+            robot.userData.moveDown = true;
             break;    
-=======
-        robot.userData.moveDown = !robot.userData.moveDown;
-            break;
->>>>>>> b27b8f996548367d5ad72cfdbf981593c3ed7a27
 
 
         /* Arm movement */
@@ -151,16 +146,8 @@ function onKeyDown(e) {
             break;
 
         case 52: //4
-<<<<<<< HEAD
-            /*scene.traverse(function (node) {
-                if (node instanceof THREE.Mesh) {
-                    node.material.wireframe = !node.material.wireframe;
-                }
-            });*/
-=======
-            targetBase.toggleWireframe();
-            targetToroid.toggleWireframe();
->>>>>>> b27b8f996548367d5ad72cfdbf981593c3ed7a27
+           // targetBase.toggleWireframe();
+           // targetToroid.toggleWireframe();
             break;
 
         case 53: //test camera
