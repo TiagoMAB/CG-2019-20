@@ -4,7 +4,10 @@ class Robot extends THREE.Object3D {
     constructor(x, y, z) {
         super();
 
-        this.material = new THREE.MeshBasicMaterial( { color: 0x0000ff, wireframe: true });
+        this.robotArmMaterial = new THREE.MeshBasicMaterial( { color: 0xffa500, wireframe: true });
+        this.robotSphereMaterial = new THREE.MeshBasicMaterial( { color: 0x4169E1, wireframe: true });
+        this.robotBaseMaterial = new THREE.MeshBasicMaterial( { color: 0x663399, wireframe: true });
+        this.robotBaseSphereMaterial = new THREE.MeshBasicMaterial( { color: 0xee82ee, wireframe: true });
 
         this.g3 = new THREE.Object3D();
         this.g2 = new THREE.Object3D();
@@ -27,29 +30,36 @@ class Robot extends THREE.Object3D {
 
         var p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13;
 
-        p13 = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 1.5), this.material);
+        /* Upper Robot Finger */
+        p13 = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 1.5), this.robotArmMaterial);
         p13.rotation.z = Math.PI / 2;
         p13.position.set(x + 15.5, y + 14.4, z);
-        p13.material.color.setHex( 0x000fff );
     
-        p12 = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 1.5), this.material);
+        /* Lower Robot Finger */
+        p12 = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 1.5), this.robotArmMaterial);
         p12.rotation.z = Math.PI / 2;
         p12.position.set(x + 15.5, y + 12.6, z);
 
-        p11 = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.5, 0.5), this.material);
+        /* Robot Hand Base */
+        p11 = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.5, 0.5), this.robotArmMaterial);
         p11.rotation.z = Math.PI / 2;
         p11.position.set(x + 14.5, y + 13.5, z);
-        p10 = new THREE.Mesh(new THREE.SphereGeometry(1.25, 10, 10), this.material);
+
+        /* Upper Robot Sphere */
+        p10 = new THREE.Mesh(new THREE.SphereGeometry(1.25, 10, 10), this.robotSphereMaterial);
         p10.position.set(x + 13, y + 13.5, z);
 
-        p9 = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 13), this.material);
+        /* Upper Arm */
+        p9 = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 13), this.robotArmMaterial);
         p9.position.set(x + 6.5, y + 13.5, z);
         p9.rotation.z = Math.PI / 2;
 
-        p8 = new THREE.Mesh(new THREE.SphereGeometry(1.25, 10, 10), this.material);
+        /* Middle Robot Sphere */
+        p8 = new THREE.Mesh(new THREE.SphereGeometry(1.25, 10, 10), this.robotSphereMaterial);
         p8.position.set(x, y + 13.5, z);
 
-        p7 = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 13), this.material);
+        /* Lower Arm */
+        p7 = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 13), this.robotArmMaterial);
         p7.position.set(x, y + 6.5, z);
 
         this.g3 = new THREE.Object3D();
@@ -63,26 +73,32 @@ class Robot extends THREE.Object3D {
         this.g3.add(p7);
         this.g3.position.set(x, y + 1.5, z);
 
-        p6 = new THREE.Mesh(new THREE.SphereGeometry(2.5, 10, 10, 0, Math.PI * 2, 0, Math.PI / 2), this.material);
+        /* Lower Robot Sphere */
+        p6 = new THREE.Mesh(new THREE.SphereGeometry(2.5, 10, 10, 0, Math.PI * 2, 0, Math.PI / 2), this.robotSphereMaterial);
         
         this.g2 = new THREE.Object3D();
         this.g2.add(p6);
         this.g2.add(this.g3);
         this.g2.position.set(x, y + 3, z);
 
-        p5 = new THREE.Mesh(new THREE.CubeGeometry(20, 1, 20), this.material);
+        /* Robot Base */
+        p5 = new THREE.Mesh(new THREE.CubeGeometry(20, 1, 20), this.robotBaseMaterial);
         p5.position.set(x, y + 2.5, z);
 
-        p4 = new THREE.Mesh(new THREE.SphereGeometry(1, 10, 10), this.material);
+        /* Robot Base Upper Right Sphere */
+        p4 = new THREE.Mesh(new THREE.SphereGeometry(1, 10, 10), this.robotBaseSphereMaterial);
         p4.position.set(x + 9, y + 1, z + 9);
         
-        p3 = new THREE.Mesh(new THREE.SphereGeometry(1, 10, 10), this.material);
+        /* Robot Base Lower Right Sphere */
+        p3 = new THREE.Mesh(new THREE.SphereGeometry(1, 10, 10), this.robotBaseSphereMaterial);
         p3.position.set(x - 9, y + 1, z + 9);
-       
-        p2 = new THREE.Mesh(new THREE.SphereGeometry(1, 10, 10), this.material);
+        
+        /* Robot Base Lower Left Sphere */
+        p2 = new THREE.Mesh(new THREE.SphereGeometry(1, 10, 10), this.robotBaseSphereMaterial);
         p2.position.set(x - 9, y + 1, z - 9);
-       
-        p1 = new THREE.Mesh(new THREE.SphereGeometry(1, 10, 10), this.material);
+        
+        /* Robot Base Upper Left Sphere */
+        p1 = new THREE.Mesh(new THREE.SphereGeometry(1, 10, 10), this.robotBaseSphereMaterial);
         p1.position.set(x + 9, y + 1, z - 9);
 
         this.g1 = new THREE.Object3D();
@@ -100,7 +116,10 @@ class Robot extends THREE.Object3D {
     }
 
     toggleWireframe() {
-        this.material.wireframe = !this.material.wireframe;
+        this.robotArmMaterial.wireframe = !this.robotArmMaterial.wireframe;
+        this.robotBaseMaterial.wireframe = !this.robotBaseMaterial.wireframe;
+        this.robotBaseSphereMaterial.wireframe = !this.robotBaseSphereMaterial.wireframe;
+        this.robotSphereMaterial.wireframe = !this.robotSphereMaterial.wireframe;
     }
 
     rotateBase(value) {

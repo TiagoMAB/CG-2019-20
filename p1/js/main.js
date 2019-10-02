@@ -44,6 +44,7 @@ function createCamera3() {
     camera3.lookAt(scene.position);
 }
 
+/* Test Camera */
 function createCamera4() {
     'use scrict';
 
@@ -114,6 +115,7 @@ function onKeyDown(e) {
 
 
         /* Arm movement */
+        /* "Por convencao, 'q' e 'a' sao negativos, 'w' e 's' sao positivos" */
         case 65: //a
             robot.userData.rotateBaseNegative = true;
             break;
@@ -252,7 +254,7 @@ function init() {
     createCamera1();
     createCamera2();
     createCamera3();
-    createCamera4();
+    createCamera4(); /* Test Camera */
     createCamera();
     
     render();
