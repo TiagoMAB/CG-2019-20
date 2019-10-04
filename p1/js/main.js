@@ -15,8 +15,8 @@ function createCamera1() {
     camera1 = new THREE.OrthographicCamera( -window.innerWidth/factor, window.innerWidth/factor, window.innerHeight/factor, -window.innerHeight/factor, 1, 1000 );
 
     camera1.position.x = 0;
-    camera1.position.y = 0;
-    camera1.position.z = 50;
+    camera1.position.y = 50;
+    camera1.position.z = 0;
     camera1.lookAt(scene.position);
 }
 
@@ -27,8 +27,8 @@ function createCamera2() {
     camera2 = new THREE.OrthographicCamera( -window.innerWidth/factor, window.innerWidth/factor, window.innerHeight/factor, -window.innerHeight/factor, 1, 1000 );
 
     camera2.position.x = 0;
-    camera2.position.y = 50;
-    camera2.position.z = 0;
+    camera2.position.y = 0;
+    camera2.position.z = 50;
     camera2.lookAt(scene.position);
 }
 
