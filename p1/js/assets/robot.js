@@ -4,7 +4,12 @@ class Robot extends THREE.Object3D {
     constructor(x, y, z) {
         super();
 
-        this.material = new THREE.MeshBasicMaterial( { color: 0x0000ff, wireframe: true });
+        this.material = new THREE.MeshBasicMaterial( { color: 0xffffff, wireframe: true });
+        this.baseM = new THREE.MeshBasicMaterial( { color: 0x191970, wireframe: true });
+        this.fingerM = new THREE.MeshBasicMaterial( { color: 0xC9C0BB, wireframe: true });
+        this.armM = new THREE.MeshBasicMaterial( { color: 0x666666, wireframe: true });
+        this.handM = new THREE.MeshBasicMaterial( { color: 0x666666, wireframe: true });
+
 
         this.g3 = new THREE.Object3D();
         this.g2 = new THREE.Object3D();
@@ -27,29 +32,29 @@ class Robot extends THREE.Object3D {
 
         var p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13;
 
-        p13 = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 1.5), this.material);
+        p13 = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 1.5), this.fingerM);
         p13.rotation.z = Math.PI / 2;
         p13.position.set(x + 15.5, y + 14.4, z);
-        p13.material.color.setHex( 0x000fff );
     
-        p12 = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 1.5), this.material);
+        p12 = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 1.5), this.fingerM);
         p12.rotation.z = Math.PI / 2;
         p12.position.set(x + 15.5, y + 12.6, z);
 
-        p11 = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.5, 0.5), this.material);
+        p11 = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.5, 0.5), this.handM);
         p11.rotation.z = Math.PI / 2;
         p11.position.set(x + 14.5, y + 13.5, z);
+
         p10 = new THREE.Mesh(new THREE.SphereGeometry(1.25, 10, 10), this.material);
         p10.position.set(x + 13, y + 13.5, z);
 
-        p9 = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 13), this.material);
+        p9 = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 13), this.armM);
         p9.position.set(x + 6.5, y + 13.5, z);
         p9.rotation.z = Math.PI / 2;
 
         p8 = new THREE.Mesh(new THREE.SphereGeometry(1.25, 10, 10), this.material);
         p8.position.set(x, y + 13.5, z);
 
-        p7 = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 13), this.material);
+        p7 = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 13), this.armM);
         p7.position.set(x, y + 6.5, z);
 
         this.g3 = new THREE.Object3D();
@@ -70,19 +75,19 @@ class Robot extends THREE.Object3D {
         this.g2.add(this.g3);
         this.g2.position.set(x, y + 3, z);
 
-        p5 = new THREE.Mesh(new THREE.CubeGeometry(20, 1, 20), this.material);
+        p5 = new THREE.Mesh(new THREE.CubeGeometry(20, 1, 20), this.baseM);
         p5.position.set(x, y + 2.5, z);
 
-        p4 = new THREE.Mesh(new THREE.SphereGeometry(1, 10, 10), this.material);
+        p4 = new THREE.Mesh(new THREE.SphereGeometry(1, 10, 10), this.baseM);
         p4.position.set(x + 9, y + 1, z + 9);
         
-        p3 = new THREE.Mesh(new THREE.SphereGeometry(1, 10, 10), this.material);
+        p3 = new THREE.Mesh(new THREE.SphereGeometry(1, 10, 10), this.baseM);
         p3.position.set(x - 9, y + 1, z + 9);
        
-        p2 = new THREE.Mesh(new THREE.SphereGeometry(1, 10, 10), this.material);
+        p2 = new THREE.Mesh(new THREE.SphereGeometry(1, 10, 10), this.baseM);
         p2.position.set(x - 9, y + 1, z - 9);
        
-        p1 = new THREE.Mesh(new THREE.SphereGeometry(1, 10, 10), this.material);
+        p1 = new THREE.Mesh(new THREE.SphereGeometry(1, 10, 10), this.baseM);
         p1.position.set(x + 9, y + 1, z - 9);
 
         this.g1 = new THREE.Object3D();
@@ -101,6 +106,10 @@ class Robot extends THREE.Object3D {
 
     toggleWireframe() {
         this.material.wireframe = !this.material.wireframe;
+        this.baseM.wireframe = !this.baseM.wireframe;
+        this.fingerM.wireframe = !this.fingerM.wireframe;
+        this.armM.wireframe = !this.armM.wireframe;
+        this.handM.wireframe = !this.handM.wireframe;
     }
 
     rotateBase(value) {
