@@ -1,6 +1,6 @@
 var camera, scene, renderer;
-var camera1, camera2, camera3;
-var robot, targetBase, targetToroid;
+var camera1, camera2, camera3, camera2;
+var cannon1, cannon2, cannon3, fence, targetBase, targetToroid;
 
 function render() {
     'use strict';
@@ -24,10 +24,10 @@ function createCamera2() {
     'use scrict';
 
     factor = 20
-    camera2 = new THREE.OrthographicCamera( -window.innerWidth/factor, window.innerWidth/factor, window.innerHeight/factor, -window.innerHeight/factor, 1, 1000 );
+    camera2 = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
 
-    camera2.position.x = 0;
-    camera2.position.y = 0;
+    camera2.position.x = -50;
+    camera2.position.y = 50;
     camera2.position.z = 50;
     camera2.lookAt(scene.position);
 }
@@ -43,6 +43,7 @@ function createCamera3() {
     camera3.position.z = 0;
     camera3.lookAt(scene.position);
 }
+
 
 function createCamera() {
     'use scrict';
@@ -62,9 +63,11 @@ function createScene() {
 
     targetToroid = new Toroid(20, 20.5, 0);
     targetBase = new Cylinder(20, 9, 0);
+    fence = new Fence(0, 0, 0);
 
     scene.add(targetToroid);
     scene.add(targetBase);
+    scene.add(fence);
 }
 
 function onResize() {
@@ -83,21 +86,20 @@ function onKeyDown(e) {
 
     switch (e.keyCode) {
         /* Movement */
-        /* "Por convencao, orientamos o movimento com a frente do robot ser a direção inicial do braço"*/
         case 37: //left
-            robot.movement.z = -1;
+            robot.userData.moveLeft = true;
             break;
 
         case 38: //up
-            robot.movement.x = 1;
+            robot.userData.moveUp = true;
             break;
 
         case 39: //right
-            robot.movement.z = 1;
+            robot.userData.moveRight = true;
             break;
 
         case 40: //down
-            robot.movement.x = -1;
+            robot.userData.moveDown = true;
             break;    
 
 
@@ -147,19 +149,19 @@ function onKeyUp(e) {
     switch (e.keyCode) {
         /* Movement */
         case 37: //left
-            robot.movement.z = 0;
+            robot.userData.moveLeft = false;
             break;
 
         case 38: //up
-            robot.movement.x = 0;
+            robot.userData.moveUp = false;
             break;
 
         case 39: //right
-            robot.movement.z = 0;
+            robot.userData.moveRight = false;
             break;
 
         case 40: //down
-            robot.movement.x = 0;
+            robot.userData.moveDown = false;
             break;
 
         /* Arm movement */
@@ -185,11 +187,20 @@ function animate() {
     'use strict';
 
     /* Movement */
-    if (robot.movement.x != 0 && robot.movement.z != 0) {
-        robot.translateOnAxis(robot.movement, 0.2/robot.movement.length())
+    if (robot.userData.moveUp) {
+        robot.position.x += 0.2;
     }
-    else {
-        robot.translateOnAxis(robot.movement, 0.2)
+
+    if (robot.userData.moveDown) {
+        robot.position.x -= 0.2;
+    }
+
+    if (robot.userData.moveLeft) {
+        robot.position.z -= 0.2;
+    }
+
+    if (robot.userData.moveRight) {
+        robot.position.z += 0.2;
     }
 
     /* Arm Movement */

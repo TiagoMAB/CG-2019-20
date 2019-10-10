@@ -16,7 +16,11 @@ class Robot extends THREE.Object3D {
 
         this.createRobot(x, y, z);
 
-        this.movement = new THREE.Vector3( 0, 0, 0 );
+        this.userData = { moveUp: false };
+        this.userData = { moveDown: false };
+        this.userData = { moveLeft: false };
+        this.userData = { moveRight: false };
+
         this.userData = { rotateBasePositive: false };
         this.userData = { rotateBaseNegtive: false };
         this.userData = { rotateArmPositive: false };
@@ -59,6 +63,8 @@ class Robot extends THREE.Object3D {
         p7 = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 13), this.robotArmMaterial);
         p7.position.set(x, y + 6.5, z);
 
+        this.g3 = new THREE.Object3D();
+
         this.g3.add(p13);
         this.g3.add(p12);
         this.g3.add(p11);
@@ -71,6 +77,7 @@ class Robot extends THREE.Object3D {
         /* Lower Robot Sphere */
         p6 = new THREE.Mesh(new THREE.SphereGeometry(2.5, 10, 10, 0, Math.PI * 2, 0, Math.PI / 2), this.robotSphereMaterial);
         
+        this.g2 = new THREE.Object3D();
         this.g2.add(p6);
         this.g2.add(this.g3);
         this.g2.position.set(x, y + 3, z);
@@ -95,6 +102,7 @@ class Robot extends THREE.Object3D {
         p1 = new THREE.Mesh(new THREE.SphereGeometry(1, 10, 10), this.robotBaseSphereMaterial);
         p1.position.set(x + 9, y + 1, z - 9);
 
+        this.g1 = new THREE.Object3D();
         this.g1.add(p5);
         this.g1.add(p4);
         this.g1.add(p3);
