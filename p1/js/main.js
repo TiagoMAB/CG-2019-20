@@ -98,19 +98,19 @@ function onKeyDown(e) {
     switch (e.keyCode) {
         /* Movement */
         case 37: //left
-            robot.userData.moveLeft = true;
+            robot.movement.z = -1;
             break;
 
         case 38: //up
-            robot.userData.moveUp = true;
+            robot.movement.x = 1;
             break;
 
         case 39: //right
-            robot.userData.moveRight = true;
+            robot.movement.z = 1;
             break;
 
         case 40: //down
-            robot.userData.moveDown = true;
+            robot.movement.x = -1;
             break;    
 
 
@@ -164,19 +164,19 @@ function onKeyUp(e) {
     switch (e.keyCode) {
         /* Movement */
         case 37: //left
-            robot.userData.moveLeft = false;
+            robot.movement.z = 0;
             break;
 
         case 38: //up
-            robot.userData.moveUp = false;
+            robot.movement.x = 0;
             break;
 
         case 39: //right
-            robot.userData.moveRight = false;
+            robot.movement.z = 0;
             break;
 
         case 40: //down
-            robot.userData.moveDown = false;
+            robot.movement.x = 0;
             break;
 
         /* Arm movement */
@@ -202,7 +202,14 @@ function animate() {
     'use strict';
 
     /* Movement */
-    if (robot.userData.moveUp) {
+    if (robot.movement.x != 0 && robot.movement.z != 0) {
+        robot.translateOnAxis(robot.movement, 0.2/robot.movement.length())
+    }
+    else {
+        robot.translateOnAxis(robot.movement, 0.2)
+    }
+
+    /*if (robot.userData.moveUp) {
         robot.position.x += 0.2;
     }
 
@@ -216,7 +223,7 @@ function animate() {
 
     if (robot.userData.moveRight) {
         robot.position.z += 0.2;
-    }
+    }*/
 
     /* Arm Movement */
     if (robot.userData.rotateBaseNegative) {

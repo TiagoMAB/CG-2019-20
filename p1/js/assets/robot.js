@@ -16,11 +16,13 @@ class Robot extends THREE.Object3D {
 
         this.createRobot(x, y, z);
 
+        /*
         this.userData = { moveUp: false };
         this.userData = { moveDown: false };
         this.userData = { moveLeft: false };
         this.userData = { moveRight: false };
-
+        */
+        this.movement = new THREE.Vector3( 0, 0, 0 );
         this.userData = { rotateBasePositive: false };
         this.userData = { rotateBaseNegtive: false };
         this.userData = { rotateArmPositive: false };
