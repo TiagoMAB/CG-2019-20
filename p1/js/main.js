@@ -85,21 +85,36 @@ function onKeyDown(e) {
         /* Movement */
         /* "Por convencao, orientamos o movimento com a frente do robot ser a direção inicial do braço"*/
         case 37: //left
-            robot.movement.z = -1;
+            if (robot.userData.keyRightPressed)
+                robot.movement.z = 0;
+            else
+                robot.movement.z = -1;
+            robot.userData.keyLeftPressed = true;
             break;
 
         case 38: //up
-            robot.movement.x = 1;
+            if (robot.userData.keyDownPressed)
+                robot.movement.x = 0;
+            else
+                robot.movement.x = 1;
+            robot.userData.keyUpPressed = true;
             break;
 
         case 39: //right
-            robot.movement.z = 1;
+            if (robot.userData.keyLeftPressed)
+                robot.movement.z = 0;
+            else
+                robot.movement.z = 1;
+            robot.userData.keyRightPressed = true;
             break;
 
         case 40: //down
-            robot.movement.x = -1;
+            if (robot.userData.keyUpPressed)
+                robot.movement.x = 0;
+            else
+                robot.movement.x = -1;
+            robot.userData.keyDownPressed = true;
             break;    
-
 
         /* Arm movement */
         /* "Por convencao, 'q' e 'a' sao negativos, 'w' e 's' sao positivos" */
@@ -147,19 +162,35 @@ function onKeyUp(e) {
     switch (e.keyCode) {
         /* Movement */
         case 37: //left
-            robot.movement.z = 0;
+            if (robot.userData.keyRightPressed)
+                robot.movement.z = 1;
+            else
+                robot.movement.z = 0;
+            robot.userData.keyLeftPressed = false;
             break;
 
         case 38: //up
-            robot.movement.x = 0;
+            if (robot.userData.keyDownPressed)
+                robot.movement.x = -1;
+            else
+                robot.movement.x = 0;
+            robot.userData.keyUpPressed = false;
             break;
 
         case 39: //right
-            robot.movement.z = 0;
+            if (robot.userData.keyLeftPressed)
+                robot.movement.z = -1;
+            else
+                robot.movement.z = 0;
+            robot.userData.keyRightPressed = false;
             break;
 
         case 40: //down
-            robot.movement.x = 0;
+            if (robot.userData.keyUpPressed)
+                robot.movement.x = 1;
+            else
+                robot.movement.x = 0;
+            robot.userData.keyDownPressed = false;
             break;
 
         /* Arm movement */

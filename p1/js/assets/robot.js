@@ -17,6 +17,10 @@ class Robot extends THREE.Object3D {
         this.createRobot(x, y, z);
 
         this.movement = new THREE.Vector3( 0, 0, 0 );
+        this.userData = { keyUpPressed: false};
+        this.userData = { keyDownPressed: false};
+        this.userData = { keyLeftPressed: false};
+        this.userData = { keyRightPressed: false};
         this.userData = { rotateBasePositive: false };
         this.userData = { rotateBaseNegtive: false };
         this.userData = { rotateArmPositive: false };
