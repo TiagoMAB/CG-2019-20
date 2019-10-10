@@ -209,22 +209,6 @@ function animate() {
         robot.translateOnAxis(robot.movement, 0.2)
     }
 
-    /*if (robot.userData.moveUp) {
-        robot.position.x += 0.2;
-    }
-
-    if (robot.userData.moveDown) {
-        robot.position.x -= 0.2;
-    }
-
-    if (robot.userData.moveLeft) {
-        robot.position.z -= 0.2;
-    }
-
-    if (robot.userData.moveRight) {
-        robot.position.z += 0.2;
-    }*/
-
     /* Arm Movement */
     if (robot.userData.rotateBaseNegative) {
         robot.rotateBase(0.02);
