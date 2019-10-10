@@ -1,6 +1,8 @@
 var camera, scene, renderer;
 var camera1, camera2, camera3, camera2;
-var cannon1, cannon2, cannon3, fence, targetBase, targetToroid;
+var cannon1, cannon2, cannon3, fence;
+var selectedCannon, selectedCannonMaterial;
+var N = 5;
 
 function render() {
     'use strict';
@@ -26,9 +28,9 @@ function createCamera2() {
     factor = 20
     camera2 = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
 
-    camera2.position.x = -50;
-    camera2.position.y = 50;
-    camera2.position.z = 50;
+    camera2.position.x = 55;
+    camera2.position.y = 55;
+    camera2.position.z = 55;
     camera2.lookAt(scene.position);
 }
 
@@ -38,7 +40,7 @@ function createCamera3() {
     factor = 20
     camera3 = new THREE.OrthographicCamera( -window.innerWidth/factor, window.innerWidth/factor, window.innerHeight/factor, -window.innerHeight/factor, 1, 1000 );
 
-    camera3.position.x = 50;
+    camera3.position.x = 60;
     camera3.position.y = 0;
     camera3.position.z = 0;
     camera3.lookAt(scene.position);
@@ -50,6 +52,59 @@ function createCamera() {
     camera = camera1;
 }
 
+function createCannonBalls() {
+    var maxX, minX, maxZ, minZ, x, z, cannonBall;
+    maxX=0;
+    minX=-37.5;
+    maxZ=22.5;
+    minZ=-22.5;
+
+    for(i = 0; i < N; i++) {
+        //Temos de fazer um if para ver se a posição em que a bola está interseta qualquer outra.
+        //Se sim, fazemos uma nova posição random
+        x = (Math.random() * (maxX - minX + 1)) + minX;
+        z = (Math.random() * (maxZ - minZ + 1)) + minZ;
+        //console.log("X: " + x + "  Z: " + z);
+        cannonBall = new CannonBall(x, 2.5, z);
+        scene.add(cannonBall);
+    }
+}
+
+function createCannons() {
+    cannon1 = new Cannon(0, 0, 0);
+    cannon1.rotation.y = 0;
+    cannon1.startingRotationAngle = cannon1.rotation.y;
+    cannon1.position.x = 50;
+    cannon1.position.y = 2.5;
+    cannon1.position.z = 0;
+
+    cannon2 = new Cannon(0, 0, 0);
+    cannon2.rotation.y = -(Math.PI / 6);
+    cannon2.startingRotationAngle = cannon2.rotation.y;
+    cannon2.position.x = 50;
+    cannon2.position.y = 2.5;
+    cannon2.position.z = +25;
+
+    cannon3 = new Cannon(0, 0, 0);
+    cannon3.rotation.y = +(Math.PI / 6);
+    cannon3.startingRotationAngle = cannon3.rotation.y;
+    cannon3.position.x = 50;
+    cannon3.position.y = 2.5;
+    cannon3.position.z = -25;
+
+    scene.add(cannon1);
+    scene.add(cannon2);
+    scene.add(cannon3);
+}
+
+function selectCannon(cannon) {
+    selectedCannon.material.color.setHex(0x00008b);
+    selectedCannon.userData.rotatePositive = false;
+    selectedCannon.userData.rotateNegative = false;
+    selectedCannon = cannon;
+    selectedCannon.material.color.setHex(0xFFD700);
+}
+
 function createScene() {
     'use scrict';
 
@@ -57,17 +112,16 @@ function createScene() {
 
     scene.add(new THREE.AxisHelper(10));
 
-    robot = new Robot(0, 0, 0);
+    selectedCannon = new Cannon(0, 0, 0); 
 
-    scene.add(robot);
-
-    targetToroid = new Toroid(20, 20.5, 0);
-    targetBase = new Cylinder(20, 9, 0);
     fence = new Fence(0, 0, 0);
 
-    scene.add(targetToroid);
-    scene.add(targetBase);
+    createCannons();
+
+    createCannonBalls();
+
     scene.add(fence);
+    selectCannon(cannon1);
 }
 
 function onResize() {
@@ -85,42 +139,15 @@ function onKeyDown(e) {
     'use strict';
 
     switch (e.keyCode) {
-        /* Movement */
-        case 37: //left
-            robot.userData.moveLeft = true;
-            break;
 
-        case 38: //up
-            robot.userData.moveUp = true;
+        /* Selected Cannon Angle */
+        case 37: //left
+            selectedCannon.userData.rotateNegative = true;
             break;
 
         case 39: //right
-            robot.userData.moveRight = true;
+            selectedCannon.userData.rotatePositive = true;
             break;
-
-        case 40: //down
-            robot.userData.moveDown = true;
-            break;    
-
-
-        /* Arm movement */
-        /* "Por convencao, 'q' e 'a' sao negativos, 'w' e 's' sao positivos" */
-        case 65: //a
-            robot.userData.rotateBaseNegative = true;
-            break;
-
-        case 83: //s
-            robot.userData.rotateBasePositive = true;
-            break;
-
-        case 81: //q
-            robot.userData.rotateArmNegative = true;
-            break;
-
-        case 87: //w
-            robot.userData.rotateArmPositive = true;
-            break; 
-
 
         /* Camera */
         case 49: //1
@@ -136,10 +163,25 @@ function onKeyDown(e) {
             break;
 
         case 52: //4
-            targetBase.toggleWireframe();
-            targetToroid.toggleWireframe();
-            robot.toggleWireframe();
+            cannon1.toggleWireframe();
+            cannon2.toggleWireframe();
+            cannon3.toggleWireframe();
+            fence.toggleWireframe();
             break;
+
+        /* Selecting Cannon */
+        case 69: //e
+            selectCannon(cannon3);
+            break; 
+
+        case 81: //q
+            selectCannon(cannon2);
+            break;
+
+        case 87: //w
+            selectCannon(cannon1);
+            break; 
+
     }
 }
 
@@ -147,77 +189,61 @@ function onKeyUp(e) {
     'use strict';
 
     switch (e.keyCode) {
-        /* Movement */
-        case 37: //left
-            robot.userData.moveLeft = false;
-            break;
 
-        case 38: //up
-            robot.userData.moveUp = false;
+        /* Selected Cannon Angle */
+        case 37: //left
+            selectedCannon.userData.rotateNegative = false;
             break;
 
         case 39: //right
-            robot.userData.moveRight = false;
+            selectedCannon.userData.rotatePositive = false;
             break;
-
-        case 40: //down
-            robot.userData.moveDown = false;
-            break;
-
-        /* Arm movement */
-        case 65: //a
-            robot.userData.rotateBaseNegative = false;
-            break;
-
-        case 83: //s
-            robot.userData.rotateBasePositive = false;
-            break;
-
-        case 81: //q
-            robot.userData.rotateArmNegative = false;
-            break;
-
-        case 87: //w
-            robot.userData.rotateArmPositive = false;
-            break; 
     }
 }
 
 function animate() {
     'use strict';
 
-    /* Movement */
-    if (robot.userData.moveUp) {
-        robot.position.x += 0.2;
+    /* Selected Cannon Angle */
+    if (selectedCannon.userData.rotateNegative) {
+        if(selectedCannon.startingRotationAngle == 0) {
+            if(selectedCannon.currentRotationValue() < (Math.PI/6)) {
+                selectedCannon.rotateCannon(0.02);
+            }
+        }
+
+        else if(selectedCannon.startingRotationAngle == -(Math.PI/6)) {
+            if(selectedCannon.currentRotationValue() < ((Math.PI/6)-0.005)) {
+                selectedCannon.rotateCannon(0.02);
+            }
+        }
+
+        else if(selectedCannon.startingRotationAngle == (Math.PI/6)) {
+            if(selectedCannon.currentRotationValue() < 0) {
+                selectedCannon.rotateCannon(0.02);
+            }
+        }
+        
     }
 
-    if (robot.userData.moveDown) {
-        robot.position.x -= 0.2;
-    }
+    if (selectedCannon.userData.rotatePositive) {
+        if(selectedCannon.startingRotationAngle == 0) {
+            if(selectedCannon.currentRotationValue() > -(Math.PI/6)) {
+                selectedCannon.rotateCannon(-0.02);
+            }
+        }
 
-    if (robot.userData.moveLeft) {
-        robot.position.z -= 0.2;
-    }
+        else if(selectedCannon.startingRotationAngle == -(Math.PI/6)) {
+            if(selectedCannon.currentRotationValue() > 0) {
+                selectedCannon.rotateCannon(-0.02);
+            }
+        }
 
-    if (robot.userData.moveRight) {
-        robot.position.z += 0.2;
-    }
-
-    /* Arm Movement */
-    if (robot.userData.rotateBaseNegative) {
-        robot.rotateBase(0.02);
-    }
-
-    if (robot.userData.rotateBasePositive) {
-        robot.rotateBase(-0.02);
-    }
-
-    if (robot.userData.rotateArmNegative && robot.currentRotationArmValue() < 1.5) {
-        robot.rotateArm(0.02);
-    }
-
-    if (robot.userData.rotateArmPositive && robot.currentRotationArmValue() > -0.75) {
-        robot.rotateArm(-0.02);
+        else if(selectedCannon.startingRotationAngle == (Math.PI/6)) {
+            if(selectedCannon.currentRotationValue() > (-(Math.PI/6)+0.005)) {
+                selectedCannon.rotateCannon(-0.02);
+            }
+        }
     }
 
     render();
