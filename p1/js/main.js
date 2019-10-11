@@ -54,7 +54,7 @@ function createScene() {
 
     scene = new THREE.Scene();
 
-    scene.add(new THREE.axesHelper(10));
+    scene.add(new THREE.AxesHelper(10));
 
     robot = new Robot(0, 0, 0);
 

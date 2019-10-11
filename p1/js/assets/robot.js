@@ -80,7 +80,7 @@ class Robot extends THREE.Object3D {
         this.g2.position.set(x, y + 3, z);
 
         /* Robot Base */
-        p5 = new THREE.Mesh(new THREE.boxGeometry(20, 1, 20), this.robotBaseMaterial);
+        p5 = new THREE.Mesh(new THREE.BoxGeometry(20, 1, 20), this.robotBaseMaterial);
         p5.position.set(x, y + 2.5, z);
 
         /* Robot Base Upper Right Sphere */
