@@ -15,15 +15,15 @@ class Fence extends THREE.Object3D {
 
         var wall1, wall2, wall3;
 
-        wall1 = new THREE.Mesh(new THREE.BoxGeometry(60, 20, 1), this.material);
-        wall1.position.set(x - 10, y + 10, z - 30);
+        wall1 = new THREE.Mesh(new THREE.BoxGeometry(60, 10, 1), this.material);
+        wall1.position.set(x - 10, y + 5, z - 30);
 
-        wall2 = new THREE.Mesh(new THREE.BoxGeometry(60, 20, 1), this.material);
-        wall2.position.set(x - 10, y + 10, z + 30);
+        wall2 = new THREE.Mesh(new THREE.BoxGeometry(60, 10, 1), this.material);
+        wall2.position.set(x - 10, y + 5, z + 30);
 
-        wall3 = new THREE.Mesh(new THREE.BoxGeometry(60, 20, 1), this.material);
+        wall3 = new THREE.Mesh(new THREE.BoxGeometry(60, 10, 1), this.material);
         wall3.rotation.y = Math.PI / 2;
-        wall3.position.set(x - 40, y + 10, z);
+        wall3.position.set(x - 40, y + 5, z);
 
         this.fence.add(wall1);
         this.fence.add(wall2);

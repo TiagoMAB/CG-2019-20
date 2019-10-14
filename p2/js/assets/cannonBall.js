@@ -5,18 +5,21 @@ class CannonBall extends THREE.Object3D {
         super();
 
         this.material = new THREE.MeshBasicMaterial( { color: 0x8b0000, wireframe: true });
+        this.geometry = new THREE.SphereGeometry(2.5, 10, 10);
 
         this.cannonBall = new THREE.Object3D();
-        this.axes = new THREE.AxisHelper(10);
+        this.axes = new THREE.AxesHelper(10);
 
         this.createCannon(x, y, z);
+
+        this.userData.velocity = new THREE.Vector3( 0, 0, 0 );
     }
 
     createCannon(x, y, z) {
 
         var cannonBall
 
-        cannonBall = new THREE.Mesh(new THREE.SphereGeometry(2.5, 10, 10), this.material);
+        cannonBall = new THREE.Mesh(this.geometry, this.material);
         cannonBall.position.set(x, y, z);
 
         cannonBall.add(this.axes);
@@ -27,6 +30,11 @@ class CannonBall extends THREE.Object3D {
 
     toggleWireframe() {
         this.material.wireframe = !this.material.wireframe;
+    }
+
+    toggleAxes() {
+        this.axes.material.transparent = !this.axes.material.transparent;
+        this.axes.material.opacity = 0.0;
     }
    
 }

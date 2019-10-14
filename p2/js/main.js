@@ -1,8 +1,10 @@
 var camera, scene, renderer;
-var camera1, camera2, camera3, camera2;
-var cannon1, cannon2, cannon3, fence;
+var camera1, camera2, camera3;
+var cannon1, cannon2, cannon3, fence, floor;
 var selectedCannon, selectedCannonMaterial;
+var cannonBalls = [];
 var N = 5;
+var radius = 2.5;
 
 function render() {
     'use strict';
@@ -53,19 +55,55 @@ function createCamera() {
 }
 
 function createCannonBalls() {
-    var maxX, minX, maxZ, minZ, x, z, cannonBall;
+    var maxX, minX, maxZ, minZ, x, z, cannonBall, j, k;
     maxX=0;
-    minX=-37.5;
-    maxZ=22.5;
-    minZ=-22.5;
+    minX= -40.0 + radius + 1;
+    maxZ= 30.0 - radius - 1;
+    minZ= -30.0 + radius + 1;
 
+    j=0;
+    k=0;
     for(i = 0; i < N; i++) {
-        //Temos de fazer um if para ver se a posição em que a bola está interseta qualquer outra.
-        //Se sim, fazemos uma nova posição random
         x = (Math.random() * (maxX - minX + 1)) + minX;
         z = (Math.random() * (maxZ - minZ + 1)) + minZ;
-        //console.log("X: " + x + "  Z: " + z);
-        cannonBall = new CannonBall(x, 2.5, z);
+        /* Verify is the generated cannon ball doesnt intersect with any other ball */
+        /*k++;
+        console.log("Entered the while loop number " + k + " !!!!!!!!!");
+        while(j < i) {
+            if(cannonBalls[j].position.x >= x && cannonBalls[j].position.x <= (x+radius+1)) {
+                console.log("cannonBall " + j + "'s x: " + cannonBalls[j].position.x);
+                console.log("and the x that was generated was: " + x);
+                console.log(" ");
+                x = (Math.random() * (maxX - minX + 1)) + minX;
+                z = (Math.random() * (maxZ - minZ + 1)) + minZ;
+                j = 0;
+            }
+            if(cannonBalls[j].position.z >= z && cannonBalls[j].position.z <= (z+radius+1)) {
+                console.log("cannonBall " + j + "'s z: " + cannonBalls[j].position.z);
+                console.log("and the z that was generated was: " + z);
+                console.log(" ");
+                z = (Math.random() * (maxZ - minZ + 1)) + minZ;
+                x = (Math.random() * (maxX - minX + 1)) + minX;
+                j = 0;
+            }
+            j++;
+        }*/
+        cannonBall = new CannonBall(0, 0, 0);
+        cannonBall.position.x = x;
+        cannonBall.position.y = radius + 2;
+        cannonBall.position.z = z;
+        /*cannonBall.geometry.computeBoundingSphere();
+        console.log(j + " bounding box: " + cannonBall.geometry.boundingSphere);
+        while(cannonBall.geometry.boundingSphere != null) {
+            x = (Math.random() * (maxX - minX + 1)) + minX;
+            z = (Math.random() * (maxZ - minZ + 1)) + minZ;
+            cannonBall.position.x = x;
+            cannonBall.position.z = z;
+            cannonBall.geometry.computeBoundingSphere();
+        }
+        j++;
+        */
+        cannonBalls.push(cannonBall);
         scene.add(cannonBall);
     }
 }
@@ -75,26 +113,30 @@ function createCannons() {
     cannon1.rotation.y = 0;
     cannon1.startingRotationAngle = cannon1.rotation.y;
     cannon1.position.x = 50;
-    cannon1.position.y = 2.5;
+    cannon1.position.y = radius + 0.5;
     cannon1.position.z = 0;
 
     cannon2 = new Cannon(0, 0, 0);
     cannon2.rotation.y = -(Math.PI / 6);
     cannon2.startingRotationAngle = cannon2.rotation.y;
     cannon2.position.x = 50;
-    cannon2.position.y = 2.5;
+    cannon2.position.y = radius + 0.5;
     cannon2.position.z = +25;
 
     cannon3 = new Cannon(0, 0, 0);
     cannon3.rotation.y = +(Math.PI / 6);
     cannon3.startingRotationAngle = cannon3.rotation.y;
     cannon3.position.x = 50;
-    cannon3.position.y = 2.5;
+    cannon3.position.y = radius + 0.5;
     cannon3.position.z = -25;
 
     scene.add(cannon1);
     scene.add(cannon2);
     scene.add(cannon3);
+}
+
+function createFloor() {
+
 }
 
 function selectCannon(cannon) {
@@ -110,17 +152,21 @@ function createScene() {
 
     scene = new THREE.Scene();
 
-    scene.add(new THREE.AxisHelper(10));
+    //scene.add(new THREE.AxesHelper(10));
 
     selectedCannon = new Cannon(0, 0, 0); 
 
     fence = new Fence(0, 0, 0);
+    floor = new Floor(0, 0, 0);
 
     createCannons();
 
     createCannonBalls();
 
+    createFloor();
+
     scene.add(fence);
+    scene.add(floor);
     selectCannon(cannon1);
 }
 
@@ -162,11 +208,17 @@ function onKeyDown(e) {
             camera = camera3;
             break;
 
-        case 52: //4
+        /* Toggling Wireframe */
+        case 52:
             cannon1.toggleWireframe();
             cannon2.toggleWireframe();
             cannon3.toggleWireframe();
             fence.toggleWireframe();
+            floor.toggleWireframe();
+            length = cannonBalls.length;
+            for(i = 0; i < length; i++) {
+                cannonBalls[i].toggleWireframe();
+            }
             break;
 
         /* Selecting Cannon */
@@ -181,6 +233,14 @@ function onKeyDown(e) {
         case 87: //w
             selectCannon(cannon1);
             break; 
+
+        /* Toggling Cannon Ball Axes */
+        case 82: //r
+            length = cannonBalls.length;
+            for(i = 0; i < length; i++) {
+                cannonBalls[i].toggleAxes();
+            }
+            break;
 
     }
 }
@@ -267,8 +327,6 @@ function init() {
     createCamera3();
     createCamera();
     
-    render();
-
     window.addEventListener("resize", onResize);
     window.addEventListener("keydown", onKeyDown);
     window.addEventListener("keyup", onKeyUp);    

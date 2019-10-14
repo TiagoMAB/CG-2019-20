@@ -261,8 +261,6 @@ function init() {
     createCamera3();
     createCamera();
     
-    render();
-
     window.addEventListener("resize", onResize);
     window.addEventListener("keydown", onKeyDown);
     window.addEventListener("keyup", onKeyUp);    
