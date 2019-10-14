@@ -56,7 +56,7 @@ function createScene() {
 
     scene.add(new THREE.AxesHelper(10));
 
-    robot = new Robot(0, 0, 0);
+    robot = new Robot(10, 0, 0);
 
     scene.add(robot);
 
@@ -243,6 +243,7 @@ function animate() {
     render();
 
     requestAnimationFrame(animate);
+    
 }
 
 function init() {
