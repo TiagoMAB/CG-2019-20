@@ -3,8 +3,9 @@ var camera1, camera2, camera3;
 var cannon1, cannon2, cannon3, fence, floor;
 var selectedCannon, selectedCannonMaterial;
 var cannonBalls = [];
-var N = 5;
+var N = 50;
 var radius = 2.5;
+var thickness = 1;
 
 function render() {
     'use strict';
@@ -54,55 +55,41 @@ function createCamera() {
     camera = camera1;
 }
 
+function hasIntersected(x, z, otherX, otherZ) {
+    if(Math.pow(radius + radius, 2) >= ((Math.pow(x - otherX, 2) + Math.pow(z - otherZ, 2)))) {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
 function createCannonBalls() {
     var maxX, minX, maxZ, minZ, x, z, cannonBall, j, k;
-    maxX=0;
-    minX= -40.0 + radius + 1;
-    maxZ= 30.0 - radius - 1;
-    minZ= -30.0 + radius + 1;
+    maxX= 20 - radius - thickness - 0.5;
+    minX= -40.0 + radius + thickness + 0.5;
+    maxZ= 30.0 - radius - thickness - 0.5;
+    minZ= -30.0 + radius + thickness + 0.5;
 
-    j=0;
-    k=0;
     for(i = 0; i < N; i++) {
         x = (Math.random() * (maxX - minX + 1)) + minX;
         z = (Math.random() * (maxZ - minZ + 1)) + minZ;
-        /* Verify is the generated cannon ball doesnt intersect with any other ball */
-        /*k++;
-        console.log("Entered the while loop number " + k + " !!!!!!!!!");
+        /* Verify if the generated cannon ball doesn't intersect with any other ball */
+        j = 0;
         while(j < i) {
-            if(cannonBalls[j].position.x >= x && cannonBalls[j].position.x <= (x+radius+1)) {
-                console.log("cannonBall " + j + "'s x: " + cannonBalls[j].position.x);
-                console.log("and the x that was generated was: " + x);
-                console.log(" ");
+            if(!hasIntersected(x, z, cannonBalls[j].position.x, cannonBalls[j].position.z)) {
                 x = (Math.random() * (maxX - minX + 1)) + minX;
                 z = (Math.random() * (maxZ - minZ + 1)) + minZ;
                 j = 0;
-            }
-            if(cannonBalls[j].position.z >= z && cannonBalls[j].position.z <= (z+radius+1)) {
-                console.log("cannonBall " + j + "'s z: " + cannonBalls[j].position.z);
-                console.log("and the z that was generated was: " + z);
-                console.log(" ");
-                z = (Math.random() * (maxZ - minZ + 1)) + minZ;
-                x = (Math.random() * (maxX - minX + 1)) + minX;
-                j = 0;
+                continue;
             }
             j++;
-        }*/
-        cannonBall = new CannonBall(0, 0, 0);
-        cannonBall.position.x = x;
-        cannonBall.position.y = radius + 2;
-        cannonBall.position.z = z;
-        /*cannonBall.geometry.computeBoundingSphere();
-        console.log(j + " bounding box: " + cannonBall.geometry.boundingSphere);
-        while(cannonBall.geometry.boundingSphere != null) {
-            x = (Math.random() * (maxX - minX + 1)) + minX;
-            z = (Math.random() * (maxZ - minZ + 1)) + minZ;
-            cannonBall.position.x = x;
-            cannonBall.position.z = z;
-            cannonBall.geometry.computeBoundingSphere();
         }
-        j++;
-        */
+        cannonBall = new CannonBall(0, 0, 0, radius);
+        cannonBall.position.x = x;
+        cannonBall.position.y = radius;
+        cannonBall.position.z = z;
+
         cannonBalls.push(cannonBall);
         scene.add(cannonBall);
     }
@@ -135,10 +122,6 @@ function createCannons() {
     scene.add(cannon3);
 }
 
-function createFloor() {
-
-}
-
 function selectCannon(cannon) {
     selectedCannon.material.color.setHex(0x00008b);
     selectedCannon.userData.rotatePositive = false;
@@ -152,21 +135,17 @@ function createScene() {
 
     scene = new THREE.Scene();
 
-    //scene.add(new THREE.AxesHelper(10));
-
     selectedCannon = new Cannon(0, 0, 0); 
 
-    fence = new Fence(0, 0, 0);
-    floor = new Floor(0, 0, 0);
+    fence = new Fence(0, 0, 0, thickness);
+    floor = new Floor(0, 0, 0, thickness);
 
     createCannons();
-
     createCannonBalls();
-
-    createFloor();
 
     scene.add(fence);
     scene.add(floor);
+
     selectCannon(cannon1);
 }
 
