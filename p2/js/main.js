@@ -1,11 +1,11 @@
 var camera, scene, renderer;
 var camera1, camera2, camera3;
 var cannon1, cannon2, cannon3, fence, floor;
-var selectedCannon, selectedCannonMaterial;
+var selectedCannon, selectedCannonMaterial, shotVector;
+var minAngle = -(Math.PI / 6), maxAngle = +(Math.PI / 6); //For cannon rotation
+
 var cannonBalls = [];
-var N = 50;
-var radius = 2.5;
-var thickness = 1;
+var N = 5, sphereRadius = 2.5, thickness = 1, cannonLenght = 15; //arbitrary values
 
 function render() {
     'use strict';
@@ -56,7 +56,7 @@ function createCamera() {
 }
 
 function hasIntersected(x, z, otherX, otherZ) {
-    if(Math.pow(radius + radius, 2) >= ((Math.pow(x - otherX, 2) + Math.pow(z - otherZ, 2)))) {
+    if(Math.pow(sphereRadius + sphereRadius, 2) >= ((Math.pow(x - otherX, 2) + Math.pow(z - otherZ, 2)))) {
         return false;
     }
     else {
@@ -64,12 +64,12 @@ function hasIntersected(x, z, otherX, otherZ) {
     }
 }
 
-function createCannonBalls() {
-    var maxX, minX, maxZ, minZ, x, z, cannonBall, j, k;
-    maxX= 20 - radius - thickness - 0.5;
-    minX= -40.0 + radius + thickness + 0.5;
-    maxZ= 30.0 - radius - thickness - 0.5;
-    minZ= -30.0 + radius + thickness + 0.5;
+function createRandomCannonBalls() {
+    var maxX, minX, maxZ, minZ, x, z, cannonBall, j;
+    maxX= 20 - sphereRadius - thickness - 0.5;
+    minX= -40.0 + sphereRadius + thickness + 0.5;
+    maxZ= 30.0 - sphereRadius - thickness - 0.5;
+    minZ= -30.0 + sphereRadius + thickness + 0.5;
 
     for(i = 0; i < N; i++) {
         x = (Math.random() * (maxX - minX + 1)) + minX;
@@ -85,9 +85,9 @@ function createCannonBalls() {
             }
             j++;
         }
-        cannonBall = new CannonBall(0, 0, 0, radius);
+        cannonBall = new CannonBall(0, 0, 0, sphereRadius);
         cannonBall.position.x = x;
-        cannonBall.position.y = radius;
+        cannonBall.position.y = sphereRadius;
         cannonBall.position.z = z;
 
         cannonBalls.push(cannonBall);
@@ -96,25 +96,25 @@ function createCannonBalls() {
 }
 
 function createCannons() {
-    cannon1 = new Cannon(0, 0, 0);
-    cannon1.rotation.y = 0;
-    cannon1.startingRotationAngle = cannon1.rotation.y;
+    cannon1 = new Cannon(0, 0, 0, cannonLenght);
+    cannon1.rotateCannon(0);
+    cannon1.userData.startingRotationAngle = 0;
     cannon1.position.x = 50;
-    cannon1.position.y = radius + 0.5;
+    cannon1.position.y = sphereRadius + 0.5;
     cannon1.position.z = 0;
 
-    cannon2 = new Cannon(0, 0, 0);
-    cannon2.rotation.y = -(Math.PI / 6);
-    cannon2.startingRotationAngle = cannon2.rotation.y;
+    cannon2 = new Cannon(0, 0, 0, cannonLenght);
+    cannon2.rotateCannon(minAngle);
+    cannon2.userData.startingRotationAngle = minAngle;
     cannon2.position.x = 50;
-    cannon2.position.y = radius + 0.5;
+    cannon2.position.y = sphereRadius + 0.5;
     cannon2.position.z = +25;
 
-    cannon3 = new Cannon(0, 0, 0);
-    cannon3.rotation.y = +(Math.PI / 6);
-    cannon3.startingRotationAngle = cannon3.rotation.y;
+    cannon3 = new Cannon(0, 0, 0, cannonLenght);
+    cannon3.rotateCannon(maxAngle);
+    cannon3.userData.startingRotationAngle = maxAngle;
     cannon3.position.x = 50;
-    cannon3.position.y = radius + 0.5;
+    cannon3.position.y = sphereRadius + 0.5;
     cannon3.position.z = -25;
 
     scene.add(cannon1);
@@ -123,11 +123,35 @@ function createCannons() {
 }
 
 function selectCannon(cannon) {
-    selectedCannon.material.color.setHex(0x00008b);
+    selectedCannon.material.color.setHex(0x00008b); //Turn back to blue
     selectedCannon.userData.rotatePositive = false;
     selectedCannon.userData.rotateNegative = false;
     selectedCannon = cannon;
-    selectedCannon.material.color.setHex(0xFFD700);
+    selectedCannon.material.color.setHex(0xFFD700); //Turn yellow
+    if(selectedCannon.numShots != 0) { //Make sure to update repeatedShot flag if it's not the first shot
+        selectedCannon.userData.repeatedShot = false;
+    }
+}
+
+function shootBall() {
+    var cannonBall;
+
+    cannonBall = new CannonBall(0, selectedCannon.position.z, 0, sphereRadius);
+    cannonBall.position.x = selectedCannon.position.x;
+    cannonBall.position.y = sphereRadius;
+    cannonBall.position.z = selectedCannon.position.z;
+
+    if(!selectedCannon.userData.repeatedShot) {
+        shotVector = selectedCannon.updateDirection(selectedCannon.currentRotationValue());
+        selectedCannon.userData.repeatedShot = true;
+    }
+
+    cannonBall.translateOnAxis(shotVector, cannonLenght/2 + sphereRadius); //Move it to be in front of the cannon
+    cannonBall.userData.movement = shotVector;
+
+    cannonBalls.push(cannonBall);
+    scene.add(cannonBall);
+    selectedCannon.userData.numShots++;
 }
 
 function createScene() {
@@ -135,13 +159,13 @@ function createScene() {
 
     scene = new THREE.Scene();
 
-    selectedCannon = new Cannon(0, 0, 0); 
+    selectedCannon = new Cannon(0, 0, 0, cannonLenght); 
 
     fence = new Fence(0, 0, 0, thickness);
     floor = new Floor(0, 0, 0, thickness);
 
     createCannons();
-    createCannonBalls();
+    createRandomCannonBalls();
 
     scene.add(fence);
     scene.add(floor);
@@ -174,6 +198,56 @@ function onKeyDown(e) {
             selectedCannon.userData.rotatePositive = true;
             break;
 
+        /* Toggling Cannon Ball Axes */
+        case 82: //r
+            length = cannonBalls.length;
+            for(i = 0; i < length; i++) {
+                cannonBalls[i].toggleAxes();
+            }
+            break;
+        
+        /* Selecting Cannon */
+        case 69: //e
+            selectCannon(cannon3);
+            break; 
+
+        case 81: //q
+            selectCannon(cannon2);
+            break;
+
+        case 87: //w
+            selectCannon(cannon1);
+            break; 
+
+    }
+}
+
+function onKeyUp(e) {
+    'use strict';
+
+    switch (e.keyCode) {
+
+        /* Selected Cannon Angle */
+        case 37: //left
+            selectedCannon.userData.rotateNegative = false;
+            break;
+
+        case 39: //right
+            selectedCannon.userData.rotatePositive = false;
+            break;
+    }
+}
+
+function onKeyPress(e) {
+    'use strict';
+
+    switch (e.keyCode) {
+
+        /* Shoot Cannon Ball */
+        case 32: //space
+            shootBall();
+            break;
+
         /* Camera */
         case 49: //1
             camera = camera1;
@@ -200,43 +274,6 @@ function onKeyDown(e) {
             }
             break;
 
-        /* Selecting Cannon */
-        case 69: //e
-            selectCannon(cannon3);
-            break; 
-
-        case 81: //q
-            selectCannon(cannon2);
-            break;
-
-        case 87: //w
-            selectCannon(cannon1);
-            break; 
-
-        /* Toggling Cannon Ball Axes */
-        case 82: //r
-            length = cannonBalls.length;
-            for(i = 0; i < length; i++) {
-                cannonBalls[i].toggleAxes();
-            }
-            break;
-
-    }
-}
-
-function onKeyUp(e) {
-    'use strict';
-
-    switch (e.keyCode) {
-
-        /* Selected Cannon Angle */
-        case 37: //left
-            selectedCannon.userData.rotateNegative = false;
-            break;
-
-        case 39: //right
-            selectedCannon.userData.rotatePositive = false;
-            break;
     }
 }
 
@@ -245,42 +282,48 @@ function animate() {
 
     /* Selected Cannon Angle */
     if (selectedCannon.userData.rotateNegative) {
-        if(selectedCannon.startingRotationAngle == 0) {
-            if(selectedCannon.currentRotationValue() < (Math.PI/6)) {
+        if(selectedCannon.userData.startingRotationAngle == 0) {
+            if(selectedCannon.currentRotationValue() < maxAngle) {
                 selectedCannon.rotateCannon(0.02);
+                selectedCannon.userData.repeatedShot = false;
             }
         }
 
-        else if(selectedCannon.startingRotationAngle == -(Math.PI/6)) {
-            if(selectedCannon.currentRotationValue() < ((Math.PI/6)-0.005)) {
-                selectedCannon.rotateCannon(0.02);
-            }
-        }
-
-        else if(selectedCannon.startingRotationAngle == (Math.PI/6)) {
+        else if(selectedCannon.userData.startingRotationAngle == minAngle) {
             if(selectedCannon.currentRotationValue() < 0) {
                 selectedCannon.rotateCannon(0.02);
+                selectedCannon.userData.repeatedShot = false;
+            }
+        }
+
+        else if(selectedCannon.userData.startingRotationAngle == maxAngle) {
+            if(selectedCannon.currentRotationValue() < maxAngle) {
+                selectedCannon.rotateCannon(0.02);
+                selectedCannon.userData.repeatedShot = false;
             }
         }
         
     }
 
     if (selectedCannon.userData.rotatePositive) {
-        if(selectedCannon.startingRotationAngle == 0) {
-            if(selectedCannon.currentRotationValue() > -(Math.PI/6)) {
+        if(selectedCannon.userData.startingRotationAngle == 0) {
+            if(selectedCannon.currentRotationValue() > minAngle) {
                 selectedCannon.rotateCannon(-0.02);
+                selectedCannon.userData.repeatedShot = false;
             }
         }
 
-        else if(selectedCannon.startingRotationAngle == -(Math.PI/6)) {
+        else if(selectedCannon.userData.startingRotationAngle == minAngle) {
+            if(selectedCannon.currentRotationValue() > minAngle) {
+                selectedCannon.rotateCannon(-0.02);
+                selectedCannon.userData.repeatedShot = false;
+            }
+        }
+
+        else if(selectedCannon.userData.startingRotationAngle == maxAngle) {
             if(selectedCannon.currentRotationValue() > 0) {
                 selectedCannon.rotateCannon(-0.02);
-            }
-        }
-
-        else if(selectedCannon.startingRotationAngle == (Math.PI/6)) {
-            if(selectedCannon.currentRotationValue() > (-(Math.PI/6)+0.005)) {
-                selectedCannon.rotateCannon(-0.02);
+                selectedCannon.userData.repeatedShot = false;
             }
         }
     }
@@ -308,5 +351,6 @@ function init() {
     
     window.addEventListener("resize", onResize);
     window.addEventListener("keydown", onKeyDown);
-    window.addEventListener("keyup", onKeyUp);    
+    window.addEventListener("keyup", onKeyUp);   
+    window.addEventListener("keypress", onKeyPress);    
 }

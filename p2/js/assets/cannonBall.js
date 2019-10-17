@@ -38,7 +38,7 @@ class CannonBall extends THREE.Object3D {
         this.axes.material.opacity = 0.0;
     }
    
-    hasColided(x, z, radius) {
+    hasColidedWithSphere(x, z, radius) {
         if(Math.pow(this.radius + radius, 2) >= ((Math.pow(this.position.x - x, 2) + Math.pow(this.position.z - z, 2)))) {
             return false;
         }

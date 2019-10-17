@@ -1,9 +1,10 @@
 'use strict'
 
 class Cannon extends THREE.Object3D {
-    constructor(x, y, z) {
+    constructor(x, y, z, cannonLenght) {
         super();
 
+        this.cannonLenght = cannonLenght;
         this.material = new THREE.MeshBasicMaterial( { color: 0x00008b, wireframe: true });
 
         this.cannon = new THREE.Object3D();
@@ -12,21 +13,29 @@ class Cannon extends THREE.Object3D {
 
         this.userData = { rotatePositive: false };
         this.userData = { rotateNegtive: false };
-        this.startingRotationAngle = 0;
+        this.userData = { shot: false };
+        this.userData = { repeatedShot: false };
+        this.userData.startingRotationAngle = 0;
+        this.userData.numShots = 0;
+        this.userData.direction = new THREE.Vector3( -1, 0, 0 );
+        this.userData.axis = new THREE.Vector3( 0, 1, 0 );
+        //this.cannon.add(new THREE.ArrowHelper(this.userData.axis, this.userData.direction, 15, 0x00ff00))
+
     }
 
     createCannon(x, y, z) {
 
         var cannon, cannonBack;
 
-        cannon = new THREE.Mesh(new THREE.CylinderGeometry( 3, 4.3, 15, 32), this.material);
+        cannon = new THREE.Mesh(new THREE.CylinderGeometry( 3, 4.3, this.cannonLenght, 32), this.material);
         cannonBack = new THREE.Mesh(new THREE.SphereGeometry(4.5, 10, 10, 0, Math.PI * 2, 0, Math.PI / 2), this.material);
         cannon.rotation.z = Math.PI / 2;
         cannonBack.rotation.z = -Math.PI / 2;
         cannon.position.set(x, y, z);
-        cannonBack.position.set(x+7.5, y, z);
+        cannonBack.position.set(x+this.cannonLenght/2, y, z);
     
-        this.cannon.add(cannon);
+        this.Mesh = cannon;
+        this.cannon.add(this.Mesh);
         this.cannon.add(cannonBack);
 
         this.add(this.cannon);
@@ -44,4 +53,9 @@ class Cannon extends THREE.Object3D {
         return this.cannon.rotation.y;
     }
    
+    updateDirection(angle) {
+        var vector = this.userData.direction.clone();
+        vector.applyAxisAngle( this.userData.axis, angle );
+        return vector
+    }
 }
