@@ -1,30 +1,30 @@
 'use strict'
 
 class Fence extends THREE.Object3D {
-    constructor(x, y, z, thickness) {
+    constructor(x, y, z, thickness, height, positiveXLimit, negativeXLimit, positiveZLimit, negativeZLimit, arenaOffset) {
         super();
 
-        this.thickness = thickness;
         this.material = new THREE.MeshBasicMaterial( { color: 0x666666, wireframe: true });
 
         this.fence = new THREE.Object3D();
 
-        this.createFence(x, y, z);
+        this.createFence(x, y, z, thickness, height, positiveXLimit, negativeXLimit, positiveZLimit, negativeZLimit, arenaOffset);
     }
 
-    createFence(x, y, z) {
+    createFence(x, y, z, thickness, height, positiveXLimit, negativeXLimit, positiveZLimit, negativeZLimit, arenaOffset) {
 
         var wall1, wall2, wall3;
 
-        wall1 = new THREE.Mesh(new THREE.BoxGeometry(60, 10, this.thickness), this.material);
-        wall1.position.set(x - 10, y + 5, z - 30);
+        wall1 = new THREE.Mesh(new THREE.BoxGeometry(positiveXLimit-negativeXLimit, height, thickness), this.material);
+        wall1.applyMatrix(makeTranslation(x - arenaOffset, y + height/2, z + negativeZLimit));
 
-        wall2 = new THREE.Mesh(new THREE.BoxGeometry(60, 10, this.thickness), this.material);
-        wall2.position.set(x - 10, y + 5, z + 30);
+        wall2 = new THREE.Mesh(new THREE.BoxGeometry(positiveXLimit-negativeXLimit, height, thickness), this.material);
+        wall2.applyMatrix(makeTranslation(x - arenaOffset, y + height/2, z + positiveZLimit));
 
-        wall3 = new THREE.Mesh(new THREE.BoxGeometry(60, 10, this.thickness), this.material);
-        wall3.rotation.y = Math.PI / 2;
-        wall3.position.set(x - 40, y + 5, z);
+        wall3 = new THREE.Mesh(new THREE.BoxGeometry(positiveXLimit-negativeXLimit, height, thickness), this.material);
+        wall3.applyMatrix(rotateInY(Math.PI / 2))
+        wall3.applyMatrix(makeTranslation(x + negativeXLimit, y + height/2, z));
+        
 
         this.fence.add(wall1);
         this.fence.add(wall2);

@@ -1,11 +1,17 @@
-var camera, scene, renderer;
+var camera, scene, renderer, clock;
 var camera1, camera2, camera3;
 var cannon1, cannon2, cannon3, fence, floor;
-var selectedCannon, selectedCannonMaterial, shotVector;
-var minAngle = -(Math.PI / 6), maxAngle = +(Math.PI / 6); //For cannon rotation
+var selectedCannon, selectedCannonMaterial, ballVector;
+var minAngle = -(Math.PI / 6), maxAngle = +(Math.PI / 6); //For cannon rotation. Angles are calculated in radians
 
 var cannonBalls = [];
-var N = 5, sphereRadius = 2.5, thickness = 1, cannonLenght = 15; //arbitrary values
+//arbitrary values that can be changed
+var N = 5, sphereRadius = 2.5, ballSpeed=2.5, wallThickness = 1, cannonLenght = 15, maxZCannon = 25, minZCannon = -25,
+    positiveXLimit = 20.0, negativeXLimit = -40.0, positiveZLimit = 30.0, negativeZLimit = -30.0, wallHeight = 10, arenaOffset = 10;
+    //The positive/negative X/Z Limits are to decide how big the arena (floor+fence) is
+    //The max/min Z cannon decide where the side cannos will be
+    //arenaOffset decides how far the center of the floor is from position (0,0,0)
+
 
 function render() {
     'use strict';
@@ -19,21 +25,16 @@ function createCamera1() {
     factor = 20
     camera1 = new THREE.OrthographicCamera( -window.innerWidth/factor, window.innerWidth/factor, window.innerHeight/factor, -window.innerHeight/factor, 1, 1000 );
 
-    camera1.position.x = 0;
-    camera1.position.y = 50;
-    camera1.position.z = 0;
+    camera1.applyMatrix(makeTranslation(0,50,0))
     camera1.lookAt(scene.position);
 }
 
 function createCamera2() {
     'use scrict';
 
-    factor = 20
     camera2 = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
 
-    camera2.position.x = 55;
-    camera2.position.y = 55;
-    camera2.position.z = 55;
+    camera2.applyMatrix(makeTranslation(55,55,55))
     camera2.lookAt(scene.position);
 }
 
@@ -43,9 +44,7 @@ function createCamera3() {
     factor = 20
     camera3 = new THREE.OrthographicCamera( -window.innerWidth/factor, window.innerWidth/factor, window.innerHeight/factor, -window.innerHeight/factor, 1, 1000 );
 
-    camera3.position.x = 60;
-    camera3.position.y = 0;
-    camera3.position.z = 0;
+    camera3.applyMatrix(makeTranslation(60,0,0))
     camera3.lookAt(scene.position);
 }
 
@@ -55,21 +54,33 @@ function createCamera() {
     camera = camera1;
 }
 
-function hasIntersected(x, z, otherX, otherZ) {
-    if(Math.pow(sphereRadius + sphereRadius, 2) >= ((Math.pow(x - otherX, 2) + Math.pow(z - otherZ, 2)))) {
-        return false;
-    }
-    else {
+function hasIntersectedWithBall(x, z, otherX, otherZ, radius1, radius2) {
+    if(Math.pow(radius1 + radius2, 2) >= ((Math.pow(x - otherX, 2) + Math.pow(z - otherZ, 2)))) {
         return true;
     }
+    return false;
+}
+
+function hasIntersectedWithWall(x, z, maxX, minX, maxZ, minZ) {
+    var thick = wallThickness/2
+    if(x > maxX) {
+        return false;
+    }
+    if(x - thick - sphereRadius < minX) {
+        return true;
+    }
+    if(z + thick + sphereRadius > maxZ || z - thick - sphereRadius < minZ) {
+        return true;
+    }
+    return false;
 }
 
 function createRandomCannonBalls() {
     var maxX, minX, maxZ, minZ, x, z, cannonBall, j;
-    maxX= 20 - sphereRadius - thickness - 0.5;
-    minX= -40.0 + sphereRadius + thickness + 0.5;
-    maxZ= 30.0 - sphereRadius - thickness - 0.5;
-    minZ= -30.0 + sphereRadius + thickness + 0.5;
+    maxX= positiveXLimit - sphereRadius - 0.5;
+    minX= negativeXLimit + sphereRadius + wallThickness/2 + 0.5;
+    maxZ= positiveZLimit - sphereRadius - wallThickness/2 - 0.5;
+    minZ= negativeZLimit + sphereRadius + wallThickness/2 + 0.5;
 
     for(i = 0; i < N; i++) {
         x = (Math.random() * (maxX - minX + 1)) + minX;
@@ -77,7 +88,7 @@ function createRandomCannonBalls() {
         /* Verify if the generated cannon ball doesn't intersect with any other ball */
         j = 0;
         while(j < i) {
-            if(!hasIntersected(x, z, cannonBalls[j].position.x, cannonBalls[j].position.z)) {
+            if(hasIntersectedWithBall(x, z, cannonBalls[j].position.x, cannonBalls[j].position.z, sphereRadius, sphereRadius)) {
                 x = (Math.random() * (maxX - minX + 1)) + minX;
                 z = (Math.random() * (maxZ - minZ + 1)) + minZ;
                 j = 0;
@@ -86,9 +97,7 @@ function createRandomCannonBalls() {
             j++;
         }
         cannonBall = new CannonBall(0, 0, 0, sphereRadius);
-        cannonBall.position.x = x;
-        cannonBall.position.y = sphereRadius;
-        cannonBall.position.z = z;
+        cannonBall.applyMatrix(makeTranslation(x, sphereRadius, z))
 
         cannonBalls.push(cannonBall);
         scene.add(cannonBall);
@@ -99,23 +108,17 @@ function createCannons() {
     cannon1 = new Cannon(0, 0, 0, cannonLenght);
     cannon1.rotateCannon(0);
     cannon1.userData.startingRotationAngle = 0;
-    cannon1.position.x = 50;
-    cannon1.position.y = sphereRadius + 0.5;
-    cannon1.position.z = 0;
+    cannon1.applyMatrix(makeTranslation(50, sphereRadius+0.5, 0))
 
     cannon2 = new Cannon(0, 0, 0, cannonLenght);
     cannon2.rotateCannon(minAngle);
     cannon2.userData.startingRotationAngle = minAngle;
-    cannon2.position.x = 50;
-    cannon2.position.y = sphereRadius + 0.5;
-    cannon2.position.z = +25;
+    cannon2.applyMatrix(makeTranslation(50, sphereRadius+0.5, maxZCannon))
 
     cannon3 = new Cannon(0, 0, 0, cannonLenght);
     cannon3.rotateCannon(maxAngle);
     cannon3.userData.startingRotationAngle = maxAngle;
-    cannon3.position.x = 50;
-    cannon3.position.y = sphereRadius + 0.5;
-    cannon3.position.z = -25;
+    cannon3.applyMatrix(makeTranslation(50, sphereRadius+0.5, minZCannon))
 
     scene.add(cannon1);
     scene.add(cannon2);
@@ -127,8 +130,9 @@ function selectCannon(cannon) {
     selectedCannon.userData.rotatePositive = false;
     selectedCannon.userData.rotateNegative = false;
     selectedCannon = cannon;
+    selectedCannon.userData.angle = cannon.userData.angle;
     selectedCannon.material.color.setHex(0xFFD700); //Turn yellow
-    if(selectedCannon.numShots != 0) { //Make sure to update repeatedShot flag if it's not the first shot
+    if(selectedCannon.numShots != 0) { //Makes sure to update repeatedShot flag if it's not the first shot
         selectedCannon.userData.repeatedShot = false;
     }
 }
@@ -136,18 +140,19 @@ function selectCannon(cannon) {
 function shootBall() {
     var cannonBall;
 
-    cannonBall = new CannonBall(0, selectedCannon.position.z, 0, sphereRadius);
-    cannonBall.position.x = selectedCannon.position.x;
-    cannonBall.position.y = sphereRadius;
-    cannonBall.position.z = selectedCannon.position.z;
+    cannonBall = new CannonBall(0, 0, 0, sphereRadius);
+    cannonBall.applyMatrix(makeTranslation(selectedCannon.position.x, sphereRadius, selectedCannon.position.z))
 
-    if(!selectedCannon.userData.repeatedShot) {
-        shotVector = selectedCannon.updateDirection(selectedCannon.currentRotationValue());
+    /* TO DO - Fazer com que, quando disparamos uma bola e ela colide com outra, invertendo o movimento, a bola disparada a seguir, sem virar o canhão
+       nao segue a mesma direcao, errada */
+    if(!selectedCannon.userData.repeatedShot) { //Test if it's the first time this shot has been made
+        ballVector = selectedCannon.updateDirection(selectedCannon.currentRotationValue());
         selectedCannon.userData.repeatedShot = true;
+        ballVector.applyMatrix4(makeScale(cannonLenght/2 + sphereRadius));
     }
 
-    cannonBall.translateOnAxis(shotVector, cannonLenght/2 + sphereRadius); //Move it to be in front of the cannon
-    cannonBall.userData.movement = shotVector;
+    cannonBall.applyMatrix(makeTranslation(ballVector.x, ballVector.y, ballVector.z)); //Move it to be in front of the cannon
+    cannonBall.updateMovement(ballVector);
 
     cannonBalls.push(cannonBall);
     scene.add(cannonBall);
@@ -159,10 +164,12 @@ function createScene() {
 
     scene = new THREE.Scene();
 
+    clock = new THREE.Clock();
+
     selectedCannon = new Cannon(0, 0, 0, cannonLenght); 
 
-    fence = new Fence(0, 0, 0, thickness);
-    floor = new Floor(0, 0, 0, thickness);
+    fence = new Fence(0, 0, 0, wallThickness, wallHeight, positiveXLimit, negativeXLimit, positiveZLimit, negativeZLimit, arenaOffset);
+    floor = new Floor(0, 0, 0, wallThickness, positiveXLimit, negativeXLimit, positiveZLimit, negativeZLimit, arenaOffset);
 
     createCannons();
     createRandomCannonBalls();
@@ -280,6 +287,10 @@ function onKeyPress(e) {
 function animate() {
     'use strict';
 
+    //var clock = new THREE.Clock();
+    
+    var delta = clock.getDelta() * 0.8; // slow down simulation
+
     /* Selected Cannon Angle */
     if (selectedCannon.userData.rotateNegative) {
         if(selectedCannon.userData.startingRotationAngle == 0) {
@@ -290,7 +301,7 @@ function animate() {
         }
 
         else if(selectedCannon.userData.startingRotationAngle == minAngle) {
-            if(selectedCannon.currentRotationValue() < 0) {
+            if(selectedCannon.currentRotationValue() < 0 - 0.005) {
                 selectedCannon.rotateCannon(0.02);
                 selectedCannon.userData.repeatedShot = false;
             }
@@ -302,7 +313,6 @@ function animate() {
                 selectedCannon.userData.repeatedShot = false;
             }
         }
-        
     }
 
     if (selectedCannon.userData.rotatePositive) {
@@ -321,12 +331,82 @@ function animate() {
         }
 
         else if(selectedCannon.userData.startingRotationAngle == maxAngle) {
-            if(selectedCannon.currentRotationValue() > 0) {
+            if(selectedCannon.currentRotationValue() > 0 + 0.005) {
                 selectedCannon.rotateCannon(-0.02);
                 selectedCannon.userData.repeatedShot = false;
             }
         }
     }
+
+    if(cannonBalls.length > N) {
+        for(i = 0; i < cannonBalls.length; i++) {
+            //Wall Colisions
+            /* TO DO - Fazes com que elas façam bounce nas paredes de acordo com o angulo em que nelas batem */
+            if(hasIntersectedWithWall(cannonBalls[i].position.x, cannonBalls[i].position.z, positiveXLimit, negativeXLimit, positiveZLimit, negativeZLimit)) {
+                console.log("colided with wall");
+                ballVector = cannonBalls[i].getMovement();
+                ballVector.applyMatrix4(makeScale(-1));
+                cannonBalls[i].updateMovement(ballVector);
+            }
+    
+            //Ball Colisions
+            /* TO DO - Corrigir bug das colisões */
+            var j = 0;
+            while(j < cannonBalls.length) {
+                if(cannonBalls[i] != cannonBalls[j]) {
+                    if(hasIntersectedWithBall(cannonBalls[i].position.x, cannonBalls[i].position.z, cannonBalls[j].position.x, cannonBalls[j].position.z, sphereRadius, sphereRadius)) {
+                        var ballVector1 = new THREE.Vector3( 0, 0, 0 );
+                        var ballVector2 = new THREE.Vector3( 0, 0, 0 );
+                        /*
+                        if(cannonBalls[i].isMoving() && cannonBalls[j].isMoving()) {
+                            ballVector1 = cannonBalls[i].getMovement();
+                            ballVector2 = cannonBalls[j].getMovement();
+                            ballVector1.applyMatrix4(makeScale(-1));
+                            ballVector2.applyMatrix4(makeScale(-1));
+
+                            //Troca-se os vetores
+                            cannonBalls[j].updateMovement(ballVector1);
+                            cannonBalls[i].updateMovement(ballVector2);
+                            break;
+                        }
+                        */
+                        if(cannonBalls[i].isMoving()) {
+                            ballVector1 = cannonBalls[i].getMovement();
+                            ballVector2.x = ballVector1.x; //Fazer simplesmente ballVector2 = ballVector causa problemas
+                            ballVector2.y = ballVector1.y;
+                            ballVector2.z = ballVector1.z;
+                            ballVector.applyMatrix4(makeScale(-1));
+                            cannonBalls[j].updateMovement(ballVector2);
+                            cannonBalls[i].updateMovement(ballVector1);
+                        }
+                        else if(cannonBalls[j].isMoving()) {
+                            ballVector1 = cannonBalls[j].getMovement();
+                            ballVector2.x = ballVector1.x; //Fazer simplesmente ballVector2 = ballVector causa problemas
+                            ballVector2.y = ballVector1.y;
+                            ballVector2.z = ballVector1.z;
+                            ballVector.applyMatrix4(makeScale(-1));
+                            cannonBalls[i].updateMovement(ballVector2);
+                            cannonBalls[j].updateMovement(ballVector1);
+                        }
+                    }
+                }
+                j++;
+            }
+    
+            //Ball Movement
+            if(cannonBalls[i].isMoving()) {
+                ballVector = cannonBalls[i].getMovement();
+                cannonBalls[i].translateOnAxis(ballVector, ballSpeed*delta)
+                /* TO DO - Fazer esta parte com Matrizes e sem o translateOnAxis */
+                //console.log(cannonBalls[i].position.x)
+                //ballVector.applyMatrix4(makeScale(ballSpeed*delta));
+                //console.log(ballSpeed*delta)
+                //cannonBalls[i].applyMatrix(makeTranslation(ballVector.x, ballVector.y, ballVector.z));
+                //cannonBalls[i].updateMovement(ballVector);
+            }
+        }
+    }
+
 
     render();
 

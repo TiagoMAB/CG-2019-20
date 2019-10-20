@@ -21,7 +21,7 @@ class CannonBall extends THREE.Object3D {
         var cannonBall
 
         cannonBall = new THREE.Mesh(this.geometry, this.material);
-        cannonBall.position.set(x, y, z);
+        cannonBall.applyMatrix(makeTranslation(x, y, z));
 
         cannonBall.add(this.axes);
         this.cannonBall.add(cannonBall);
@@ -35,7 +35,12 @@ class CannonBall extends THREE.Object3D {
 
     toggleAxes() {
         this.axes.material.transparent = !this.axes.material.transparent;
-        this.axes.material.opacity = 0.0;
+        if(this.axes.material.opacity == 0.0) {
+            this.axes.material.opacity = 1.0
+        }
+        else {
+            this.axes.material.opacity = 0.0;
+        }
     }
    
     hasColidedWithSphere(x, z, radius) {
@@ -45,5 +50,32 @@ class CannonBall extends THREE.Object3D {
         else {
             return true;
         }
+    }
+
+    hasColidedWithWalls(minX, maxZ, minZ) {
+        //console.log(this.cannonBall.position.x - this.radius, minX)
+        if(this.cannonBall.position.x - this.radius < minX) {
+            return true
+        }
+        //console.log(this.cannonBall.position.z - this.radius, minZ)
+        if(this.cannonBall.position.z + this.radius > maxZ || this.cannonBall.position.z - this.radius < minZ) {
+            return true
+        }
+        return false
+    }
+
+    isMoving() {
+        if(this.userData.movement.x != 0 || this.userData.movement.x != 0 || this.userData.movement.z != 0) {
+            return true;
+        }
+        return false;
+    }
+
+    getMovement() {
+        return this.userData.movement;
+    }
+
+    updateMovement(movement) {
+        this.userData.movement = movement;
     }
 }

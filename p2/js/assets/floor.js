@@ -1,7 +1,7 @@
 'use strict'
 
 class Floor extends THREE.Object3D {
-    constructor(x, y, z, thickness) {
+    constructor(x, y, z, thickness, positiveXLimit, negativeXLimit, positiveZLimit, negativeZLimit, arenaOffset) {
         super();
 
         this.thickness = thickness;
@@ -9,16 +9,16 @@ class Floor extends THREE.Object3D {
 
         this.floor = new THREE.Object3D();
 
-        this.createFloor(x, y, z);
+        this.createFloor(x, y, z, thickness, positiveXLimit, negativeXLimit, positiveZLimit, negativeZLimit, arenaOffset);
     }
 
-    createFloor(x, y, z) {
+    createFloor(x, y, z, thickness, positiveXLimit, negativeXLimit, positiveZLimit, negativeZLimit, arenaOffset) {
 
         var floor;
 
-        floor = new THREE.Mesh(new THREE.BoxGeometry(60, 60, this.thickness), this.material);
-        floor.position.set(x - 10, y - 0.5, z);
-        floor.rotation.x = Math.PI / 2;
+        floor = new THREE.Mesh(new THREE.BoxGeometry(positiveXLimit-negativeXLimit, positiveZLimit-negativeZLimit, thickness), this.material);
+        floor.applyMatrix(rotateInX(Math.PI / 2));
+        floor.applyMatrix(makeTranslation(x - arenaOffset, y - thickness/2, z));
 
         this.floor.add(floor);
 
