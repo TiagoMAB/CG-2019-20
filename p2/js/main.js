@@ -1,3 +1,7 @@
+/* Despite the fact that Three.js offers tools to use and manipulate matrixes, after discussing it with one of our laboratory teachers,
+   we have decided to use our own functions, even if some are similarly named, to manipulate matrixes. These can be found in utils/matrixTools.js
+   This was done to combat what we believe is an ambiguous project when it comes to what Three.js tools we can and can't use*/
+
 var camera, scene, renderer, clock;
 var camera1, camera2, camera3;
 var cannon1, cannon2, cannon3, fence, floor;
@@ -7,7 +11,7 @@ var minAngle = -(Math.PI / 6), maxAngle = +(Math.PI / 6); //For cannon rotation.
 //Assumimos que a massa de todos os objetos é 1
 var cannonBalls = [];
 //arbitrary values that can be changed
-var N = 5, frictionForce = 0.3, bounce = 0.7, sphereRadius = 2.5, ballAcceleration=2.5, wallThickness = 1, cannonLenght = 15, maxZCannon = 25, minZCannon = -25,
+var N = 5, frictionForce = 0.3, bounce = 0.7, sphereRadius = 2.5, ballAcceleration=2.5, initialSpin = 0.5, wallThickness = 1, cannonLenght = 15, maxZCannon = 25, minZCannon = -25,
     positiveXLimit = 20.0, negativeXLimit = -40.0, positiveZLimit = 30.0, negativeZLimit = -30.0, wallHeight = 10, arenaOffset = 10;
     //The positive/negative X/Z Limits are to decide how big the arena (floor+fence) is
     //The max/min Z cannon decide where the side cannos will be
@@ -56,8 +60,10 @@ function createCamera() {
     camera = camera1;
 }
 
-function hasIntersectedWithBall(x, z, otherX, otherZ, radius1, radius2) {
-    if(Math.pow(radius1 + radius2, 2) >= ((Math.pow(x - otherX, 2) + Math.pow(z - otherZ, 2)))) {
+function hasIntersectedWithBall(x, y, z, otherX, otherY, otherZ, radius1, radius2) {
+    /* For simplicity, intersections no longer matter if the cannon balls are not on the floor. 
+       That is to say, if they go over the edge of the floor, there will be no colision*/
+    if((Math.pow(radius1 + radius2, 2) >= ((Math.pow(x - otherX, 2) + Math.pow(z - otherZ, 2)))) && y == radius1 && otherY == radius2) {
         return true;
     }
     return false;
@@ -78,7 +84,8 @@ function hasIntersectedWithWall(x, z, maxX, minX, maxZ, minZ) {
 }
 
 function createRandomCannonBalls() {
-    var maxX, minX, maxZ, minZ, x, z, cannonBall, j;
+    var maxX, minX, maxZ, minZ, x, y, z, cannonBall, j;
+    y = sphereRadius;
     maxX= positiveXLimit - sphereRadius - 0.5;
     minX= negativeXLimit + sphereRadius + wallThickness/2 + 0.5;
     maxZ= positiveZLimit - sphereRadius - wallThickness/2 - 0.5;
@@ -90,7 +97,7 @@ function createRandomCannonBalls() {
         /* Verify if the generated cannon ball doesn't intersect with any other ball */
         j = 0;
         while(j < i) {
-            if(hasIntersectedWithBall(x, z, cannonBalls[j].position.x, cannonBalls[j].position.z, sphereRadius, sphereRadius)) {
+            if(hasIntersectedWithBall(x, y, z, cannonBalls[j].position.x, cannonBalls[j].position.y, cannonBalls[j].position.z, sphereRadius, sphereRadius)) {
                 x = (Math.random() * (maxX - minX + 1)) + minX;
                 z = (Math.random() * (maxZ - minZ + 1)) + minZ;
                 j = 0;
@@ -98,8 +105,8 @@ function createRandomCannonBalls() {
             }
             j++;
         }
-        cannonBall = new CannonBall(0, 0, 0, sphereRadius, ballAcceleration);
-        cannonBall.applyMatrix(makeTranslation(x, sphereRadius, z))
+        cannonBall = new CannonBall(0, 0, 0, sphereRadius, ballAcceleration, initialSpin);
+        cannonBall.applyMatrix(makeTranslation(x, y, z))
 
         cannonBalls.push(cannonBall);
         scene.add(cannonBall);
@@ -140,7 +147,7 @@ function shootBall() {
     var cannonBall;
     var ballVector1 = new THREE.Vector3( 0, 0, 0 );
 
-    cannonBall = new CannonBall(0, 0, 0, sphereRadius, ballAcceleration);
+    cannonBall = new CannonBall(0, 0, 0, sphereRadius, ballAcceleration, initialSpin);
     cannonBall.applyMatrix(makeTranslation(selectedCannon.position.x, sphereRadius, selectedCannon.position.z))
 
     ballVector1 = selectedCannon.updateDirection(selectedCannon.currentRotationValue());
@@ -325,6 +332,13 @@ function animate() {
     }
 
     for(i = 0; i < cannonBalls.length; i++) {
+        //Gravity
+        if(cannonBalls[i].isFalling(cannonBalls[i].position.x, positiveXLimit)) {
+            var ballVector1 = new THREE.Vector3( 0, 0, 0 );
+            ballVector1 = cannonBalls[i].getMovement();
+            cannonBalls[i].updateMovement(ballVector1.x, ballVector1.y-(9.8*delta), ballVector1.z);
+        }
+
         //Wall Colisions
         /* TO DO - Fazer com que elas façam bounce nas paredes de acordo com o angulo em que nelas batem */
         if(hasIntersectedWithWall(cannonBalls[i].position.x, cannonBalls[i].position.z, positiveXLimit, negativeXLimit, positiveZLimit, negativeZLimit)) {
@@ -340,7 +354,7 @@ function animate() {
         var j = 0;
         while(j < cannonBalls.length) {
             if(cannonBalls[i] != cannonBalls[j]) {
-                if(hasIntersectedWithBall(cannonBalls[i].position.x, cannonBalls[i].position.z, cannonBalls[j].position.x, cannonBalls[j].position.z, sphereRadius, sphereRadius)) {
+                if(hasIntersectedWithBall(cannonBalls[i].position.x, cannonBalls[i].position.y, cannonBalls[i].position.z, cannonBalls[j].position.x, cannonBalls[j].position.y, cannonBalls[j].position.z, sphereRadius, sphereRadius)) {
                     var ballVector1 = new THREE.Vector3( 0, 0, 0 );
                     var ballVector2 = new THREE.Vector3( 0, 0, 0 );
                     if(cannonBalls[i].isMoving() && cannonBalls[j].isMoving()) {
@@ -400,14 +414,15 @@ function animate() {
         if(cannonBalls[i].isMoving()) {
             var ballVector1 = new THREE.Vector3( 0, 0, 0 );
             ballVector1 = cannonBalls[i].getMovement();
-            cannonBalls[i].translateOnAxis(ballVector1, (cannonBalls[i].getAcceleration()*delta))
+            var move = cannonBalls[i].getAcceleration()*delta
+            cannonBalls[i].applyMatrix(makeTranslation(ballVector1.x*move, ballVector1.y*move, ballVector1.z*move));
+            if(cannonBalls[i].position.x < positiveXLimit) { //Makes sure the cannonBall spins only on the floor and that it will start falling only after returning
+                if(cannonBalls[i].getAcceleration() > 0) {
+                    //cannonBalls[i].spin();
+                }
+                cannonBalls[i].canFall();
+            }
             cannonBalls[i].applyFriction(frictionForce*delta);
-            /* TO DO - Fazer esta parte com Matrizes e sem o translateOnAxis */
-            //console.log(cannonBalls[i].position.x)
-            //ballVector.applyMatrix4(makeScale(ballAcceleration*delta));
-            //console.log(ballAcceleration*delta)
-            //cannonBalls[i].applyMatrix(makeTranslation(ballVector.x, ballVector.y, ballVector.z));
-            //cannonBalls[i].updateMovement(ballVector.x, ballVector.y, ballVector.z);
         }
     }
 

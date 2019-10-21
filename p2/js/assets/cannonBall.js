@@ -1,7 +1,7 @@
 'use strict'
 
 class CannonBall extends THREE.Object3D {
-    constructor(x, y, z, radius, acceleration) {
+    constructor(x, y, z, radius, acceleration, initialSpin) {
         super();
 
         this.radius = radius;
@@ -15,6 +15,8 @@ class CannonBall extends THREE.Object3D {
 
         this.userData.movement = new THREE.Vector3( 0, 0, 0 );
         this.userData.acceleration = acceleration;
+        this.userData.spin = initialSpin;
+        this.userData.canFall = false;
     }
 
     createCannon(x, y, z) {
@@ -66,7 +68,7 @@ class CannonBall extends THREE.Object3D {
     }
 
     isMoving() {
-        if((this.userData.movement.x != 0 || this.userData.movement.x != 0 || this.userData.movement.z != 0) && this.userData.acceleration > 0) {
+        if((this.userData.movement.x != 0 || this.userData.movement.y != 0 || this.userData.movement.z != 0) && this.userData.acceleration > 0) {
             return true;
         }
         this.userData.movement.applyMatrix4(makeTranslation(0,0,0));
@@ -83,6 +85,7 @@ class CannonBall extends THREE.Object3D {
 
     applyFriction(friction) {
         this.userData.acceleration-=friction;
+        this.userData.spin = Math.sqrt(this.userData.acceleration)/this.radius; //a = w^2*r
     }
 
     applyBounce(bounce) {
@@ -97,5 +100,22 @@ class CannonBall extends THREE.Object3D {
 
     updateAcceleration(acceleration) {
         this.userData.acceleration = acceleration;
+    }
+
+    spin() {
+        if(this.userData.acceleration > 0) {
+            this.cannonBall.applyMatrix(rotateInZ(this.userData.spin));
+        }
+    }
+
+    canFall() { //Makes the ball able to fall once it goes over the edge of the floor again
+        this.userData.canFall = true;
+    }
+
+    isFalling(x, maxX) {
+        if(x > maxX && this.userData.canFall) {
+            return this.userData.canFall;
+        }
+        return false;
     }
 }
