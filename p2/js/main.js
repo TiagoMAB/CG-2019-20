@@ -3,7 +3,7 @@
    This was done to combat what we believe is an ambiguous project when it comes to what Three.js tools we can and can't use*/
 
 var camera, scene, renderer, clock;
-var camera1, camera2, camera3;
+var camera1, camera2, camera3, camera3Vector;
 var cannon1, cannon2, cannon3, fence, floor;
 var selectedCannon, selectedCannonMaterial;
 var minAngle = -(Math.PI / 6), maxAngle = +(Math.PI / 6); //For cannon rotation. Angles are calculated in radians
@@ -11,8 +11,8 @@ var minAngle = -(Math.PI / 6), maxAngle = +(Math.PI / 6); //For cannon rotation.
 //Assumimos que a massa de todos os objetos é 1
 var cannonBalls = [];
 //arbitrary values that can be changed
-var N = 5, frictionForce = 0.3, bounce = 0.7, sphereRadius = 2.5, ballAcceleration=2.5, initialSpin = 0.5, wallThickness = 1, cannonLenght = 15, maxZCannon = 25, minZCannon = -25,
-    positiveXLimit = 20.0, negativeXLimit = -40.0, positiveZLimit = 30.0, negativeZLimit = -30.0, wallHeight = 10, arenaOffset = 10;
+var N = 5, frictionForce = 0.3, bounce = 0.7, sphereRadius = 2.5, ballAcceleration=2.5, initialSpin = 0.5, wallThickness = 1, cannonLenght = 15, numShots = 0,
+    maxZCannon = 25, minZCannon = -25, positiveXLimit = 20.0, negativeXLimit = -40.0, positiveZLimit = 30.0, negativeZLimit = -30.0, wallHeight = 10, arenaOffset = 10;
     //The positive/negative X/Z Limits are to decide how big the arena (floor+fence) is
     //The max/min Z cannon decide where the side cannos will be
     //arenaOffset decides how far the center of the floor is from position (0,0,0)
@@ -43,15 +43,16 @@ function createCamera2() {
     camera2.lookAt(scene.position);
 }
 
-/* TO DO - Camera in ball */
+/* TO DO? - Fazer com que a camera dê flip para que siga mesmo a bola em vez de ficar só a olhar para ela de trás */
 function createCamera3() {
     'use scrict';
 
     factor = 20
-    camera3 = new THREE.OrthographicCamera( -window.innerWidth/factor, window.innerWidth/factor, window.innerHeight/factor, -window.innerHeight/factor, 1, 1000 );
+    //camera3 = new THREE.OrthographicCamera( -window.innerWidth/factor, window.innerWidth/factor, window.innerHeight/factor, -window.innerHeight/factor, 1, 1000 );
+    camera3 = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
 
-    camera3.applyMatrix(makeTranslation(60,0,0))
-    camera3.lookAt(scene.position);
+    //camera3.applyMatrix(makeTranslation(30,0,0))
+    //camera3.lookAt(scene.position);
 }
 
 
@@ -156,8 +157,18 @@ function shootBall() {
     cannonBall.applyMatrix(makeTranslation(ballVector1.x, ballVector1.y, ballVector1.z)); //Move it to be in front of the cannon
     cannonBall.updateMovement(ballVector1.x, ballVector1.y, ballVector1.z);
 
+    if(numShots > 0) { //Resets the camera vector so that it doesn't generate conflicts
+        camera3.applyMatrix(makeTranslation(camera3Vector.x, camera3Vector.y, camera3Vector.z))
+    }
+
+    camera3Vector = ballVector1;
+    camera3.applyMatrix(makeTranslation(-camera3Vector.x, -camera3Vector.y, -camera3Vector.z))
+    cannonBall.add(camera3);
+    camera3.lookAt(cannonBall.getMovement());
+
     cannonBalls.push(cannonBall);
     scene.add(cannonBall);
+    numShots++;
 }
 
 function createScene() {
@@ -266,7 +277,9 @@ function onKeyPress(e) {
             break;
 
         case 51: //3
-            camera = camera3;
+            if(numShots > 0) {
+                camera = camera3;
+            }
             break;
 
         /* Toggling Wireframe */
@@ -333,6 +346,7 @@ function animate() {
 
     for(i = 0; i < cannonBalls.length; i++) {
         //Gravity
+        /* TO DO - Fix gravity so that the balls continue accelerating downwards and that they disappear after a while or a certain y height */
         if(cannonBalls[i].isFalling(cannonBalls[i].position.x, positiveXLimit)) {
             var ballVector1 = new THREE.Vector3( 0, 0, 0 );
             ballVector1 = cannonBalls[i].getMovement();
@@ -340,7 +354,7 @@ function animate() {
         }
 
         //Wall Colisions
-        /* TO DO - Fazer com que elas façam bounce nas paredes de acordo com o angulo em que nelas batem */
+        /* TO DO? - Fazer com que elas façam bounce nas paredes de acordo com o angulo em que nelas batem */
         if(hasIntersectedWithWall(cannonBalls[i].position.x, cannonBalls[i].position.z, positiveXLimit, negativeXLimit, positiveZLimit, negativeZLimit)) {
             var ballVector1 = new THREE.Vector3( 0, 0, 0 );
             ballVector1 = cannonBalls[i].getMovement();
@@ -411,6 +425,7 @@ function animate() {
         }
 
         //Ball Movement
+        /* TO DO - Spinning */
         if(cannonBalls[i].isMoving()) {
             var ballVector1 = new THREE.Vector3( 0, 0, 0 );
             ballVector1 = cannonBalls[i].getMovement();
