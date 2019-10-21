@@ -1,7 +1,7 @@
 'use strict'
 
 class CannonBall extends THREE.Object3D {
-    constructor(x, y, z, radius) {
+    constructor(x, y, z, radius, acceleration) {
         super();
 
         this.radius = radius;
@@ -14,6 +14,7 @@ class CannonBall extends THREE.Object3D {
         this.createCannon(x, y, z);
 
         this.userData.movement = new THREE.Vector3( 0, 0, 0 );
+        this.userData.acceleration = acceleration;
     }
 
     createCannon(x, y, z) {
@@ -65,9 +66,10 @@ class CannonBall extends THREE.Object3D {
     }
 
     isMoving() {
-        if(this.userData.movement.x != 0 || this.userData.movement.x != 0 || this.userData.movement.z != 0) {
+        if((this.userData.movement.x != 0 || this.userData.movement.x != 0 || this.userData.movement.z != 0) && this.userData.acceleration > 0) {
             return true;
         }
+        this.userData.movement.applyMatrix4(makeTranslation(0,0,0));
         return false;
     }
 
@@ -75,7 +77,25 @@ class CannonBall extends THREE.Object3D {
         return this.userData.movement;
     }
 
-    updateMovement(movement) {
-        this.userData.movement = movement;
+    getAcceleration() {
+        return this.userData.acceleration;
+    }
+
+    applyFriction(friction) {
+        this.userData.acceleration-=friction;
+    }
+
+    applyBounce(bounce) {
+        this.userData.acceleration*=bounce;
+    }
+
+    updateMovement(x, y, z) {
+        this.userData.movement.x = x;
+        this.userData.movement.y = y;
+        this.userData.movement.z = z;
+    }
+
+    updateAcceleration(acceleration) {
+        this.userData.acceleration = acceleration;
     }
 }

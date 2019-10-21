@@ -14,9 +14,7 @@ class Cannon extends THREE.Object3D {
         this.userData = { rotatePositive: false };
         this.userData = { rotateNegtive: false };
         this.userData = { shot: false };
-        this.userData = { repeatedShot: false };
         this.userData.startingRotationAngle = 0;
-        this.userData.numShots = 0;
         this.userData.angle = 0;
         this.userData.direction = new THREE.Vector3( -1, 0, 0 );
     }
