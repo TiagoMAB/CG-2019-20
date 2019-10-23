@@ -11,7 +11,7 @@ var minAngle = -(Math.PI / 6), maxAngle = +(Math.PI / 6); //For cannon rotation.
 //Assumimos que a massa de todos os objetos é 1
 var cannonBalls = [];
 //arbitrary values that can be changed
-var N = 5, friction = 0.3, bounce = 0.7, sphereRadius = 2.5, maxBallSpeed=2.5, initialSpin = 0.5, wallThickness = 1, cannonLenght = 15, numShots = 0, allAxesToggled = false,
+var N = 10, friction = 0.3, bounce = 1, sphereRadius = 2.5, maxBallSpeed=2.5, initialSpin = 0.5, wallThickness = 0.01, cannonLenght = 15, numShots = 0, allAxesToggled = false,
     maxZCannon = 25, minZCannon = -25, positiveXLimit = 20.0, negativeXLimit = -40.0, positiveZLimit = 30.0, negativeZLimit = -30.0, wallHeight = 10, arenaOffset = 10;
     //The positive/negative X/Z Limits are to decide how big the arena (floor+fence) is
     //The max/min Z cannon decide where the side cannos will be
@@ -69,15 +69,18 @@ function hasIntersectedWithBall(x, y, z, otherX, otherY, otherZ, radius1, radius
 function hasIntersectedWithWall(x, z, maxX, minX, maxZ, minZ) {
     var thick = wallThickness/2
     if(x >= maxX) {
-        return false;
+        return 0;
+    }
+    if(z + sphereRadius >= maxZ - thick) {
+        return 1
     }
     if(x - sphereRadius <= minX + thick) {
-        return true;
+        return 2;
     }
-    if(z + sphereRadius >= maxZ - thick || z - sphereRadius <= minZ + thick) {
-        return true;
+    if(z - sphereRadius <= minZ + thick) {
+        return 3;
     }
-    return false;
+    return 0;
 }
 
 function createRandomCannonBalls() {
@@ -302,42 +305,30 @@ function animate() {
 
     /* Selected Cannon Angle */
     if (selectedCannon.userData.rotateNegative) {
-        if(selectedCannon.userData.startingRotationAngle == 0) {
-            if(selectedCannon.currentRotationValue() < maxAngle) {
-                selectedCannon.rotateCannon(0.02);
-            }
+        if(selectedCannon.userData.startingRotationAngle == 0 && selectedCannon.currentRotationValue() < maxAngle) {
+            selectedCannon.rotateCannon(0.02);
         }
 
-        else if(selectedCannon.userData.startingRotationAngle == minAngle) {
-            if(selectedCannon.currentRotationValue() < 0 - 0.005) {
-                selectedCannon.rotateCannon(0.02);
-            }
+        else if(selectedCannon.userData.startingRotationAngle == minAngle && selectedCannon.currentRotationValue() < 0 - 0.005) {
+            selectedCannon.rotateCannon(0.02);
         }
 
-        else if(selectedCannon.userData.startingRotationAngle == maxAngle) {
-            if(selectedCannon.currentRotationValue() < maxAngle) {
-                selectedCannon.rotateCannon(0.02);
-            }
+        else if(selectedCannon.userData.startingRotationAngle == maxAngle && selectedCannon.currentRotationValue() < maxAngle) {
+            selectedCannon.rotateCannon(0.02);
         }
     }
 
     if (selectedCannon.userData.rotatePositive) {
-        if(selectedCannon.userData.startingRotationAngle == 0) {
-            if(selectedCannon.currentRotationValue() > minAngle) {
-                selectedCannon.rotateCannon(-0.02);
-            }
+        if(selectedCannon.userData.startingRotationAngle == 0 && selectedCannon.currentRotationValue() > minAngle) {
+            selectedCannon.rotateCannon(-0.02);
         }
 
-        else if(selectedCannon.userData.startingRotationAngle == minAngle) {
-            if(selectedCannon.currentRotationValue() > minAngle) {
-                selectedCannon.rotateCannon(-0.02);
-            }
+        else if(selectedCannon.userData.startingRotationAngle == minAngle && selectedCannon.currentRotationValue() > minAngle) {
+            selectedCannon.rotateCannon(-0.02);
         }
 
-        else if(selectedCannon.userData.startingRotationAngle == maxAngle) {
-            if(selectedCannon.currentRotationValue() > 0 + 0.005) {
-                selectedCannon.rotateCannon(-0.02);
-            }
+        else if(selectedCannon.userData.startingRotationAngle == maxAngle && selectedCannon.currentRotationValue() > 0 + 0.005) {
+            selectedCannon.rotateCannon(-0.02);
         }
     }
 
@@ -348,19 +339,19 @@ function animate() {
                  and can potentially go back in the direction of the cannons, which would lead it to fall when going over the edge of the floor */
                  
         if(cannonBalls[i].isFalling(cannonBalls[i].position.x, positiveXLimit)) {
-            var ballVector1 = new THREE.Vector3( 0, 0, 0 );
-            ballVector1 = cannonBalls[i].getMovement();
+            var ballVector1 = cannonBalls[i].getMovement();
             cannonBalls[i].updateMovement(ballVector1.x, ballVector1.y-(9.8*delta), ballVector1.z);
         }
 
         //Wall Colisions
         /* TO DO? - Fazer com que elas façam bounce nas paredes de acordo com o angulo em que nelas batem */
-        if(hasIntersectedWithWall(cannonBalls[i].position.x, cannonBalls[i].position.z, positiveXLimit, negativeXLimit, positiveZLimit, negativeZLimit)) {
-            var ballVector1 = new THREE.Vector3( 0, 0, 0 );
-            ballVector1 = cannonBalls[i].getMovement();
+
+        var wall = hasIntersectedWithWall(cannonBalls[i].position.x, cannonBalls[i].position.z, positiveXLimit, negativeXLimit, positiveZLimit, negativeZLimit)
+        if(wall) {
+            var ballVector1 = cannonBalls[i].getMovement();
             if(!cannonBalls[i].userData.hitWall) {
-                ballVector1.applyMatrix4(makeScale(-1));
-                cannonBalls[i].userData.hitWall = true;
+                ballVector1.applyMatrix4(rotateInY(Math.PI));
+                cannonBalls[i].userData.hitWall = wall;
             }
             cannonBalls[i].canFall();
             cannonBalls[i].updateSpeed(cannonBalls[i].getSpeed()*bounce); //Loses speed because of what was lost with the bounce back
@@ -374,32 +365,19 @@ function animate() {
                 if(hasIntersectedWithBall(cannonBalls[i].position.x, cannonBalls[i].position.y, cannonBalls[i].position.z, cannonBalls[j].position.x, cannonBalls[j].position.y, cannonBalls[j].position.z, sphereRadius, sphereRadius)) {
                     var ballVector1 = new THREE.Vector3( 0, 0, 0 );
                     var ballVector2 = new THREE.Vector3( 0, 0, 0 );
-                    cannonBalls[i].userData.hitWall = false;
-                    cannonBalls[j].userData.hitWall = false;
+                    cannonBalls[i].userData.hitWall = 0;
+                    cannonBalls[j].userData.hitWall = 0;
                     if(cannonBalls[i].isMoving() && cannonBalls[j].isMoving()) {
                         ballVector1 = cannonBalls[i].getMovement();
                         ballVector2 = cannonBalls[j].getMovement();
 
-                        if(cannonBalls[i].userData.colidedWithBallN != j) {
+                        if (cannonBalls[i].userData.collidedWithBallN != j || cannonBalls[j].userData.collidedWithBallN != i) {
                             /* Making sure that the last colision of this ball i wasn't with this other ball j before */
-                            ballVector1.applyMatrix4(makeScale(-1));
+                            /* OR in case one of the balls is hitting the same ball it did before but that other ball bounced back from another one */
+                            ballVector1.applyMatrix4(rotateInY(Math.PI));
+                            ballVector2.applyMatrix4(rotateInY(Math.PI));
                             cannonBalls[i].canFall();
                             cannonBalls[i].updateSpeed((cannonBalls[i].getSpeed() + cannonBalls[j].getSpeed())*bounce);
-                        }
-                        else if(cannonBalls[i].userData.colidedWithBallN == j && cannonBalls[j].userData.colidedWithBallN != i) {
-                            /* In case one of the balls is hitting the same ball it did before but that other ball bounced back from another one */
-                            ballVector1.applyMatrix4(makeScale(-1));
-                            cannonBalls[i].canFall();
-                            cannonBalls[i].updateSpeed((cannonBalls[i].getSpeed() + cannonBalls[j].getSpeed())*bounce);
-                        }
-
-                        if(cannonBalls[j].userData.colidedWithBallN != i) {
-                            ballVector2.applyMatrix4(makeScale(-1));
-                            cannonBalls[j].canFall();
-                            cannonBalls[j].updateSpeed((cannonBalls[i].getSpeed() + cannonBalls[j].getSpeed())*bounce);
-                        }
-                        else if(cannonBalls[j].userData.colidedWithBallN == i && cannonBalls[i].userData.colidedWithBallN != j) {
-                            ballVector2.applyMatrix4(makeScale(-1));
                             cannonBalls[j].canFall();
                             cannonBalls[j].updateSpeed((cannonBalls[i].getSpeed() + cannonBalls[j].getSpeed())*bounce);
                         }
@@ -408,8 +386,8 @@ function animate() {
                         cannonBalls[j].updateMovement(ballVector2.x, ballVector2.y, ballVector2.z);
 
                         /* We update what was the last ball that i and j collided with, in this case, each other */
-                        cannonBalls[i].colidedWithBall(j);
-                        cannonBalls[j].colidedWithBall(i);
+                        cannonBalls[i].collidedWithBall(j);
+                        cannonBalls[j].collidedWithBall(i);
                         break;
                     }
                     else if(cannonBalls[i].isMoving() && !cannonBalls[j].isMoving()) {
@@ -418,29 +396,18 @@ function animate() {
                         ballVector2.y = ballVector1.y;
                         ballVector2.z = ballVector1.z;
                         
-                        if(cannonBalls[i].userData.colidedWithBallN != j) {
-                            ballVector1.applyMatrix4(makeScale(-1));
+                        if (cannonBalls[i].userData.collidedWithBallN != j || cannonBalls[j].userData.collidedWithBallN != i) {
+                            ballVector1.applyMatrix4(rotateInY(Math.PI));
                             cannonBalls[i].canFall();   
                             cannonBalls[i].updateSpeed(cannonBalls[i].getSpeed()*bounce);
-                        }
-                        else if(cannonBalls[i].userData.colidedWithBallN == j && cannonBalls[j].userData.colidedWithBallN != i) {
-                            ballVector1.applyMatrix4(makeScale(-1));
-                            cannonBalls[i].canFall();   
-                            cannonBalls[i].updateSpeed(cannonBalls[i].getSpeed()*bounce);
-                        }
-
-                        if(cannonBalls[j].userData.colidedWithBallN != i) {
-                            cannonBalls[j].updateSpeed(cannonBalls[i].getSpeed()*bounce);
-                        }
-                        else if(cannonBalls[j].userData.colidedWithBallN == i && cannonBalls[i].userData.colidedWithBallN != j) {
                             cannonBalls[j].updateSpeed(cannonBalls[i].getSpeed()*bounce);
                         }
                         
                         cannonBalls[i].updateMovement(ballVector1.x, ballVector1.y, ballVector1.z);
                         cannonBalls[j].updateMovement(ballVector2.x, ballVector2.y, ballVector2.z);
 
-                        cannonBalls[i].colidedWithBall(j);
-                        cannonBalls[j].colidedWithBall(i);
+                        cannonBalls[i].collidedWithBall(j);
+                        cannonBalls[j].collidedWithBall(i);
                         break;
                     }
                     else if(cannonBalls[j].isMoving() && !cannonBalls[i].isMoving()) {
@@ -449,20 +416,9 @@ function animate() {
                         ballVector2.y = ballVector1.y;
                         ballVector2.z = ballVector1.z;
 
-                        if(cannonBalls[i].userData.colidedWithBallN != j) {
+                        if (cannonBalls[i].userData.collidedWithBallN != j || cannonBalls[j].userData.collidedWithBallN != i) {
                             cannonBalls[i].updateSpeed(cannonBalls[j].getSpeed()*bounce);
-                        }
-                        else if(cannonBalls[i].userData.colidedWithBallN == j && cannonBalls[j].userData.colidedWithBallN != i) {
-                            cannonBalls[i].updateSpeed(cannonBalls[j].getSpeed()*bounce);
-                        }
-
-                        if(cannonBalls[j].userData.colidedWithBallN != i) {
-                            ballVector1.applyMatrix4(makeScale(-1));
-                            cannonBalls[j].canFall();
-                            cannonBalls[j].updateSpeed(cannonBalls[j].getSpeed()*bounce);
-                        }
-                        else if(cannonBalls[j].userData.colidedWithBallN == i && cannonBalls[i].userData.colidedWithBallN != j) {
-                            ballVector1.applyMatrix4(makeScale(-1));
+                            ballVector1.applyMatrix4(rotateInY(Math.PI));
                             cannonBalls[j].canFall();
                             cannonBalls[j].updateSpeed(cannonBalls[j].getSpeed()*bounce);
                         }
@@ -470,8 +426,8 @@ function animate() {
                         cannonBalls[j].updateMovement(ballVector1.x, ballVector1.y, ballVector1.z);
                         cannonBalls[i].updateMovement(ballVector2.x, ballVector2.y, ballVector2.z);
 
-                        cannonBalls[i].colidedWithBall(j);
-                        cannonBalls[j].colidedWithBall(i);
+                        cannonBalls[i].collidedWithBall(j);
+                        cannonBalls[j].collidedWithBall(i);
                         break;
                     }
                 }
@@ -481,8 +437,7 @@ function animate() {
 
         //Ball Movement
         if(cannonBalls[i].isMoving()) {
-            var ballVector1 = new THREE.Vector3( 0, 0, 0 );
-            ballVector1 = cannonBalls[i].getMovement();
+            var ballVector1 = cannonBalls[i].getMovement();
             var move = cannonBalls[i].getSpeed()*delta
             cannonBalls[i].applyMatrix(makeTranslation(ballVector1.x*move, ballVector1.y, ballVector1.z*move));
             if(cannonBalls[i].position.x < positiveXLimit) { //Makes sure the cannonBall spins only on the floor

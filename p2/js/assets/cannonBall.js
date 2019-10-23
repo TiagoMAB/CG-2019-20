@@ -11,23 +11,23 @@ class CannonBall extends THREE.Object3D {
         this.cannonBall = new THREE.Object3D();
         this.axes = new THREE.AxesHelper(10);
 
-        this.createCannon(x, y, z);
+        this.createCannonBall(x, y, z);
 
         this.userData.movement = new THREE.Vector3( 0, 0, 0 );
         this.userData.maxSpeed = maxSpeed
         this.userData.speed = maxSpeed;
         this.userData.spin = initialSpin;
-        this.userData.colidedWithBallN;
+        this.userData.collidedWithBallN;
         this.userData.canFall = false;
 
-        this.userData.hitWall = false;
+        this.userData.hitWall = 0;
 
         if(allAxesToggled) {
             this.toggleAxes();
         }
     }
 
-    createCannon(x, y, z) {
+    createCannonBall(x, y, z) {
 
         var cannonBall
 
@@ -68,6 +68,10 @@ class CannonBall extends THREE.Object3D {
 
     getSpeed() {
         return this.userData.speed;
+    }
+
+    getAngle() {
+        return Math.atan2(this.userData.movement.z, this.userData.movement.x)
     }
 
     applyFriction(friction) {
@@ -136,7 +140,7 @@ class CannonBall extends THREE.Object3D {
         return false;
     }
 
-    colidedWithBall(number) {
-        this.userData.colidedWithBallN = number;
+    collidedWithBall(number) {
+        this.userData.collidedWithBallN = number;
     }
 }
