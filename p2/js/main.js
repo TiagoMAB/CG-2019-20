@@ -11,7 +11,7 @@ var minAngle = -(Math.PI / 6), maxAngle = +(Math.PI / 6); //For cannon rotation.
 //Assumimos que a massa de todos os objetos é 1
 var cannonBalls = [];
 //arbitrary values that can be changed
-var N = 10, friction = 0.3, bounce = 1, sphereRadius = 2.5, maxBallSpeed=2.5, initialSpin = 0.5, wallThickness = 0.01, cannonLenght = 15, numShots = 0, allAxesToggled = false,
+var N = 10, friction = 0.3, bounce = 1, sphereRadius = 2.5, initialBallSpin = 0.5, wallThickness = 0.01, cannonLenght = 15, numShots = 0, allAxesToggled = false,
     maxZCannon = 25, minZCannon = -25, positiveXLimit = 20.0, negativeXLimit = -40.0, positiveZLimit = 30.0, negativeZLimit = -30.0, wallHeight = 10, arenaOffset = 10;
     //The positive/negative X/Z Limits are to decide how big the arena (floor+fence) is
     //The max/min Z cannon decide where the side cannos will be
@@ -105,7 +105,7 @@ function createRandomCannonBalls() {
             }
             j++;
         }
-        cannonBall = new CannonBall(0, 0, 0, sphereRadius, maxBallSpeed, initialSpin, allAxesToggled);
+        cannonBall = new CannonBall(0, 0, 0, sphereRadius, initialBallSpin, allAxesToggled);
         cannonBall.applyMatrix(makeTranslation(x, y, z))
 
         cannonBalls.push(cannonBall);
@@ -237,7 +237,7 @@ function onKeyPress(e) {
 
         /* Shoot Cannon Ball */
         case 32: //space
-            selectedCannon.shootBall();
+            selectedCannon.shootBall(initialBallSpin);
             break;
 
         /* Camera */
@@ -353,11 +353,10 @@ function animate() {
                 }
 
                 ballVector1.applyMatrix4(rotateInY(angleRotation));
-                cannonBalls[i].userData.hitWall = 0;
             }
             cannonBalls[i].canFall();
-            cannonBalls[i].updateSpeed(cannonBalls[i].getSpeed()*bounce); //Loses speed because of what was lost with the bounce back
             cannonBalls[i].updateMovement(ballVector1.x, ballVector1.y, ballVector1.z);
+            cannonBalls[i].updateSpeed(bounce); //Loses speed because of what was lost with the bounce back
         }
 
         //Ball Colisions
@@ -378,8 +377,9 @@ function animate() {
                             angle1 = cannonBalls[i].getAngle();
                             angle2 = cannonBalls[j].getAngle();
                             phi = Math.atan2(cannonBalls[j].position.z - cannonBalls[i].position.z, cannonBalls[j].position.x - cannonBalls[i].position.x);
-                            speed1 = Math.sqrt(Math.pow(ballVector1.x, 2) + Math.pow(ballVector1.z, 2))
+                            speed1 = Math.sqrt(Math.pow(ballVector1.x, 2) + Math.pow(ballVector1.z, 2));
                             speed2 = Math.sqrt(Math.pow(ballVector2.x, 2) + Math.pow(ballVector2.z, 2))
+                            console.log("speed1 = getSpeed():", speed1, cannonBalls[i].getSpeed())
                             console.log(phi);
                             console.log(ballVector1.x, ballVector1.z, angle1, speed1);
                             console.log(ballVector2.x, ballVector2.z, angle2, speed2);
@@ -389,13 +389,10 @@ function animate() {
                             ballVector2.z = (2 * speed1 * Math.cos(angle1 - phi)) / 2 * Math.sin(phi) + speed2 * Math.sin(angle2 - phi) * Math.sin(phi + Math.PI/2);
                             // should be correct until here
                             console.log(ballVector1.x, ballVector1.z, ballVector2.x, ballVector2.z);
-                            angleRes1 = angle1 - Math.atan2(ballVector1.z, ballVector1.x);
-                            angleRes2 = angle2 - Math.atan2(ballVector2.z, ballVector2.x);
+                            angleRes1 = Math.atan2(ballVector1.z, ballVector1.x) - angle1;
+                            angleRes2 = Math.atan2(ballVector2.z, ballVector2.x) - angle2;
                             console.log("angleRes1: " + angleRes1)
                             console.log("angleRes2: " + angleRes2)
-
-                            //cannonBalls[i].updateSpeed(Math.sqrt(Math.pow(ballVector1.x, 2) + Math.pow(ballVector1.z, 2)));
-                            //cannonBalls[j].updateSpeed(Math.sqrt(Math.pow(ballVector2.x, 2) + Math.pow(ballVector2.z, 2)));
 
                             ballVector1.applyMatrix4(rotateInY(angleRes1));
                             ballVector2.applyMatrix4(rotateInY(angleRes2));
@@ -406,6 +403,9 @@ function animate() {
 
                         cannonBalls[i].updateMovement(ballVector1.x, ballVector1.y, ballVector1.z);
                         cannonBalls[j].updateMovement(ballVector2.x, ballVector2.y, ballVector2.z);
+
+                        cannonBalls[i].updateSpeed(bounce);
+                        cannonBalls[j].updateSpeed(bounce);
 
                         /* We update what was the last ball that i and j collided with, in this case, each other */
                         cannonBalls[i].collidedWithBall(j);
@@ -421,12 +421,13 @@ function animate() {
                         if (cannonBalls[i].userData.collidedWithBallN != j || cannonBalls[j].userData.collidedWithBallN != i) {
                             ballVector1.applyMatrix4(rotateInY(Math.PI));
                             cannonBalls[i].canFall();   
-                            cannonBalls[i].updateSpeed(cannonBalls[i].getSpeed()*bounce);
-                            cannonBalls[j].updateSpeed(cannonBalls[i].getSpeed()*bounce);
                         }
                         
                         cannonBalls[i].updateMovement(ballVector1.x, ballVector1.y, ballVector1.z);
                         cannonBalls[j].updateMovement(ballVector2.x, ballVector2.y, ballVector2.z);
+
+                        cannonBalls[i].updateSpeed(bounce);
+                        cannonBalls[j].updateSpeed(bounce);
 
                         cannonBalls[i].collidedWithBall(j);
                         cannonBalls[j].collidedWithBall(i);
@@ -440,7 +441,7 @@ function animate() {
         //Ball Movement
         if(cannonBalls[i].isMoving()) {
             var ballVector1 = cannonBalls[i].getMovement();
-            var move = cannonBalls[i].getSpeed()*delta
+            var move = cannonBalls[i].getSpeed()*delta;
             cannonBalls[i].applyMatrix(makeTranslation(ballVector1.x*move, ballVector1.y, ballVector1.z*move));
             if(cannonBalls[i].position.x < positiveXLimit) { //Makes sure the cannonBall spins only on the floor
                 cannonBalls[i].spin();
