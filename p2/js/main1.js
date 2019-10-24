@@ -287,7 +287,7 @@ function handleCollision(ball1, ball2) {
     distance = Math.sqrt(Math.pow(x, 2) + Math.pow(z, 2))
     minDist = ball1.radius + ball2.radius
     
-    if (distance <= minDist) {
+    if (distance <= minDist && ball1.position.y == ball1.radius && ball2.position.y == ball2.radius) {
         console.log("X " + x + " |Y " + z + " distance " + distance + " min " + minDist)
         
         calculateSpeed(ball1, ball2)

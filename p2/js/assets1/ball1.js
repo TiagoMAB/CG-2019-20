@@ -80,7 +80,7 @@ class CannonBall extends THREE.Object3D {
 
     spin() {
         
-        var vector = new THREE.Vector3(this.speed.x, 0, this.speed.z);
+        var vector = new THREE.Vector3(this.speed.z, 0, this.speed.x);
         vector.applyMatrix4(rotateInZ(Math.PI));
 
         var m = new THREE.Matrix4();
