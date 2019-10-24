@@ -332,28 +332,25 @@ function animate() {
         var wall = hasIntersectedWithWall(cannonBalls[i].position.x, cannonBalls[i].position.z, positiveXLimit, negativeXLimit, positiveZLimit, negativeZLimit)
         if(wall) {
             var ballVector1 = cannonBalls[i].getMovement();
-            if(!cannonBalls[i].userData.hitWall) {
-                //ballVector1.applyMatrix4(rotateInY(Math.PI));//!!!!!
-                var angleRotation = cannonBalls[i].getAngle();
-                switch (wall) {
-                    case 1:
-                        angleRotation = -2*angleRotation;
-                        break;
-                    case 2:
-                        if(angleRotation > 0) {
-                            angleRotation = Math.PI + 2*(Math.PI - angleRotation);
-                        }
-                        else {
+            var angleRotation = cannonBalls[i].getAngle();
+            switch (wall) {
+                case 1:
+                    angleRotation = -2*angleRotation;
+                    break;
+                case 2:
+                    if(angleRotation > 0) {
+                        angleRotation = Math.PI + 2*(Math.PI - angleRotation);
+                    }
+                    else {
                             angleRotation = -angleRotation - (Math.PI + angleRotation);
-                        }
-                        break;
-                    case 3:
-                        angleRotation = 2*(Math.PI - angleRotation);
-                        break;
-                }
-
-                ballVector1.applyMatrix4(rotateInY(angleRotation));
+                    }
+                    break;
+                case 3:
+                    angleRotation = 2*(Math.PI - angleRotation);
+                    break;
             }
+
+            ballVector1.applyMatrix4(rotateInY(angleRotation));
             cannonBalls[i].canFall();
             cannonBalls[i].updateMovement(ballVector1.x, ballVector1.y, ballVector1.z);
             cannonBalls[i].updateSpeed(bounce); //Loses speed because of what was lost with the bounce back

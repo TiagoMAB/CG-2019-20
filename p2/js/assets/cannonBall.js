@@ -18,8 +18,6 @@ class CannonBall extends THREE.Object3D {
         this.userData.collidedWithBallN;
         this.userData.canFall = false;
 
-        this.userData.hitWall = 0;
-
         if(allAxesToggled) {
             this.toggleAxes();
         }
