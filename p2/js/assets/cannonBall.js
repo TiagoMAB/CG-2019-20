@@ -14,8 +14,8 @@ class CannonBall extends THREE.Object3D {
         this.createCannonBall(x, y, z);
 
         this.userData.movement = new THREE.Vector3( 0, 0, 0 );
-        this.userData.maxSpeed = maxSpeed
-        this.userData.speed = maxSpeed;
+        this.userData.maxSpeed = maxSpeed;
+        this.userData.speed = 0;
         this.userData.spin = initialSpin;
         this.userData.collidedWithBallN;
         this.userData.canFall = false;
@@ -58,7 +58,7 @@ class CannonBall extends THREE.Object3D {
         if((this.userData.movement.x != 0 || this.userData.movement.y != 0 || this.userData.movement.z != 0) && this.userData.speed > 0) {
             return true;
         }
-        this.userData.movement.applyMatrix4(makeTranslation(0,0,0));
+        this.userData.movement.applyMatrix4(makeScale(0));
         return false;
     }
 
@@ -71,7 +71,7 @@ class CannonBall extends THREE.Object3D {
     }
 
     getAngle() {
-        return Math.atan2(this.userData.movement.z, this.userData.movement.x)
+        return -Math.atan2(this.userData.movement.z, this.userData.movement.x)
     }
 
     applyFriction(friction) {
@@ -101,21 +101,6 @@ class CannonBall extends THREE.Object3D {
     }
 
     spin() {
-        /*if(this.userData.speed > 0) {
-            this.cannonBall.applyMatrix(rotateInZ(this.userData.spin));
-        }*/
-        /*var m = new THREE.Matrix4();
-        if(this.userData.movement.x != 0) {
-            m.multiply(rotateInX(this.userData.spin*(Math.PI/180)))
-        }
-        if(this.userData.movement.y != 0) {
-            console.log("help")
-            m.multiply(rotateInY(this.userData.spin*(Math.PI/180)))
-        }
-        if(this.userData.movement.z != 0) {
-            m.multiply(rotateInZ(this.userData.spin*(Math.PI/180)))
-        }
-        this.cannonBall.applyMatrix(m);*/
         
         var vector = new THREE.Vector3(-this.userData.movement.z, 0, -this.userData.movement.x);
         vector.applyMatrix4(rotateInZ(-Math.PI));

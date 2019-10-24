@@ -155,6 +155,7 @@ function shootBall() {
     
     cannonBall.applyMatrix(makeTranslation(ballVector1.x, ballVector1.y, ballVector1.z)); //Move it to be in front of the cannon
     cannonBall.updateMovement(ballVector1.x, ballVector1.y, ballVector1.z);
+    cannonBall.updateSpeed(maxBallSpeed);
 
     if(numShots > 0) { //Resets the camera vector so that it doesn't generate conflicts
         camera3.applyMatrix(makeTranslation(camera3Vector.x, camera3Vector.y, camera3Vector.z));
@@ -350,8 +351,30 @@ function animate() {
         if(wall) {
             var ballVector1 = cannonBalls[i].getMovement();
             if(!cannonBalls[i].userData.hitWall) {
-                ballVector1.applyMatrix4(rotateInY(Math.PI));
-                cannonBalls[i].userData.hitWall = wall;
+                //ballVector1.applyMatrix4(rotateInY(Math.PI));//!!!!!
+                var angleRotation = cannonBalls[i].getAngle();
+                console.log(angleRotation)
+                switch (wall) {
+                    case 1:
+                        angleRotation = -2*angleRotation;
+                        break;
+                    case 2:
+                        if(angleRotation > 0) {
+                            console.log(2)
+                            angleRotation = Math.PI + 2*(Math.PI - angleRotation);
+                        }
+                        else {
+                            console.log(3)
+                            angleRotation = -angleRotation - (Math.PI + angleRotation);
+                        }
+                        break;
+                    case 3:
+                        angleRotation = 2*(Math.PI - angleRotation);
+                        break;
+                }
+
+                ballVector1.applyMatrix4(rotateInY(angleRotation));
+                cannonBalls[i].userData.hitWall = 0;
             }
             cannonBalls[i].canFall();
             cannonBalls[i].updateSpeed(cannonBalls[i].getSpeed()*bounce); //Loses speed because of what was lost with the bounce back
@@ -365,8 +388,6 @@ function animate() {
                 if(hasIntersectedWithBall(cannonBalls[i].position.x, cannonBalls[i].position.y, cannonBalls[i].position.z, cannonBalls[j].position.x, cannonBalls[j].position.y, cannonBalls[j].position.z, sphereRadius, sphereRadius)) {
                     var ballVector1 = new THREE.Vector3( 0, 0, 0 );
                     var ballVector2 = new THREE.Vector3( 0, 0, 0 );
-                    cannonBalls[i].userData.hitWall = 0;
-                    cannonBalls[j].userData.hitWall = 0;
                     if(cannonBalls[i].isMoving() && cannonBalls[j].isMoving()) {
                         ballVector1 = cannonBalls[i].getMovement();
                         ballVector2 = cannonBalls[j].getMovement();
@@ -405,26 +426,6 @@ function animate() {
                         
                         cannonBalls[i].updateMovement(ballVector1.x, ballVector1.y, ballVector1.z);
                         cannonBalls[j].updateMovement(ballVector2.x, ballVector2.y, ballVector2.z);
-
-                        cannonBalls[i].collidedWithBall(j);
-                        cannonBalls[j].collidedWithBall(i);
-                        break;
-                    }
-                    else if(cannonBalls[j].isMoving() && !cannonBalls[i].isMoving()) {
-                        ballVector1 = cannonBalls[j].getMovement();
-                        ballVector2.x = ballVector1.x;
-                        ballVector2.y = ballVector1.y;
-                        ballVector2.z = ballVector1.z;
-
-                        if (cannonBalls[i].userData.collidedWithBallN != j || cannonBalls[j].userData.collidedWithBallN != i) {
-                            cannonBalls[i].updateSpeed(cannonBalls[j].getSpeed()*bounce);
-                            ballVector1.applyMatrix4(rotateInY(Math.PI));
-                            cannonBalls[j].canFall();
-                            cannonBalls[j].updateSpeed(cannonBalls[j].getSpeed()*bounce);
-                        }
-
-                        cannonBalls[j].updateMovement(ballVector1.x, ballVector1.y, ballVector1.z);
-                        cannonBalls[i].updateMovement(ballVector2.x, ballVector2.y, ballVector2.z);
 
                         cannonBalls[i].collidedWithBall(j);
                         cannonBalls[j].collidedWithBall(i);
