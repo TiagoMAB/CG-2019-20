@@ -17,6 +17,8 @@ class Cannon extends THREE.Object3D {
         this.userData.startingRotationAngle = 0;
         this.userData.angle = 0;
         this.userData.direction = new THREE.Vector3( -1, 0, 0 );
+
+        this.timeout = 0
     }
 
     createCannon(x, y, z) {
@@ -55,5 +57,37 @@ class Cannon extends THREE.Object3D {
         var vector = this.userData.direction.clone();
         vector.applyMatrix4(rotateInY(angle));
         return vector;
+    }
+
+    shootBall() {
+        
+        if (this.timeout == 0) { 
+            var cannonBall;
+            var ballVector1 = new THREE.Vector3( 0, 0, 0 );
+
+            cannonBall = new CannonBall(0, 0, 0, sphereRadius, maxBallSpeed, initialSpin, allAxesToggled);
+            cannonBall.applyMatrix(makeTranslation(this.position.x, sphereRadius, this.position.z))
+
+            ballVector1 = this.updateDirection(this.currentRotationValue());
+            ballVector1.applyMatrix4(makeScale(cannonLenght/2 + sphereRadius));
+            
+            cannonBall.applyMatrix(makeTranslation(ballVector1.x, ballVector1.y, ballVector1.z)); //Move it to be in front of the cannon
+            cannonBall.updateMovement(ballVector1.x, ballVector1.y, ballVector1.z);
+            cannonBall.updateSpeed(maxBallSpeed);
+
+            if(numShots > 0) { //Resets the camera vector so that it doesn't generate conflicts
+                camera3.applyMatrix(makeTranslation(camera3Vector.x, camera3Vector.y, camera3Vector.z));
+            }
+
+            camera3Vector = ballVector1;
+            camera3.applyMatrix(makeTranslation(-camera3Vector.x, -camera3Vector.y, -camera3Vector.z));
+            cannonBall.add(camera3);
+            camera3.lookAt(cannonBall.getMovement());
+
+            cannonBalls.push(cannonBall);
+            scene.add(cannonBall);
+            numShots++;
+            this.timeout = 90
+        }
     }
 }

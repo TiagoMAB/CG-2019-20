@@ -143,34 +143,6 @@ function selectCannon(cannon) {
     selectedCannon.material.color.setHex(0xFFD700); //Turn yellow
 }
 
-function shootBall() {
-    var cannonBall;
-    var ballVector1 = new THREE.Vector3( 0, 0, 0 );
-
-    cannonBall = new CannonBall(0, 0, 0, sphereRadius, maxBallSpeed, initialSpin, allAxesToggled);
-    cannonBall.applyMatrix(makeTranslation(selectedCannon.position.x, sphereRadius, selectedCannon.position.z))
-
-    ballVector1 = selectedCannon.updateDirection(selectedCannon.currentRotationValue());
-    ballVector1.applyMatrix4(makeScale(cannonLenght/2 + sphereRadius));
-    
-    cannonBall.applyMatrix(makeTranslation(ballVector1.x, ballVector1.y, ballVector1.z)); //Move it to be in front of the cannon
-    cannonBall.updateMovement(ballVector1.x, ballVector1.y, ballVector1.z);
-    cannonBall.updateSpeed(maxBallSpeed);
-
-    if(numShots > 0) { //Resets the camera vector so that it doesn't generate conflicts
-        camera3.applyMatrix(makeTranslation(camera3Vector.x, camera3Vector.y, camera3Vector.z));
-    }
-
-    camera3Vector = ballVector1;
-    camera3.applyMatrix(makeTranslation(-camera3Vector.x, -camera3Vector.y, -camera3Vector.z));
-    cannonBall.add(camera3);
-    camera3.lookAt(cannonBall.getMovement());
-
-    cannonBalls.push(cannonBall);
-    scene.add(cannonBall);
-    numShots++;
-}
-
 function createScene() {
     'use scrict';
 
@@ -265,7 +237,7 @@ function onKeyPress(e) {
 
         /* Shoot Cannon Ball */
         case 32: //space
-            shootBall();
+            selectedCannon.shootBall();
             break;
 
         /* Camera */
@@ -303,6 +275,16 @@ function animate() {
     'use strict';
     
     var delta = clock.getDelta() * 0.8; // *0.8 is to slow down simulation
+
+    if (cannon1.timeout > 0) {
+        cannon1.timeout -= 1
+    }
+    if (cannon2.timeout > 0) {
+        cannon2.timeout -= 1
+    }
+    if (cannon3.timeout > 0) {
+        cannon3.timeout -= 1
+    }
 
     /* Selected Cannon Angle */
     if (selectedCannon.userData.rotateNegative) {
