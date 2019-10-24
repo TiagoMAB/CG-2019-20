@@ -51,13 +51,13 @@ class Cannon extends THREE.Object3D {
     currentRotationValue() {
         return this.userData.angle;
     }
-/* 
+
     updateDirection(angle) {
         var vector = this.userData.direction.clone();
         vector.applyMatrix4(rotateInY(angle));
         return vector;
     }
-*/
+
     shootBall() {
         
         if (this.timeout == 0) {
@@ -69,12 +69,30 @@ class Cannon extends THREE.Object3D {
 
             ball.speed.z = maxBallSpeed * Math.sin(this.userData.angle)
             ball.speed.x = - maxBallSpeed * Math.cos(this.userData.angle)
+            console.log(ball.calculateAngle())
             console.log(" X: " + ball.speed.x + " Y" + ball.speed.z)
+
+            this.timeout = 90;
+
+            if(numShots > 0) { //Resets the camera vector so that it doesn't generate conflicts
+                camera3.applyMatrix(makeTranslation(camera3Vector.x, camera3Vector.y, camera3Vector.z));
+            }
+
+            var scale = cannonLenght/2 + sphereRadius;
+
+            camera3Vector = this.updateDirection(this.currentRotationValue());
+            camera3.applyMatrix(rotateInY(this.userData.angle));
+            camera3Vector.applyMatrix4(makeScale(scale));
+            camera3.applyMatrix(makeTranslation(-camera3Vector.x, -camera3Vector.y, -camera3Vector.z));
+            
+            ball.add(camera3);
+            camera3.lookAt(ball.speed);
+
             cannonBalls.push(ball);       //may want to send global variable through function
             scene.add(ball);              //may want to send global variable through function
 
-            this.timeout = 90;
-        }
+            numShots++;
+            }
 
         /*
         if (this.timeout == 0) { 

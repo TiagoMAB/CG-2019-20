@@ -73,23 +73,6 @@ function hasIntersectedWithBall(x, y, z, otherX, otherY, otherZ, radius1, radius
     return false;
 }
 
-function hasIntersectedWithWall(x, z, maxX, minX, maxZ, minZ) {
-    var thick = wallThickness/2
-    if(x >= maxX) {
-        return 0;
-    }
-    if(z + sphereRadius >= maxZ - thick) {
-        return 1
-    }
-    if(x - sphereRadius <= minX + thick) {
-        return 2;
-    }
-    if(z - sphereRadius <= minZ + thick) {
-        return 3;
-    }
-    return 0;
-}
-
 function createRandomCannonBalls() {
     var maxX, minX, maxZ, minZ, x, y, z, cannonBall, j;
     y = sphereRadius;
@@ -308,8 +291,9 @@ function handleCollision(ball1, ball2) {
         console.log("X " + x + " |Y " + z + " distance " + distance + " min " + minDist)
         
         calculateSpeed(ball1, ball2)
+        ball1.canFall = 1
+        ball2.canFall = 1
     }
-
 }
 
 function animate() {
@@ -357,134 +341,38 @@ function animate() {
     }
 
     var j = 0, i = 0
-    for(i = 0; i < cannonBalls.length - 1; i++) {
+    for(i = 0; i < cannonBalls.length - 1; i++) {               //maybe alterar para for com if
         for (j = i + 1; j < cannonBalls.length; j++) {
             handleCollision(cannonBalls[i], cannonBalls[j])
         }
     }
 
     for(i = 0; i < cannonBalls.length; i++) {
+        
+        cannonBalls[i].handleCollisionsWall(positiveXLimit, negativeXLimit, positiveZLimit, negativeZLimit)
+        
         //Ball Movement
         if(cannonBalls[i].isMoving()) {
-            var speedX = 0 + cannonBalls[i].speed.x * delta
-            var speedY = 0 + cannonBalls[i].speed.y * delta
-            var speedZ = 0 + cannonBalls[i].speed.z * delta
+            var speedX = cannonBalls[i].speed.x * delta
+            var speedY = cannonBalls[i].speed.y * delta
+            var speedZ = cannonBalls[i].speed.z * delta
             var totalSpeed = Math.sqrt(Math.pow(speedX,2) + Math.pow(speedZ,2))
 
             cannonBalls[i].applyMatrix(makeTranslation(speedX, speedY, speedZ));
-
-            cannonBalls[i].applyFriction(totalSpeed*friction);
-            console.log("Velocities: " +  cannonBalls[i].speed.x  + " | " + cannonBalls[i].speed.y  + " | " + cannonBalls[i].speed.z  + " | ")
-            
-        }
-    }
-
-/*
-    for(i = 0; i < cannonBalls.length; i++) {
-               
-        if(cannonBalls[i].isFalling(cannonBalls[i].position.x, positiveXLimit)) {
-            var ballVector1 = cannonBalls[i].getMovement();
-            cannonBalls[i].updateMovement(ballVector1.x, ballVector1.y-(9.8*delta), ballVector1.z);
-        }
-
-
-        var wall = hasIntersectedWithWall(cannonBalls[i].position.x, cannonBalls[i].position.z, positiveXLimit, negativeXLimit, positiveZLimit, negativeZLimit)
-        if(wall) {
-            var ballVector1 = cannonBalls[i].getMovement();
-            if(!cannonBalls[i].userData.hitWall) {
-                //ballVector1.applyMatrix4(rotateInY(Math.PI));//!!!!!
-                var angleRotation = cannonBalls[i].getAngle();
-                console.log(angleRotation)
-                switch (wall) {
-                    case 1:
-                        angleRotation = -2*angleRotation;
-                        break;
-                    case 2:
-                        if(angleRotation > 0) {
-                            console.log(2)
-                            angleRotation = Math.PI + 2*(Math.PI - angleRotation);
-                        }
-                        else {
-                            console.log(3)
-                            angleRotation = -angleRotation - (Math.PI + angleRotation);
-                        }
-                        break;
-                    case 3:
-                        angleRotation = 2*(Math.PI - angleRotation);
-                        break;
-                }
-
-                ballVector1.applyMatrix4(rotateInY(angleRotation));
-                cannonBalls[i].userData.hitWall = 0;
-            }
-            cannonBalls[i].canFall();
-            cannonBalls[i].updateSpeed(cannonBalls[i].getSpeed()*bounce); //Loses speed because of what was lost with the bounce back
-            cannonBalls[i].updateMovement(ballVector1.x, ballVector1.y, ballVector1.z);
-        }
-
-        //Ball Colisions
-        var j = 0;
-        while(j < cannonBalls.length) {
-            if(j != i) {
-                if(hasIntersectedWithBall(cannonBalls[i].position.x, cannonBalls[i].position.y, cannonBalls[i].position.z, cannonBalls[j].position.x, cannonBalls[j].position.y, cannonBalls[j].position.z, sphereRadius, sphereRadius)) {
-                    var ballVector1 = new THREE.Vector3( 0, 0, 0 );
-                    var ballVector2 = new THREE.Vector3( 0, 0, 0 );
-                    if(cannonBalls[i].isMoving() && cannonBalls[j].isMoving()) {
-                        ballVector1 = cannonBalls[i].getMovement();
-                        ballVector2 = cannonBalls[j].getMovement();
-
-                        if (cannonBalls[i].userData.collidedWithBallN != j || cannonBalls[j].userData.collidedWithBallN != i) {
-                            ballVector1.applyMatrix4(rotateInY(Math.PI));
-                            ballVector2.applyMatrix4(rotateInY(Math.PI));
-                            cannonBalls[i].canFall();
-                            cannonBalls[i].updateSpeed((cannonBalls[i].getSpeed() + cannonBalls[j].getSpeed())*bounce);
-                            cannonBalls[j].canFall();
-                            cannonBalls[j].updateSpeed((cannonBalls[i].getSpeed() + cannonBalls[j].getSpeed())*bounce);
-                        }
-
-                        cannonBalls[i].updateMovement(ballVector1.x, ballVector1.y, ballVector1.z);
-                        cannonBalls[j].updateMovement(ballVector2.x, ballVector2.y, ballVector2.z);
-
-                        cannonBalls[i].collidedWithBall(j);
-                        cannonBalls[j].collidedWithBall(i);
-                        break;
-                    }
-                    else if(cannonBalls[i].isMoving() && !cannonBalls[j].isMoving()) {
-                        ballVector1 = cannonBalls[i].getMovement();
-                        ballVector2.x = ballVector1.x;
-                        ballVector2.y = ballVector1.y;
-                        ballVector2.z = ballVector1.z;
-                        
-                        if (cannonBalls[i].userData.collidedWithBallN != j || cannonBalls[j].userData.collidedWithBallN != i) {
-                            ballVector1.applyMatrix4(rotateInY(Math.PI));
-                            cannonBalls[i].canFall();   
-                            cannonBalls[i].updateSpeed(cannonBalls[i].getSpeed()*bounce);
-                            cannonBalls[j].updateSpeed(cannonBalls[i].getSpeed()*bounce);
-                        }
-                        
-                        cannonBalls[i].updateMovement(ballVector1.x, ballVector1.y, ballVector1.z);
-                        cannonBalls[j].updateMovement(ballVector2.x, ballVector2.y, ballVector2.z);
-
-                        cannonBalls[i].collidedWithBall(j);
-                        cannonBalls[j].collidedWithBall(i);
-                        break;
-                    }
-                }
-            }
-            j++;
-        }
-
-        //Ball Movement
-        if(cannonBalls[i].isMoving()) {
-            var ballVector1 = cannonBalls[i].getMovement();
-            var move = cannonBalls[i].getSpeed()*delta
-            cannonBalls[i].applyMatrix(makeTranslation(ballVector1.x*move, ballVector1.y, ballVector1.z*move));
             if(cannonBalls[i].position.x < positiveXLimit) { //Makes sure the cannonBall spins only on the floor
                 cannonBalls[i].spin();
             }
-            cannonBalls[i].applyFriction(friction*delta);
+            cannonBalls[i].applyFriction(totalSpeed*friction);
+        //    console.log("Velocities: " +  cannonBalls[i].speed.x  + " | " + cannonBalls[i].speed.y  + " | " + cannonBalls[i].speed.z  + " | ")
+            
         }
-    }*/
+
+        if(cannonBalls[i].isFalling(positiveXLimit)) {
+            cannonBalls[i].setSpeed(cannonBalls[i].speed.x, 25*(-9.8)*delta, cannonBalls[i].speed.z)
+        }
+    }
+
+
 
     setTimeout( function() {
 

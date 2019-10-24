@@ -6,7 +6,7 @@ class CannonBall extends THREE.Object3D {
 
         this.radius = radius;
         this.material = new THREE.MeshBasicMaterial( { color: 0x8b0000, wireframe: true });
-        this.geometry = new THREE.SphereGeometry(radius, 20, 20);
+        this.geometry = new THREE.SphereGeometry(radius, 15, 15);
 
         this.cannonBall = new THREE.Object3D();
         this.axes = new THREE.AxesHelper(10);
@@ -15,8 +15,7 @@ class CannonBall extends THREE.Object3D {
 
         this.speed = new THREE.Vector3( 0, 0, 0 );
         this.angle = angle
-        
-        
+        this.canFall = 0
 
         if(allAxesToggled) {
             this.toggleAxes();
@@ -57,20 +56,15 @@ class CannonBall extends THREE.Object3D {
         return false;
     }
 
-    applyFriction(friction) {
+    applyFriction(friction) { //para corrigir
         
-        if (this.speed.y < 0) {
-            this.speed.z = Math.min(this.speed.y + friction, 0)
-        }
         if (this.speed.x < 0) {
             this.speed.x = Math.min(this.speed.x + friction*Math.abs(Math.cos(this.angle)), 0)
         }
         if (this.speed.z < 0) {
             this.speed.z = Math.min(this.speed.z + friction*Math.abs(Math.sin(this.angle)), 0)
         }
-        if (this.speed.y > 0) {
-            this.speed.y = Math.max(this.speed.y - friction, 0)
-        }
+
         if (this.speed.x > 0) {
             this.speed.x = Math.max(this.speed.x - friction*Math.abs(Math.cos(this.angle)), 0)
         }
@@ -81,23 +75,16 @@ class CannonBall extends THREE.Object3D {
     }
 
     calculateAngle() {
-
-        var totalSpeed = Math.sqrt(Math.pow(this.speed.x, 2) + Math.pow(this.speed.z, 2))
-        if (this.speed.x != 0) {
-            this.angle = Math.acos(this.speed.x/totalSpeed)
-        }
-        else if (this.speed.z != 0) {
-            this.angle = Math.acos(this.speed.z/totalSpeed)
-        }
+        this.angle = - Math.atan2(this.speed.z, this.speed.x)
     }
 
     spin() {
         
-        var vector = new THREE.Vector3(-this.userData.movement.z, 0, -this.userData.movement.x);
-        vector.applyMatrix4(rotateInZ(-Math.PI));
+        var vector = new THREE.Vector3(this.speed.x, 0, this.speed.z);
+        vector.applyMatrix4(rotateInZ(Math.PI));
 
         var m = new THREE.Matrix4();
-        m.makeRotationAxis(vector.normalize(), this.userData.spin/10);
+        m.makeRotationAxis(vector.normalize(), 0.5/10);
 
         this.cannonBall.matrix.multiply(m);
 
@@ -105,6 +92,70 @@ class CannonBall extends THREE.Object3D {
 
     }
 
+    hasIntersectedWithWall(maxX, minX, maxZ, minZ) {
+        var thick = wallThickness/2
+       
+        if(this.position.x >= maxX) {
+            return 0;
+        }
+        if(this.position.z + sphereRadius >= maxZ - thick) {
+            return 1
+        }
+        if(this.position.x - sphereRadius <= minX + thick) {
+            return 2;
+        }
+        if(this.position.z - sphereRadius <= minZ + thick) {
+            return 3;
+        }
+        return 0;
+    }
+
+    handleCollisionsWall(positiveXLimit, negativeXLimit, positiveZLimit, negativeZLimit) {
+    
+        var wall = this.hasIntersectedWithWall(positiveXLimit, negativeXLimit, positiveZLimit, negativeZLimit) 
+        if (wall) {
+            console.log(this.angle)
+            var angleRotation = this.angle
+
+            switch (wall) {
+                case 1:
+                    angleRotation = -2*angleRotation;
+                    break;
+                case 2:
+                    if(angleRotation > 0) {
+                        console.log(2)
+                        angleRotation = Math.PI + 2*(Math.PI - angleRotation);
+                    }
+                    else {
+                        console.log(3)
+                        angleRotation = -angleRotation - (Math.PI + angleRotation);
+                    }
+                    break;
+                case 3:
+                    angleRotation = 2*(Math.PI - angleRotation);
+                    break;
+            }
+    
+            this.speed.applyMatrix4(rotateInY(angleRotation))
+            this.calculateAngle()
+            this.canFall = 1
+        }
+    }
+
+    isFalling(maxX) {
+        console.log(x, maxX)
+        if(this.position.x - this.radius/2 > maxX && this.canFall) {
+            return this.canFall;
+        }
+        return false;
+    }
+
+    setSpeed(x, y, z) {
+        this.speed.x = x;
+        this.speed.y = y;
+        this.speed.z = z;
+        
+    }
 /*
     isMoving() {
         if((this.userData.movement.x != 0 || this.userData.movement.y != 0 || this.userData.movement.z != 0) && this.userData.speed > 0) {
