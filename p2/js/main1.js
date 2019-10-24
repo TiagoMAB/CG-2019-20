@@ -11,7 +11,7 @@ var minAngle = -(Math.PI / 6), maxAngle = +(Math.PI / 6); //For cannon rotation.
 //Assumimos que a massa de todos os objetos é 1
 var cannonBalls = [];
 //arbitrary values that can be changed
-var N = 10, friction = 0.3, bounce = 1, sphereRadius = 2.5, maxBallSpeed=2.5, initialSpin = 0.5, wallThickness = 0.01, cannonLenght = 15, numShots = 0, allAxesToggled = false,
+var N = 10, friction = 0.2, bounce = 1, sphereRadius = 2.5, maxBallSpeed=35, initialSpin = 0.5, wallThickness = 0.01, cannonLenght = 15, numShots = 0, allAxesToggled = false,
     maxZCannon = 25, minZCannon = -25, positiveXLimit = 20.0, negativeXLimit = -40.0, positiveZLimit = 30.0, negativeZLimit = -30.0, wallHeight = 10, arenaOffset = 10;
     //The positive/negative X/Z Limits are to decide how big the arena (floor+fence) is
     //The max/min Z cannon decide where the side cannos will be
@@ -279,10 +279,23 @@ function onKeyPress(e) {
     }
 }
 
-function calculateVel(ball1, ball2) {
+function calculateSpeed(ball1, ball2) {
 
-    
+    speedX1 = ball1.speed.x
+    speedZ1 = ball1.speed.z
+    speedX2 = ball2.speed.x
+    speedZ2 = ball2.speed.z
+
+    ball1.speed.x = speedX2
+    ball1.speed.z = speedZ2
+    ball2.speed.x = speedX1
+    ball2.speed.z = speedZ1
+
+    ball1.calculateAngle()
+    ball2.calculateAngle()
 }
+
+
 
 function handleCollision(ball1, ball2) {
 
@@ -294,8 +307,7 @@ function handleCollision(ball1, ball2) {
     if (distance <= minDist) {
         console.log("X " + x + " |Y " + z + " distance " + distance + " min " + minDist)
         
-        velY = calculateVel(ball1, ball2)
-        velX = calculateVel(ball1, ball2)
+        calculateSpeed(ball1, ball2)
     }
 
 }
@@ -303,8 +315,8 @@ function handleCollision(ball1, ball2) {
 function animate() {
     'use strict';
     
-    var delta = clock.getDelta() * 0.8; // *0.8 is to slow down simulation
-
+    var delta = clock.getDelta(); // *0.8 is to slow down simulation
+    
     if (cannon1.timeout > 0) {
         cannon1.timeout -= 1
     }
@@ -344,6 +356,7 @@ function animate() {
         }
     }
 
+    var j = 0, i = 0
     for(i = 0; i < cannonBalls.length - 1; i++) {
         for (j = i + 1; j < cannonBalls.length; j++) {
             handleCollision(cannonBalls[i], cannonBalls[j])
@@ -351,18 +364,29 @@ function animate() {
     }
 
     for(i = 0; i < cannonBalls.length; i++) {
-        //Gravity
-        /* Note: canFall() is used to activate the flag that helps decide whether or not the ball should be falling
-                 It is triggered whenever the vector describing the movement of the ball is inverted as that means it colided with something
-                 and can potentially go back in the direction of the cannons, which would lead it to fall when going over the edge of the floor */
-                 
+        //Ball Movement
+        if(cannonBalls[i].isMoving()) {
+            var speedX = 0 + cannonBalls[i].speed.x * delta
+            var speedY = 0 + cannonBalls[i].speed.y * delta
+            var speedZ = 0 + cannonBalls[i].speed.z * delta
+            var totalSpeed = Math.sqrt(Math.pow(speedX,2) + Math.pow(speedZ,2))
+
+            cannonBalls[i].applyMatrix(makeTranslation(speedX, speedY, speedZ));
+
+            cannonBalls[i].applyFriction(totalSpeed*friction);
+            console.log("Velocities: " +  cannonBalls[i].speed.x  + " | " + cannonBalls[i].speed.y  + " | " + cannonBalls[i].speed.z  + " | ")
+            
+        }
+    }
+
+/*
+    for(i = 0; i < cannonBalls.length; i++) {
+               
         if(cannonBalls[i].isFalling(cannonBalls[i].position.x, positiveXLimit)) {
             var ballVector1 = cannonBalls[i].getMovement();
             cannonBalls[i].updateMovement(ballVector1.x, ballVector1.y-(9.8*delta), ballVector1.z);
         }
 
-        //Wall Colisions
-        /* TO DO? - Fazer com que elas façam bounce nas paredes de acordo com o angulo em que nelas batem */
 
         var wall = hasIntersectedWithWall(cannonBalls[i].position.x, cannonBalls[i].position.z, positiveXLimit, negativeXLimit, positiveZLimit, negativeZLimit)
         if(wall) {
@@ -410,8 +434,6 @@ function animate() {
                         ballVector2 = cannonBalls[j].getMovement();
 
                         if (cannonBalls[i].userData.collidedWithBallN != j || cannonBalls[j].userData.collidedWithBallN != i) {
-                            /* Making sure that the last colision of this ball i wasn't with this other ball j before */
-                            /* OR in case one of the balls is hitting the same ball it did before but that other ball bounced back from another one */
                             ballVector1.applyMatrix4(rotateInY(Math.PI));
                             ballVector2.applyMatrix4(rotateInY(Math.PI));
                             cannonBalls[i].canFall();
@@ -423,7 +445,6 @@ function animate() {
                         cannonBalls[i].updateMovement(ballVector1.x, ballVector1.y, ballVector1.z);
                         cannonBalls[j].updateMovement(ballVector2.x, ballVector2.y, ballVector2.z);
 
-                        /* We update what was the last ball that i and j collided with, in this case, each other */
                         cannonBalls[i].collidedWithBall(j);
                         cannonBalls[j].collidedWithBall(i);
                         break;
@@ -463,7 +484,7 @@ function animate() {
             }
             cannonBalls[i].applyFriction(friction*delta);
         }
-    }
+    }*/
 
     setTimeout( function() {
 

@@ -1,7 +1,7 @@
 'use strict'
 
 class CannonBall extends THREE.Object3D {
-    constructor(x, y, z, radius, maxSpeed, initialSpin, allAxesToggled) {
+    constructor(x, y, z, radius, maxSpeed, initialSpin, allAxesToggled, angle) {
         super();
 
         this.radius = radius;
@@ -13,18 +13,10 @@ class CannonBall extends THREE.Object3D {
 
         this.createCannonBall(x, y, z);
 
-        this.userData.movement = new THREE.Vector3( 0, 0, 0 );
+        this.speed = new THREE.Vector3( 0, 0, 0 );
+        this.angle = angle
         
-        this.userData.speedV = new THREE.Vector3( 0, 0, 0 );
-        this.userData.speedT = 0; 
-
-        this.userData.maxSpeed = maxSpeed;
-        this.userData.speed = 0;
-        this.userData.spin = initialSpin;
-        this.userData.collidedWithBallN;
-        this.userData.canFall = false;
-
-        this.userData.hitWall = 0;
+        
 
         if(allAxesToggled) {
             this.toggleAxes();
@@ -59,6 +51,62 @@ class CannonBall extends THREE.Object3D {
     }
 
     isMoving() {
+        if (this.speed.x != 0 || this.speed.y != 0 || this.speed.z != 0) {
+            return true;
+        }
+        return false;
+    }
+
+    applyFriction(friction) {
+        
+        if (this.speed.y < 0) {
+            this.speed.z = Math.min(this.speed.y + friction, 0)
+        }
+        if (this.speed.x < 0) {
+            this.speed.x = Math.min(this.speed.x + friction*Math.abs(Math.cos(this.angle)), 0)
+        }
+        if (this.speed.z < 0) {
+            this.speed.z = Math.min(this.speed.z + friction*Math.abs(Math.sin(this.angle)), 0)
+        }
+        if (this.speed.y > 0) {
+            this.speed.y = Math.max(this.speed.y - friction, 0)
+        }
+        if (this.speed.x > 0) {
+            this.speed.x = Math.max(this.speed.x - friction*Math.abs(Math.cos(this.angle)), 0)
+        }
+        if (this.speed.z > 0) {
+            this.speed.z = Math.max(this.speed.z - friction*Math.abs(Math.sin(this.angle)), 0)
+        }
+
+    }
+
+    calculateAngle() {
+
+        var totalSpeed = Math.sqrt(Math.pow(this.speed.x, 2) + Math.pow(this.speed.z, 2))
+        if (this.speed.x != 0) {
+            this.angle = Math.acos(this.speed.x/totalSpeed)
+        }
+        else if (this.speed.z != 0) {
+            this.angle = Math.acos(this.speed.z/totalSpeed)
+        }
+    }
+
+    spin() {
+        
+        var vector = new THREE.Vector3(-this.userData.movement.z, 0, -this.userData.movement.x);
+        vector.applyMatrix4(rotateInZ(-Math.PI));
+
+        var m = new THREE.Matrix4();
+        m.makeRotationAxis(vector.normalize(), this.userData.spin/10);
+
+        this.cannonBall.matrix.multiply(m);
+
+        this.cannonBall.rotation.setFromRotationMatrix(this.cannonBall.matrix);
+
+    }
+
+/*
+    isMoving() {
         if((this.userData.movement.x != 0 || this.userData.movement.y != 0 || this.userData.movement.z != 0) && this.userData.speed > 0) {
             return true;
         }
@@ -81,7 +129,7 @@ class CannonBall extends THREE.Object3D {
     applyFriction(friction) {
         this.userData.speed-=friction;
         if(this.userData.speed > 0) {
-            this.userData.spin = Math.sqrt(this.userData.speed/this.radius); //v = w*r (=) w=v/r -> angular velocity
+            this.userData.spin = Math.sqrt(this.userData.speed/this.radius); //v = w*r (=) w=v/r -> angular speed
         }
     }
 
@@ -104,20 +152,6 @@ class CannonBall extends THREE.Object3D {
         }
     }
 
-    spin() {
-        
-        var vector = new THREE.Vector3(-this.userData.movement.z, 0, -this.userData.movement.x);
-        vector.applyMatrix4(rotateInZ(-Math.PI));
-
-        var m = new THREE.Matrix4();
-        m.makeRotationAxis(vector.normalize(), this.userData.spin/10);
-
-        this.cannonBall.matrix.multiply(m);
-
-        this.cannonBall.quaternion.setFromRotationMatrix(this.cannonBall.matrix);
-
-    }
-
     canFall() { //Makes the ball able to fall once it goes over the edge of the floor again
         this.userData.canFall = true;
     }
@@ -128,8 +162,5 @@ class CannonBall extends THREE.Object3D {
         }
         return false;
     }
-
-    collidedWithBall(number) {
-        this.userData.collidedWithBallN = number;
-    }
+*/
 }
