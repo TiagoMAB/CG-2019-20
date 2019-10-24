@@ -87,7 +87,7 @@ class Cannon extends THREE.Object3D {
             cannonBalls.push(cannonBall);
             scene.add(cannonBall);
             numShots++;
-            this.timeout = 90
+            this.timeout = 30
         }
     }
 }

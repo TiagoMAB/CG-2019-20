@@ -101,7 +101,7 @@ class CannonBall extends THREE.Object3D {
     }
 
     spin() {
-        
+        /*
         var vector = new THREE.Vector3(-this.userData.movement.z, 0, -this.userData.movement.x);
         vector.applyMatrix4(rotateInZ(-Math.PI));
 
@@ -111,7 +111,7 @@ class CannonBall extends THREE.Object3D {
         this.cannonBall.matrix.multiply(m);
 
         this.cannonBall.quaternion.setFromRotationMatrix(this.cannonBall.matrix);
-
+*/
     }
 
     canFall() { //Makes the ball able to fall once it goes over the edge of the floor again
