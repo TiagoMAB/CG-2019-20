@@ -367,7 +367,7 @@ function animate() {
                 if(hasIntersectedWithBall(cannonBalls[i].position.x, cannonBalls[i].position.y, cannonBalls[i].position.z, cannonBalls[j].position.x, cannonBalls[j].position.y, cannonBalls[j].position.z, sphereRadius, sphereRadius)) {
                     var ballVector1 = new THREE.Vector3( 0, 0, 0 );
                     var ballVector2 = new THREE.Vector3( 0, 0, 0 );
-                    var angle1, angle2, phi, speed1, speed2, angleRes1, angleRes2;
+                    var angle1, angle2, phi, speed1, speed2, angleRes1, angleRes2, dz, dx;
                     if(cannonBalls[i].isMoving() && cannonBalls[j].isMoving()) {
                         ballVector1 = cannonBalls[i].getMovement();
                         ballVector2 = cannonBalls[j].getMovement();
@@ -375,30 +375,33 @@ function animate() {
                         if (cannonBalls[i].userData.collidedWithBallN != j || cannonBalls[j].userData.collidedWithBallN != i) {
                             /* Making sure that the last colision of this ball i wasn't with this other ball j before */
                             /* OR in case one of the balls is hitting the same ball it did before but that other ball bounced back from another one */
-                            angle1 = -cannonBalls[i].getAngle();
-                            angle2 = -cannonBalls[j].getAngle();
+                            angle1 = cannonBalls[i].getAngle();
+                            angle2 = cannonBalls[j].getAngle();
                             phi = Math.atan2(cannonBalls[j].position.z - cannonBalls[i].position.z, cannonBalls[j].position.x - cannonBalls[i].position.x);
-                            speed1 = cannonBalls[i].getSpeed();
-                            speed2 = cannonBalls[j].getSpeed();
+                            speed1 = Math.sqrt(Math.pow(ballVector1.x, 2) + Math.pow(ballVector1.z, 2))
+                            speed2 = Math.sqrt(Math.pow(ballVector2.x, 2) + Math.pow(ballVector2.z, 2))
+                            console.log(phi);
                             console.log(ballVector1.x, ballVector1.z, angle1, speed1);
                             console.log(ballVector2.x, ballVector2.z, angle2, speed2);
                             ballVector1.x = (2 * speed2 * Math.cos(angle2 - phi)) / 2 * Math.cos(phi) + speed1 * Math.sin(angle1 - phi) * Math.cos(phi + Math.PI/2);
                             ballVector1.z = (2 * speed2 * Math.cos(angle2 - phi)) / 2 * Math.sin(phi) + speed1 * Math.sin(angle1 - phi) * Math.sin(phi + Math.PI/2);
                             ballVector2.x = (2 * speed1 * Math.cos(angle1 - phi)) / 2 * Math.cos(phi) + speed2 * Math.sin(angle2 - phi) * Math.cos(phi + Math.PI/2);
                             ballVector2.z = (2 * speed1 * Math.cos(angle1 - phi)) / 2 * Math.sin(phi) + speed2 * Math.sin(angle2 - phi) * Math.sin(phi + Math.PI/2);
+                            // should be correct until here
                             console.log(ballVector1.x, ballVector1.z, ballVector2.x, ballVector2.z);
                             angleRes1 = angle1 - Math.atan2(ballVector1.z, ballVector1.x);
                             angleRes2 = angle2 - Math.atan2(ballVector2.z, ballVector2.x);
                             console.log("angleRes1: " + angleRes1)
                             console.log("angleRes2: " + angleRes2)
 
+                            //cannonBalls[i].updateSpeed(Math.sqrt(Math.pow(ballVector1.x, 2) + Math.pow(ballVector1.z, 2)));
+                            //cannonBalls[j].updateSpeed(Math.sqrt(Math.pow(ballVector2.x, 2) + Math.pow(ballVector2.z, 2)));
+
                             ballVector1.applyMatrix4(rotateInY(angleRes1));
                             ballVector2.applyMatrix4(rotateInY(angleRes2));
 
                             cannonBalls[i].canFall();
-                            cannonBalls[i].updateSpeed(Math.sqrt(Math.pow(ballVector1.x, 2) + Math.pow(ballVector1.z, 2)));
                             cannonBalls[j].canFall();
-                            cannonBalls[j].updateSpeed(Math.sqrt(Math.pow(ballVector2.x, 2) + Math.pow(ballVector2.z, 2)));
                         }
 
                         cannonBalls[i].updateMovement(ballVector1.x, ballVector1.y, ballVector1.z);
