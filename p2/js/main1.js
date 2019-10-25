@@ -11,7 +11,7 @@ var minAngle = -(Math.PI / 6), maxAngle = +(Math.PI / 6); //For cannon rotation.
 //Assumimos que a massa de todos os objetos é 1
 var cannonBalls = [];
 //arbitrary values that can be changed
-var N = 10, friction = 0.2, bounce = 1, sphereRadius = 2.5, maxBallSpeed=35, initialSpin = 0.5, wallThickness = 0.01, cannonLenght = 15, numShots = 0, allAxesToggled = false,
+var N = 5, friction = 0.2, bounce = 1, sphereRadius = 2.5, maxBallSpeed=35, initialSpin = 0.5, wallThickness = 0.01, cannonLenght = 15, numShots = 0, allAxesToggled = false,
     maxZCannon = 25, minZCannon = -25, positiveXLimit = 20.0, negativeXLimit = -40.0, positiveZLimit = 30.0, negativeZLimit = -30.0, wallHeight = 10, arenaOffset = 10;
     //The positive/negative X/Z Limits are to decide how big the arena (floor+fence) is
     //The max/min Z cannon decide where the side cannos will be
@@ -288,7 +288,7 @@ function handleCollision(ball1, ball2) {
     minDist = ball1.radius + ball2.radius
     
     if (distance <= minDist && ball1.position.y == ball1.radius && ball2.position.y == ball2.radius) {
-        console.log("X " + x + " |Y " + z + " distance " + distance + " min " + minDist)
+        //console.log("X " + x + " |Y " + z + " distance " + distance + " min " + minDist)
         
         calculateSpeed(ball1, ball2)
         ball1.canFall = 1
@@ -363,7 +363,7 @@ function animate() {
                 cannonBalls[i].spin();
             }
             cannonBalls[i].applyFriction(totalSpeed*friction);
-        //    console.log("Velocities: " +  cannonBalls[i].speed.x  + " | " + cannonBalls[i].speed.y  + " | " + cannonBalls[i].speed.z  + " | ")
+            //console.log("Velocities: " +  cannonBalls[i].speed.x  + " | " + cannonBalls[i].speed.y  + " | " + cannonBalls[i].speed.z  + " | ")
             
         }
 

@@ -56,7 +56,14 @@ class CannonBall extends THREE.Object3D {
         return false;
     }
 
-    applyFriction(friction) { //para corrigir
+    applyFriction(friction) {
+
+        /*  applyFriction will continuously decrease speed until it gets close to zero but never zero itself. 
+            To ensure that, when the ball effectively stops, the vector speed is reset, we have the following if*/
+        if(friction < 0.01) { 
+            this.setSpeed(0,0,0)
+            return;
+        }
         
         if (this.speed.x < 0) {
             this.speed.x = Math.min(this.speed.x + friction*Math.abs(Math.cos(this.angle)), 0)
@@ -80,8 +87,8 @@ class CannonBall extends THREE.Object3D {
 
     spin() {
         
-        var vector = new THREE.Vector3(this.speed.z, 0, this.speed.x);
-        vector.applyMatrix4(rotateInZ(Math.PI));
+        var vector = new THREE.Vector3(-this.speed.z, 0, -this.speed.x);
+        vector.applyMatrix4(rotateInZ(-Math.PI));
 
         var m = new THREE.Matrix4();
         m.makeRotationAxis(vector.normalize(), 0.5/10);
@@ -114,7 +121,7 @@ class CannonBall extends THREE.Object3D {
     
         var wall = this.hasIntersectedWithWall(positiveXLimit, negativeXLimit, positiveZLimit, negativeZLimit) 
         if (wall) {
-            console.log(this.angle)
+            //console.log("Hit wall with angle",this.angle)
             var angleRotation = this.angle
 
             switch (wall) {
@@ -123,11 +130,11 @@ class CannonBall extends THREE.Object3D {
                     break;
                 case 2:
                     if(angleRotation > 0) {
-                        console.log(2)
+                        //console.log(2)
                         angleRotation = Math.PI + 2*(Math.PI - angleRotation);
                     }
                     else {
-                        console.log(3)
+                        //console.log(3)
                         angleRotation = -angleRotation - (Math.PI + angleRotation);
                     }
                     break;
@@ -143,7 +150,7 @@ class CannonBall extends THREE.Object3D {
     }
 
     isFalling(maxX) {
-        console.log(x, maxX)
+        //console.log(x, maxX)
         if(this.position.x - this.radius/2 > maxX && this.canFall) {
             return this.canFall;
         }
@@ -156,62 +163,4 @@ class CannonBall extends THREE.Object3D {
         this.speed.z = z;
         
     }
-/*
-    isMoving() {
-        if((this.userData.movement.x != 0 || this.userData.movement.y != 0 || this.userData.movement.z != 0) && this.userData.speed > 0) {
-            return true;
-        }
-        this.userData.movement.applyMatrix4(makeScale(0));
-        return false;
-    }
-
-    getMovement() {
-        return this.userData.movement;
-    }
-
-    getSpeed() {
-        return this.userData.speed;
-    }
-
-    getAngle() {
-        return -Math.atan2(this.userData.movement.z, this.userData.movement.x)
-    }
-
-    applyFriction(friction) {
-        this.userData.speed-=friction;
-        if(this.userData.speed > 0) {
-            this.userData.spin = Math.sqrt(this.userData.speed/this.radius); //v = w*r (=) w=v/r -> angular speed
-        }
-    }
-
-    applyBounce(bounce) {
-        this.userData.speed*=bounce;
-    }
-
-    updateMovement(x, y, z) {    
-        this.userData.movement.x = x;
-        this.userData.movement.y = y;
-        this.userData.movement.z = z;
-    }
-
-    updateSpeed(speed) {
-        if(speed <= this.userData.maxSpeed) {
-            this.userData.speed = speed;
-        }
-        else {
-            this.userData.speed = this.userData.maxSpeed;
-        }
-    }
-
-    canFall() { //Makes the ball able to fall once it goes over the edge of the floor again
-        this.userData.canFall = true;
-    }
-
-    isFalling(x, maxX) {
-        if(x > maxX && this.userData.canFall) {
-            return this.userData.canFall;
-        }
-        return false;
-    }
-*/
 }

@@ -69,8 +69,8 @@ class Cannon extends THREE.Object3D {
 
             ball.speed.z = maxBallSpeed * Math.sin(this.userData.angle)
             ball.speed.x = - maxBallSpeed * Math.cos(this.userData.angle)
-            console.log(ball.calculateAngle())
-            console.log(" X: " + ball.speed.x + " Y" + ball.speed.z)
+            //console.log("angle:",ball.angle)
+            //console.log(" X: " + ball.speed.x + " Y" + ball.speed.z)
 
             this.timeout = 90;
 
@@ -93,37 +93,6 @@ class Cannon extends THREE.Object3D {
 
             numShots++;
             }
-
-        /*
-        if (this.timeout == 0) { 
-            var cannonBall;
-            var ballVector1 = new THREE.Vector3( 0, 0, 0 );
-
-            cannonBall = new CannonBall(0, 0, 0, sphereRadius, maxBallSpeed, initialSpin, allAxesToggled);
-        //    cannonBall.applyMatrix(makeTranslation(this.position.x, sphereRadius, this.position.z))
-
-            
-            ballVector1 = this.updateDirection(this.currentRotationValue());
-            ballVector1.applyMatrix4(makeScale(cannonLenght/2 + sphereRadius));
-            
-            cannonBall.applyMatrix(makeTranslation(this.position.x, ballVector1.y + sphereRadius, this.position.z)); //Move it to be in front of the cannon
-            cannonBall.updateMovement(ballVector1.x, ballVector1.y, ballVector1.z);
-            cannonBall.updateSpeed(maxBallSpeed);
-
-            if(numShots > 0) { //Resets the camera vector so that it doesn't generate conflicts
-                camera3.applyMatrix(makeTranslation(camera3Vector.x, camera3Vector.y, camera3Vector.z));
-            }
-
-            camera3Vector = ballVector1;
-            camera3.applyMatrix(makeTranslation(-camera3Vector.x, -camera3Vector.y, -camera3Vector.z));
-            cannonBall.add(camera3);
-            camera3.lookAt(cannonBall.getMovement());
-
-            cannonBalls.push(cannonBall);
-            scene.add(cannonBall);
-            numShots++;
-            this.timeout = 90
-        }*/
     }
 
     selected(flag) {
