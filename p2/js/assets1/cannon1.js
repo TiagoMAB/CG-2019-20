@@ -11,12 +11,11 @@ class Cannon extends THREE.Object3D {
 
         this.createCannon(x, y, z);
 
-        this.userData = { rotatePositive: false };
-        this.userData = { rotateNegtive: false };
-        this.userData = { shot: false };
-        this.userData.startingRotationAngle = 0;
-        this.userData.angle = 0;
-        this.userData.direction = new THREE.Vector3( -1, 0, 0 );
+        this.userData = { rotatePositive: false, rotateNegtive: false, shot: false, angle: 0, direction: new THREE.Vector3( -1, 0, 0 ), startingRotationAngle: 0};
+
+     //   this.userData.startingRotationAngle = 0;
+     //   this.userData.angle = 0;
+     //   this.userData.direction = new THREE.Vector3( -1, 0, 0 );
 
         this.timeout = 0
     }
@@ -52,43 +51,48 @@ class Cannon extends THREE.Object3D {
     currentRotationValue() {
         return this.userData.angle;
     }
-   
+
     updateDirection(angle) {
         var vector = this.userData.direction.clone();
         vector.applyMatrix4(rotateInY(angle));
         return vector;
     }
 
-    shootBall(initialBallSpin) {
+    shootBall() {
         
-        if (this.timeout == 0) { 
-            var cannonBall;
-            var ballVector1 = new THREE.Vector3( 0, 0, 0 );
+        if (this.timeout == 0) {
+            var ball;
 
-            cannonBall = new CannonBall(0, 0, 0, sphereRadius, maxBallSpeed, initialSpin, allAxesToggled);
-        //    cannonBall.applyMatrix(makeTranslation(this.position.x, sphereRadius, this.position.z))
-            ballVector1 = this.updateDirection(this.currentRotationValue());
-            var scale = cannonLenght/2 + sphereRadius;
-            ballVector1.applyMatrix4(makeScale(scale*0.5));
+            ball = new CannonBall(0, 0, 0, sphereRadius, maxBallSpeed, initialSpin, allAxesToggled, this.userData.angle);
             
-            cannonBall.applyMatrix(makeTranslation(ballVector1.x + this.position.x, ballVector1.y + sphereRadius, ballVector1.z + this.position.z)); //Move it to be in front of the cannon
-            cannonBall.updateMovement(ballVector1.x, ballVector1.y, ballVector1.z);
+            ball.applyMatrix(makeTranslation(this.position.x, sphereRadius, this.position.z));
+
+            ball.speed.z = maxBallSpeed * Math.sin(this.userData.angle)
+            ball.speed.x = - maxBallSpeed * Math.cos(this.userData.angle)
+            //console.log("angle:",ball.angle)
+            //console.log(" X: " + ball.speed.x + " Y" + ball.speed.z)
+
+            this.timeout = 90;
 
             if(numShots > 0) { //Resets the camera vector so that it doesn't generate conflicts
                 camera3.applyMatrix(makeTranslation(camera3Vector.x, camera3Vector.y, camera3Vector.z));
             }
 
+            var scale = cannonLenght/2 + sphereRadius;
+
             camera3Vector = this.updateDirection(this.currentRotationValue());
+            camera3.applyMatrix(rotateInY(this.userData.angle));
             camera3Vector.applyMatrix4(makeScale(scale));
             camera3.applyMatrix(makeTranslation(-camera3Vector.x, -camera3Vector.y, -camera3Vector.z));
-            cannonBall.add(camera3);
-            camera3.lookAt(cannonBall.getMovement());
+            
+            ball.add(camera3);
+            camera3.lookAt(ball.speed);
 
-            cannonBalls.push(cannonBall);
-            scene.add(cannonBall);
+            cannonBalls.push(ball);       //may want to send global variable through function
+            scene.add(ball);              //may want to send global variable through function
+
             numShots++;
-            this.timeout = 30
-        }
+            }
     }
 
     selected(flag) {

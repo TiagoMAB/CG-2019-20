@@ -6,7 +6,7 @@ class CannonBall extends THREE.Object3D {
 
         this.radius = radius;
         this.material = new THREE.MeshBasicMaterial( { color: 0x8b0000, wireframe: true });
-        this.geometry = new THREE.SphereGeometry(radius, 10, 10);
+        this.geometry = new THREE.SphereGeometry(radius, 20, 20);
 
         this.cannonBall = new THREE.Object3D();
         this.axes = new THREE.AxesHelper(10);
@@ -14,6 +14,14 @@ class CannonBall extends THREE.Object3D {
         this.createCannonBall(x, y, z);
 
         this.userData.movement = new THREE.Vector3( 0, 0, 0 );
+
+        
+        this.userData.speedV = new THREE.Vector3( 0, 0, 0 );
+        this.userData.speedT = 0; 
+
+        this.userData.maxSpeed = maxSpeed;
+        this.userData.speed = 0;
+
         this.userData.spin = initialSpin;
         this.userData.collidedWithBallN;
         this.userData.canFall = false;
@@ -85,7 +93,13 @@ class CannonBall extends THREE.Object3D {
         }
     }
 
-    updateMovement(x, y, z) {
+
+    applyBounce(bounce) {
+        this.userData.speed*=bounce;
+    }
+
+    updateMovement(x, y, z) {    
+
         this.userData.movement.x = x;
         this.userData.movement.y = y;
         this.userData.movement.z = z;
