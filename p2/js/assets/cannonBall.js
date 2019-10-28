@@ -1,7 +1,7 @@
 'use strict'
 
 class CannonBall extends THREE.Object3D {
-    constructor(x, y, z, radius, maxSpeed, initialSpin, allAxesToggled) {
+    constructor(x, y, z, radius, initialSpin, allAxesToggled) {
         super();
 
         this.radius = radius;
@@ -14,17 +14,17 @@ class CannonBall extends THREE.Object3D {
         this.createCannonBall(x, y, z);
 
         this.userData.movement = new THREE.Vector3( 0, 0, 0 );
+
         
         this.userData.speedV = new THREE.Vector3( 0, 0, 0 );
         this.userData.speedT = 0; 
 
         this.userData.maxSpeed = maxSpeed;
         this.userData.speed = 0;
+
         this.userData.spin = initialSpin;
         this.userData.collidedWithBallN;
         this.userData.canFall = false;
-
-        this.userData.hitWall = 0;
 
         if(allAxesToggled) {
             this.toggleAxes();
@@ -59,7 +59,7 @@ class CannonBall extends THREE.Object3D {
     }
 
     isMoving() {
-        if((this.userData.movement.x != 0 || this.userData.movement.y != 0 || this.userData.movement.z != 0) && this.userData.speed > 0) {
+        if((this.userData.movement.x != 0 || this.userData.movement.y != 0 || this.userData.movement.z != 0)) {
             return true;
         }
         this.userData.movement.applyMatrix4(makeScale(0));
@@ -71,7 +71,7 @@ class CannonBall extends THREE.Object3D {
     }
 
     getSpeed() {
-        return this.userData.speed;
+        return Math.sqrt(Math.pow(this.userData.movement.x, 2) + Math.pow(this.userData.movement.z, 2));
     }
 
     getAngle() {
@@ -79,33 +79,38 @@ class CannonBall extends THREE.Object3D {
     }
 
     applyFriction(friction) {
-        this.userData.speed-=friction;
-        if(this.userData.speed > 0) {
-            this.userData.spin = Math.sqrt(this.userData.speed/this.radius); //v = w*r (=) w=v/r -> angular velocity
+        if(this.getSpeed() > 0) {
+            var oldSpeed = this.getSpeed();
+            /*  applyFriction will continuously decrease speed until it gets close to zero but never zero itself. 
+                To ensure that, when the ball effectively stops, the vector movement is reset, we have the following if*/
+            if(oldSpeed < 0.001) { 
+                this.updateMovement(0, 0, 0);
+                return;
+            }
+            var newSpeed = oldSpeed - friction;
+            this.updateSpeed(((newSpeed*100)/oldSpeed)/100);
+            this.userData.spin = Math.sqrt(this.getSpeed()/this.radius); //v = w*r (=) w=v/r -> angular velocity
         }
     }
+
 
     applyBounce(bounce) {
         this.userData.speed*=bounce;
     }
 
     updateMovement(x, y, z) {    
+
         this.userData.movement.x = x;
         this.userData.movement.y = y;
         this.userData.movement.z = z;
     }
 
     updateSpeed(speed) {
-        if(speed <= this.userData.maxSpeed) {
-            this.userData.speed = speed;
-        }
-        else {
-            this.userData.speed = this.userData.maxSpeed;
-        }
+        this.userData.movement.x *= speed;
+        this.userData.movement.z *= speed;
     }
 
     spin() {
-        
         var vector = new THREE.Vector3(-this.userData.movement.z, 0, -this.userData.movement.x);
         vector.applyMatrix4(rotateInZ(-Math.PI));
 
@@ -114,8 +119,7 @@ class CannonBall extends THREE.Object3D {
 
         this.cannonBall.matrix.multiply(m);
 
-        this.cannonBall.quaternion.setFromRotationMatrix(this.cannonBall.matrix);
-
+        this.cannonBall.rotation.setFromRotationMatrix(this.cannonBall.matrix);
     }
 
     canFall() { //Makes the ball able to fall once it goes over the edge of the floor again
