@@ -1,7 +1,9 @@
 var camera, scene, renderer, clock;
 var camera1, camera2;
-var portrait, sculpture, stand, gallery;
+var portrait, sculpture, gallery;
+var stand, standMaterialBasic, standMaterialLambert, standMaterialPhong;
 var light1, light2, light3, light4;
+var usingLambert = true, calculateIlumination = true;
 
 
 function render() {
@@ -15,8 +17,7 @@ function createCamera1() {
 
     camera1 = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
 
-    camera1.position.set(0, 0, 70);
-    //camera1.position.set(20, 20, 20);
+    camera1.position.set(0, 10, 70);
     camera1.lookAt(scene.position);
 }
 
@@ -41,8 +42,20 @@ function createGallery() {
 
 function createSculpture() {
 
-    sculpture = new Sculpture(40,0,0)
+    sculpture = new Sculpture(40,0,10)
     scene.add(sculpture);
+
+    stand = new THREE.Object3D();
+    standMaterialBasic = new THREE.MeshBasicMaterial( { color: 0xdaa520 } )
+    standMaterialLambert = new THREE.MeshLambertMaterial( { color: 0xdaa520 } )
+    standMaterialPhong = new THREE.MeshPhongMaterial( { color: 0xdaa520 } )
+
+    var cylinder = new THREE.Mesh(new THREE.CylinderGeometry(5, 5, 30, 16), standMaterialLambert);
+    cylinder.position.set(40,-23,10)
+
+    stand.add(cylinder)
+    scene.add(stand)
+    
 }
 
 function createPortrait() {
@@ -53,17 +66,21 @@ function createPortrait() {
 
 function createLights() {
 
-    //light1 = new Light(0,-10,0,-Math.PI/3);
-    //scene.add(light1);
+    light1 = new Light(-30,5,0,Math.PI/3);
+    light1.power();
+    scene.add(light1);
 
-    /*light2 = new Light(0,0,0,angle);
+    light2 = new Light(-15,10,5,Math.PI/3);
+    light2.power();
     scene.add(light2);
 
-    light3 = new Light(0,0,0,angle);
+    light3 = new Light(15,10,5,Math.PI/3);
+    light3.power();
     scene.add(light3);
 
-    light4 = new Light(0,0,0,angle);
-    scene.add(light4);*/
+    light4 = new Light(30,5,0,Math.PI/3);
+    light4.power();
+    scene.add(light4);
 
 }
 
@@ -82,6 +99,45 @@ function createScene() {
     createLights();
 }
 
+function alternateMaterials() {
+    if(usingLambert) {
+        gallery.alternateMaterials(usingLambert);
+        portrait.alternateMaterials(usingLambert);
+        sculpture.alternateMaterials(usingLambert);
+        stand.children[0].material = standMaterialPhong;
+        usingLambert = false;
+    }
+    else {
+        gallery.alternateMaterials(usingLambert);
+        portrait.alternateMaterials(usingLambert);
+        sculpture.alternateMaterials(usingLambert);
+        stand.children[0].material = standMaterialLambert;
+        usingLambert = true;
+    }
+}
+
+function toggleIluminationCalculation() {
+    if(calculateIlumination) {
+        gallery.toggleIluminationCalculation(calculateIlumination,usingLambert);
+        portrait.toggleIluminationCalculation(calculateIlumination,usingLambert);
+        sculpture.toggleIluminationCalculation(calculateIlumination,usingLambert);
+        stand.children[0].material = standMaterialBasic;
+        calculateIlumination = false;
+    }
+    else {
+        gallery.toggleIluminationCalculation(calculateIlumination,usingLambert);
+        portrait.toggleIluminationCalculation(calculateIlumination,usingLambert);
+        sculpture.toggleIluminationCalculation(calculateIlumination,usingLambert);
+        if(usingLambert) {
+            stand.children[0].material = standMaterialLambert;
+        }
+        else {
+            stand.children[0].material = standMaterialPhong;
+        }
+        calculateIlumination = true;
+    }
+}
+
 function onResize() {
     'use strict';
 
@@ -98,6 +154,22 @@ function onKeyDown(e) {
 
     switch (e.keyCode) {
 
+        /*  Alternate between Lambert & Phong   */
+        case 69: //e
+            alternateMaterials()
+            break; 
+        
+
+        /*  Toggle Global Light */
+        case 81: //q
+            break;
+        
+
+        /*  Toggle Ilumination Calculation  */
+        case 87: //w
+            toggleIluminationCalculation();
+            break; 
+            
     }
 }
 
@@ -114,7 +186,25 @@ function onKeyPress(e) {
 
     switch (e.keyCode) {
 
-        /* Camera */
+        /*  Lights  */
+        case 49: //1
+            light1.power();
+            break;
+
+        case 50: //2
+            light2.power();
+            break;
+            
+        case 51: //3
+            light3.power();
+            break;
+
+        case 52: //4
+            light4.power();
+            break;
+        
+        
+        /*  Camera  */
         case 53: //5
             camera = camera1;
             break;
