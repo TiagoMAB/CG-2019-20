@@ -4,7 +4,7 @@ class Portrait extends THREE.Object3D {
     constructor(x, y, z) {
         super();
 
-        this.materialBackground = new THREE.MeshBasicMaterial( { color: 0xa9a9a9 });
+        this.materialBackground = new THREE.MeshBasicMaterial( { color: 0x808080 });
         this.materialSquare = new THREE.MeshBasicMaterial( { color: 0x000000 });
         this.materialCircle = new THREE.MeshBasicMaterial( { color: 0xffffff });
         this.materialFrame = new THREE.MeshBasicMaterial( { color: 0xdaa520 });
@@ -26,15 +26,15 @@ class Portrait extends THREE.Object3D {
             height = distanceY + 2*(distanceY - radius) + (columns)*(squareSides + distanceY);
         
         /* Generate Squares */
-        background = new THREE.Mesh(new THREE.PlaneGeometry(width, height), this.materialBackground);
+        background = new THREE.Mesh(new THREE.BoxGeometry(width, height, 1), this.materialBackground);
         background.position.set(x,y,z);
         this.portrait.add(background);
         xSquare = x - width/2 + squareSides/2 + distanceX + (distanceX - radius);
         for(var i = 0; i < rows; i++) {
             ySquare = y - height/2 + squareSides/2 + distanceY + (distanceY - radius);
             for(var j = 0; j < columns; j++) {
-                square = new THREE.Mesh(new THREE.PlaneGeometry(squareSides,squareSides), this.materialSquare);
-                square.position.set(xSquare, ySquare, z);
+                square = new THREE.Mesh(new THREE.BoxGeometry(squareSides, squareSides, squareSides), this.materialSquare);
+                square.position.set(xSquare, ySquare, z + squareSides);
                 this.portrait.add(square);
                 ySquare+=squareSides + distanceY;
             }
@@ -46,8 +46,9 @@ class Portrait extends THREE.Object3D {
         for(var i = 0; i < rows + 1; i++) {
             yCircle = y - height/2 + distanceY/2 + (distanceY - radius);
             for(var j = 0; j < columns + 1; j++) {
-                circle = new THREE.Mesh(new THREE.CircleGeometry(radius, 32), this.materialCircle);
-                circle.position.set(xCircle, yCircle, z);
+                circle = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, squareSides, 16), this.materialCircle);
+                circle.position.set(xCircle, yCircle, z + squareSides);
+                circle.rotation.x = Math.PI/2
                 this.portrait.add(circle);
                 yCircle+=squareSides + distanceY;
             }

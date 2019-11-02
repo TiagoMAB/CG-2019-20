@@ -1,6 +1,7 @@
 var camera, scene, renderer, clock;
 var camera1, camera2;
-var portrait, sculpture, stand;
+var portrait, sculpture, stand, gallery;
+var light1, light2, light3, light4;
 
 
 function render() {
@@ -14,7 +15,8 @@ function createCamera1() {
 
     camera1 = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
 
-    camera1.position.set(0, 0, 60);
+    camera1.position.set(0, 0, 70);
+    //camera1.position.set(20, 20, 20);
     camera1.lookAt(scene.position);
 }
 
@@ -31,12 +33,38 @@ function createCamera() {
     camera = camera1;
 }
 
+function createGallery() {
+
+    gallery = new Gallery(0,0,0)
+    scene.add(gallery)
+}
+
 function createSculpture() {
+
+    sculpture = new Sculpture(40,0,0)
+    scene.add(sculpture);
 }
 
 function createPortrait() {
+
     portrait = new Portrait(-40,0,0);
     scene.add(portrait);
+}
+
+function createLights() {
+
+    //light1 = new Light(0,-10,0,-Math.PI/3);
+    //scene.add(light1);
+
+    /*light2 = new Light(0,0,0,angle);
+    scene.add(light2);
+
+    light3 = new Light(0,0,0,angle);
+    scene.add(light3);
+
+    light4 = new Light(0,0,0,angle);
+    scene.add(light4);*/
+
 }
 
 function createScene() {
@@ -48,8 +76,10 @@ function createScene() {
 
     scene.add(new THREE.AxesHelper(10));
 
+    createGallery();
     createSculpture();
     createPortrait();
+    createLights();
 }
 
 function onResize() {
@@ -85,11 +115,11 @@ function onKeyPress(e) {
     switch (e.keyCode) {
 
         /* Camera */
-        case 49: //1
+        case 53: //5
             camera = camera1;
             break;
 
-        case 50: //2
+        case 54: //6
             camera = camera2;
             break;
 
