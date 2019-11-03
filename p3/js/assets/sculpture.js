@@ -4,13 +4,14 @@ class Sculpture extends THREE.Object3D {
     constructor(x, y, z) {
         super();
 
-        this.materialBasic = new THREE.MeshBasicMaterial( { color: 0x00008b} );
+        this.materialBasic = new THREE.MeshBasicMaterial( { color: 0x00008b } );
         this.materialLambert = new THREE.MeshLambertMaterial( { color: 0x00008b } );
         this.materialPhong = new THREE.MeshPhongMaterial( { color: 0x00008b } );
 
         this.sculpture = new THREE.Object3D();
 
         this.createSculpture(x,y,z);
+        this.sculpture.castShadow = true;
 
     }
 
@@ -45,6 +46,8 @@ class Sculpture extends THREE.Object3D {
         var sculpture = new THREE.Mesh(geometry, this.materialLambert);
         sculpture.scale.set(5,5,5)
         sculpture.position.set(x,y,z)
+        sculpture.receiveShadow = true;
+        sculpture.castShadow = true;
 
         this.sculpture.add(sculpture);
         

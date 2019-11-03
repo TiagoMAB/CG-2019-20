@@ -39,6 +39,8 @@ class Portrait extends THREE.Object3D {
         /* Generate Squares */
         background = new THREE.Mesh(new THREE.BoxGeometry(width, height, 1), this.materialBackgroundLambert);
         background.position.set(x,y,z);
+        background.receiveShadow = true;
+        background.castShadow = true;
         this.portrait.add(background);
         xSquare = x - width/2 + squareSides/2 + distanceX + (distanceX - radius);
         for(var i = 0; i < rows; i++) {
@@ -46,6 +48,8 @@ class Portrait extends THREE.Object3D {
             for(var j = 0; j < columns; j++) {
                 square = new THREE.Mesh(new THREE.BoxGeometry(squareSides, squareSides, squareSides), this.materialSquareLambert);
                 square.position.set(xSquare, ySquare, z + squareSides);
+                square.receiveShadow = true;
+                square.castShadow = true;
                 this.portrait.add(square);
                 this.numSquares++;
                 ySquare+=squareSides + distanceY;
@@ -61,6 +65,8 @@ class Portrait extends THREE.Object3D {
                 circle = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, squareSides, 16), this.materialCircleLambert);
                 circle.position.set(xCircle, yCircle, z + squareSides);
                 circle.rotation.x = Math.PI/2
+                circle.receiveShadow = true;
+                circle.castShadow = true;
                 this.portrait.add(circle);
                 this.numCircles++;
                 yCircle+=squareSides + distanceY;
@@ -70,6 +76,8 @@ class Portrait extends THREE.Object3D {
         
         frame = new THREE.Mesh(new THREE.BoxGeometry(width+distanceX*4, height+distanceY*4, 1), this.materialFrameLambert)
         frame.position.set(x, y, z-1);
+        frame.receiveShadow = true;
+        frame.castShadow = true;
         this.portrait.add(frame);
 
         this.add(this.portrait);

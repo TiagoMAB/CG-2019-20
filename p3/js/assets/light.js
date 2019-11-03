@@ -29,14 +29,14 @@ class Light extends THREE.Object3D {
 
         cone.add(this.spotLight);
         this.spotLight.angle = Math.PI/4;
-        this.spotLight.target = cone
-        //this.spotLight.castShadow = true
+        this.spotLight.target = cone;
+        this.spotLight.castShadow = true;
 
         this.light.position.set(x,y+10,z+30);
         this.light.rotation.x = angle;
         
-        var spotter = new THREE.SpotLightHelper( this.spotLight );
-        this.add(spotter);
+        //var spotter = new THREE.SpotLightHelper( this.spotLight );
+        //this.add(spotter);
 
         this.add(this.light);
 
@@ -44,7 +44,7 @@ class Light extends THREE.Object3D {
 
     power() {
         if(this.on) {
-            this.spotLight.power = 0 * Math.PI;
+            this.spotLight.power = 0;
             this.on = false;
         }
         else {

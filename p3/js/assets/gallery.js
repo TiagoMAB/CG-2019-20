@@ -24,9 +24,11 @@ class Gallery extends THREE.Object3D {
         floor = new THREE.Mesh(new THREE.BoxGeometry(500, 100, 1), this.materialFloorLambert);
         floor.position.set(x, y-27.5, z);
         floor.rotation.x = Math.PI/2;
+        floor.receiveShadow = true;
 
         wall = new THREE.Mesh(new THREE.BoxGeometry(300, 100, 1), this.materialWallLambert);
         wall.position.set(x, y, z-2);
+        wall.receiveShadow = true;
 
         this.gallery.add(floor);
         this.gallery.add(wall);

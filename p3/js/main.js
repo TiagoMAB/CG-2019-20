@@ -2,14 +2,15 @@ var camera, scene, renderer, clock;
 var camera1, camera2;
 var portrait, sculpture, gallery;
 var stand, standMaterialBasic, standMaterialLambert, standMaterialPhong;
-var light1, light2, light3, light4;
+var light1, light2, light3, light4, directionalLight;
 var usingLambert = true, calculateIlumination = true;
 
 
 function render() {
     'use strict';
-    
+
     renderer.render(scene, camera);
+    
 }
 
 function createCamera1() {
@@ -42,7 +43,7 @@ function createGallery() {
 
 function createSculpture() {
 
-    sculpture = new Sculpture(40,0,10)
+    sculpture = new Sculpture(40,0,20)
     scene.add(sculpture);
 
     stand = new THREE.Object3D();
@@ -51,8 +52,10 @@ function createSculpture() {
     standMaterialPhong = new THREE.MeshPhongMaterial( { color: 0xdaa520 } )
 
     var cylinder = new THREE.Mesh(new THREE.CylinderGeometry(5, 5, 30, 16), standMaterialLambert);
-    cylinder.position.set(40,-23,10)
+    cylinder.position.set(40,-23,20)
 
+    cylinder.castShadow = true;
+    cylinder.recieveShadow = true;
     stand.add(cylinder)
     scene.add(stand)
     
@@ -81,6 +84,11 @@ function createLights() {
     light4 = new Light(30,5,0,Math.PI/3);
     light4.power();
     scene.add(light4);
+
+    directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+    //directionalLight.castShadow = true;
+
+    scene.add( directionalLight );
 
 }
 
@@ -158,18 +166,21 @@ function onKeyDown(e) {
         case 69: //e
             alternateMaterials()
             break; 
-        
-
-        /*  Toggle Global Light */
-        case 81: //q
-            break;
-        
 
         /*  Toggle Ilumination Calculation  */
         case 87: //w
             toggleIluminationCalculation();
             break; 
             
+        /*  Toggle Directionl Light */
+        case 81: //q
+            if(directionalLight.intensity) {
+                directionalLight.intensity = 0;
+            }
+            else {
+                directionalLight.intensity = 0.5;
+            }
+            break;
     }
 }
 
@@ -213,6 +224,9 @@ function onKeyPress(e) {
             camera = camera2;
             break;
 
+
+        
+
     }
 }
 
@@ -236,6 +250,9 @@ function init() {
     renderer = new THREE.WebGLRenderer({ antialias: true });
 
     renderer.setSize(window.innerWidth, window.innerHeight);
+
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.soft = true;
 
     document.body.appendChild(renderer.domElement);
 
@@ -337,8 +354,8 @@ function init() {
     spotter = new THREE.SpotLightHelper( spotLight);
     scene.add( spotter);
     
-    var ambientLight = new THREE.AmbientLight( 0x777777 ); 
-    scene.add( ambientLight );
+    var directionalLight = new THREE.directionalLight( 0x777777 ); 
+    scene.add( directionalLight );
             
     document.body.appendChild(renderer.domElement);
     window.addEventListener("resize", resizeCamera);
