@@ -11,6 +11,7 @@ class Sculpture extends THREE.Object3D {
         this.sculpture = new THREE.Object3D();
 
         this.createSculpture(x,y,z);
+        this.sculpture.receiveShadow = true;
         this.sculpture.castShadow = true;
 
     }

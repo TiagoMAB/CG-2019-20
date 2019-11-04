@@ -4,7 +4,7 @@ class Light extends THREE.Object3D {
     constructor(x, y, z, angle) {
         super();
 
-        this.material = new THREE.MeshBasicMaterial( { color: 0x808080 } );
+        this.material = new THREE.MeshBasicMaterial( { color: 0xD2691E } );
 
         this.light = new THREE.Object3D();
         this.spotLight = new THREE.SpotLight( 0xffffff, 1 )
@@ -46,10 +46,12 @@ class Light extends THREE.Object3D {
         if(this.on) {
             this.spotLight.power = 0;
             this.on = false;
+            this.light.visible = false;
         }
         else {
             this.spotLight.power = 1 * Math.PI;
             this.on = true;
+            this.light.visible = true;
         }
     }
 

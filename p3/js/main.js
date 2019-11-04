@@ -10,6 +10,9 @@ function render() {
     'use strict';
 
     renderer.render(scene, camera);
+
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.soft = true;
     
 }
 
@@ -18,7 +21,7 @@ function createCamera1() {
 
     camera1 = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
 
-    camera1.position.set(0, 10, 70);
+    camera1.position.set(0, 10, 80);
     camera1.lookAt(scene.position);
 }
 
@@ -85,10 +88,13 @@ function createLights() {
     light4.power();
     scene.add(light4);
 
-    directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
-    //directionalLight.castShadow = true;
+    directionalLight = new THREE.DirectionalLight( 0xffffff, 0.3 );
+    directionalLight.position.set(0, 30, 70)
+    directionalLight.target.position.set(0,0,0)
+    directionalLight.castShadow = true;
 
     scene.add( directionalLight );
+    scene.add( directionalLight.target );
 
 }
 
@@ -182,6 +188,7 @@ function onKeyDown(e) {
             }
             break;
     }
+    render();
 }
 
 function onKeyUp(e) {
@@ -228,6 +235,7 @@ function onKeyPress(e) {
         
 
     }
+    render();
 }
 
 function animate() {
@@ -251,9 +259,6 @@ function init() {
 
     renderer.setSize(window.innerWidth, window.innerHeight);
 
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.soft = true;
-
     document.body.appendChild(renderer.domElement);
 
     createScene();
@@ -265,7 +270,8 @@ function init() {
     window.addEventListener("resize", onResize);
     window.addEventListener("keydown", onKeyDown);
     window.addEventListener("keyup", onKeyUp);   
-    window.addEventListener("keypress", onKeyPress);    
+    window.addEventListener("keypress", onKeyPress);   
+    
 }
 
 /*
