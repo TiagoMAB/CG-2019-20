@@ -19,32 +19,57 @@ class Sculpture extends THREE.Object3D {
     createSculpture(x,y,z) {
         //  Geometry
         var goldenRatio = (1 + Math.sqrt(5))/2
-        var deformityFactor = 1.34
+        var deformityFactor = 1.43
         var geometry = new THREE.Geometry();
-        var icosahedron =  new THREE.IcosahedronGeometry(1.9);
-
+        
         //  Vertices
         /*  By observing how icosahedron.vertices is organized, I recreated the vertices in their 
             correct position while also altering them so that no regular triangles can be found */
-        geometry.vertices.push( new THREE.Vector3( -goldenRatio, 0, 1*deformityFactor));
-        geometry.vertices.push( new THREE.Vector3( 0, 1, goldenRatio));
-        geometry.vertices.push( new THREE.Vector3( -1, goldenRatio, 0));
-        geometry.vertices.push( new THREE.Vector3( 1*deformityFactor, goldenRatio, 0));
-        geometry.vertices.push( new THREE.Vector3( 0, 1, -goldenRatio));
-        geometry.vertices.push( new THREE.Vector3( -goldenRatio, 0, -1));
-        geometry.vertices.push( new THREE.Vector3( goldenRatio, 0, 1*deformityFactor));
-        geometry.vertices.push( new THREE.Vector3( 0, -1*deformityFactor, goldenRatio));
-        geometry.vertices.push( new THREE.Vector3( -1, -goldenRatio, 0));
-        geometry.vertices.push( new THREE.Vector3( 0, -1*deformityFactor, -goldenRatio));
-        geometry.vertices.push( new THREE.Vector3( goldenRatio, 0, -1));
-        geometry.vertices.push( new THREE.Vector3( 1, -goldenRatio, 0));
+         
+        geometry.vertices.push(    new THREE.Vector3( -goldenRatio, 0, 1*deformityFactor),
+            new THREE.Vector3( 0, 1, goldenRatio),
+            new THREE.Vector3( -1, goldenRatio, 0),
+            new THREE.Vector3( 1*deformityFactor, goldenRatio, 0),
+            new THREE.Vector3( 0, 1, -goldenRatio),
+            new THREE.Vector3( -goldenRatio, 0, -1),
+            new THREE.Vector3( goldenRatio, 0, 1*deformityFactor),
+            new THREE.Vector3( 0, -1*deformityFactor, goldenRatio),
+            new THREE.Vector3( -1, -goldenRatio, 0),
+            new THREE.Vector3( 0, -1*deformityFactor, -goldenRatio),
+            new THREE.Vector3( goldenRatio, 0, -1),
+            new THREE.Vector3( 1, -goldenRatio, 0),
+        )
 
         //  Faces
         /*  Since the vertices are similar and in the same position within the vertices array, we
             can re-use icosahedron.faces in order to generate the new object's faces */
-        geometry.faces = icosahedron.faces;
- 
+        geometry.faces.push(
+            new THREE.Face3(0,1,2),
+            new THREE.Face3(1,3,2),
+            new THREE.Face3(3,4,2),
+            new THREE.Face3(4,5,2),
+            new THREE.Face3(5,0,2),
+            new THREE.Face3(1,6,3),
+            new THREE.Face3(0,7,1),
+            new THREE.Face3(5,8,0),
+            new THREE.Face3(4,9,5),
+            new THREE.Face3(3,10,4),
+            new THREE.Face3(6,7,11),
+            new THREE.Face3(7,8,11),
+            new THREE.Face3(8,9,11),
+            new THREE.Face3(9,10,11),
+            new THREE.Face3(10,6,11),
+            new THREE.Face3(6,1,7),
+            new THREE.Face3(7,0,8),
+            new THREE.Face3(8,5,9),
+            new THREE.Face3(9,4,10),
+            new THREE.Face3(10,3,6),
+        )
+
         var sculpture = new THREE.Mesh(geometry, this.materialLambert);
+        geometry.computeFaceNormals()
+        geometry.computeVertexNormals()
+        geometry.faces[ 0].color = geometry.faces[ 1].color = new THREE.Color('red');
         sculpture.scale.set(5,5,5)
         sculpture.position.set(x,y,z)
         sculpture.receiveShadow = true;
