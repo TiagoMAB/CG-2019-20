@@ -21,7 +21,7 @@ function createCamera1() {
 
     camera1 = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
 
-    camera1.position.set(0, 10, 80);
+    camera1.position.set(0, 10, 120);
     camera1.lookAt(scene.position);
 }
 
@@ -88,13 +88,13 @@ function createLights() {
     light4.power();
     scene.add(light4);
 
-    directionalLight = new THREE.DirectionalLight( 0xffffff, 0.3 );
-    directionalLight.position.set(0, 30, 70)
-    directionalLight.target.position.set(0,0,0)
-    directionalLight.castShadow = true;
+    directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
+    directionalLight.position.set(0, 1, 1)
+    //directionalLight.target.position.set(0,0,0)
+    //directionalLight.castShadow = true;
 
     scene.add( directionalLight );
-    scene.add( directionalLight.target );
+    //scene.add( directionalLight.target );
 
 }
 
@@ -171,6 +171,7 @@ function onKeyDown(e) {
         /*  Alternate between Lambert & Phong   */
         case 69: //e
             alternateMaterials()
+            
             break; 
 
         /*  Toggle Ilumination Calculation  */
@@ -184,7 +185,7 @@ function onKeyDown(e) {
                 directionalLight.intensity = 0;
             }
             else {
-                directionalLight.intensity = 0.5;
+                directionalLight.intensity = 1;
             }
             break;
     }

@@ -69,7 +69,6 @@ class Sculpture extends THREE.Object3D {
         var sculpture = new THREE.Mesh(geometry, this.materialLambert);
         geometry.computeFaceNormals()
         geometry.computeVertexNormals()
-        geometry.faces[ 0].color = geometry.faces[ 1].color = new THREE.Color('red');
         sculpture.scale.set(5,5,5)
         sculpture.position.set(x,y,z)
         sculpture.receiveShadow = true;

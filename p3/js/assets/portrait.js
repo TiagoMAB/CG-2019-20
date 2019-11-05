@@ -40,14 +40,13 @@ class Portrait extends THREE.Object3D {
         background = new THREE.Mesh(new THREE.BoxGeometry(width, height, 1), this.materialBackgroundLambert);
         background.position.set(x,y,z);
         background.receiveShadow = true;
-        background.castShadow = true;
         this.portrait.add(background);
         xSquare = x - width/2 + squareSides/2 + distanceX + (distanceX - radius);
         for(var i = 0; i < rows; i++) {
             ySquare = y - height/2 + squareSides/2 + distanceY + (distanceY - radius);
             for(var j = 0; j < columns; j++) {
-                square = new THREE.Mesh(new THREE.BoxGeometry(squareSides, squareSides, squareSides), this.materialSquareLambert);
-                square.position.set(xSquare, ySquare, z + squareSides);
+                square = new THREE.Mesh(new THREE.BoxGeometry(squareSides, squareSides, 0.2), this.materialSquareLambert);
+                square.position.set(xSquare, ySquare, z + 0.6);
                 square.receiveShadow = true;
                 square.castShadow = true;
                 this.portrait.add(square);
@@ -62,8 +61,8 @@ class Portrait extends THREE.Object3D {
         for(var i = 0; i < rows + 1; i++) {
             yCircle = y - height/2 + distanceY/2 + (distanceY - radius);
             for(var j = 0; j < columns + 1; j++) {
-                circle = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, squareSides, 16), this.materialCircleLambert);
-                circle.position.set(xCircle, yCircle, z + squareSides);
+                circle = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, 0.2, 16), this.materialCircleLambert);
+                circle.position.set(xCircle, yCircle, z + 0.6);
                 circle.rotation.x = Math.PI/2
                 circle.receiveShadow = true;
                 circle.castShadow = true;
@@ -74,11 +73,11 @@ class Portrait extends THREE.Object3D {
             xCircle+=squareSides + distanceX;
         }
         
-        frame = new THREE.Mesh(new THREE.BoxGeometry(width+distanceX*4, height+distanceY*4, 1), this.materialFrameLambert)
-        frame.position.set(x, y, z-1);
-        frame.receiveShadow = true;
-        frame.castShadow = true;
-        this.portrait.add(frame);
+       // frame = new THREE.Mesh(new THREE.BoxGeometry(width+distanceX*4, height+distanceY*4, 1), this.materialFrameLambert)
+        //frame.position.set(x, y, z-1);
+        //frame.receiveShadow = true;
+        //frame.castShadow = true;
+        //this.portrait.add(frame);
 
         this.add(this.portrait);
     }
@@ -96,7 +95,7 @@ class Portrait extends THREE.Object3D {
             while(i < limit) {
                 this.portrait.children[i++].material = this.materialCirclePhong;
             }
-            this.portrait.children[i].material = this.materialFramePhong;
+            //this.portrait.children[i].material = this.materialFramePhong;
         }
         else {
             i = 0;
@@ -109,7 +108,7 @@ class Portrait extends THREE.Object3D {
             while(i < limit) {
                 this.portrait.children[i++].material = this.materialCircleLambert;
             }
-            this.portrait.children[i].material = this.materialFrameLambert;
+            //this.portrait.children[i].material = this.materialFrameLambert;
         }
 
     }
@@ -127,7 +126,7 @@ class Portrait extends THREE.Object3D {
             while(i < limit) {
                 this.portrait.children[i++].material = this.materialCircleBasic;
             }
-            this.portrait.children[i].material = this.materialFrameBasic;
+            //this.portrait.children[i].material = this.materialFrameBasic;
         }
         else {
             if(usingLambert) {
@@ -141,7 +140,7 @@ class Portrait extends THREE.Object3D {
                 while(i < limit) {
                     this.portrait.children[i++].material = this.materialCircleLambert;
                 }
-                this.portrait.children[i].material = this.materialFrameLambert;
+                //this.portrait.children[i].material = this.materialFrameLambert;
 
             }
             else {
@@ -155,7 +154,7 @@ class Portrait extends THREE.Object3D {
                 while(i < limit) {
                     this.portrait.children[i++].material = this.materialCirclePhong;
                 }
-                this.portrait.children[i].material = this.materialFramePhong;
+                //this.portrait.children[i].material = this.materialFramePhong;
             }            
         }
     }
