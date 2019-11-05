@@ -72,7 +72,7 @@ function createPortrait() {
 
 function createLights() {
 
-    light1 = new Light(-30,5,0,Math.PI/3);
+    light1 = new Light(-30,20,0,Math.PI/3);
     light1.power();
     scene.add(light1);
 
@@ -84,7 +84,7 @@ function createLights() {
     light3.power();
     scene.add(light3);
 
-    light4 = new Light(30,5,0,Math.PI/3);
+    light4 = new Light(30,20,0,Math.PI/3);
     light4.power();
     scene.add(light4);
 
@@ -93,12 +93,12 @@ function createLights() {
     directionalLight.target.position.set(0,0,0)
     directionalLight.castShadow = true;
 
-    directionalLight.shadowCameraNear = 2;
-    directionalLight.shadowCameraFar = 200;
-    directionalLight.shadowCameraLeft = -100;
-    directionalLight.shadowCameraRight = 100;
-    directionalLight.shadowCameraTop = 100;
-    directionalLight.shadowCameraBottom = -100;
+    directionalLight.shadow.camera.near = 2;
+    directionalLight.shadow.camera.far = 200;
+    directionalLight.shadow.camera.left = -100;
+    directionalLight.shadow.camera.right = 100;
+    directionalLight.shadow.camera.top = 100;
+    directionalLight.shadow.camera.bottom = -100;
 
     scene.add( directionalLight );
     //scene.add( directionalLight.target );

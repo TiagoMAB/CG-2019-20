@@ -29,7 +29,6 @@ class Light extends THREE.Object3D {
 
         cone.add(this.spotLight);
         this.spotLight.angle = Math.PI/4;
-        this.spotLight.target = cone;
         this.spotLight.castShadow = true;
 
         this.light.position.set(x,y+10,z+30);
