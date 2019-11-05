@@ -3,6 +3,7 @@ var camera1, camera2;
 var portrait, sculpture, gallery;
 var stand, standMaterialBasic, standMaterialLambert, standMaterialPhong;
 var light1, light2, light3, light4, directionalLight;
+var target1, target2, target3, target4;
 var usingLambert = true, calculateIlumination = true;
 
 
@@ -72,6 +73,7 @@ function createPortrait() {
 
 function createLights() {
 
+    /*
     light1 = new Light(-30,20,0,Math.PI/3);
     light1.power();
     scene.add(light1);
@@ -87,10 +89,41 @@ function createLights() {
     light4 = new Light(30,20,0,Math.PI/3);
     light4.power();
     scene.add(light4);
+    */
+
+    
+    target1 = new THREE.Object3D();
+    target1.position.set(-40,0,0);
+
+    target2 = new THREE.Object3D();
+    target2.position.set(-40,0,0);
+
+    target3 = new THREE.Object3D();
+    target3.position.set(40,0,20);
+
+    target4 = new THREE.Object3D();
+    target4.position.set(40,0,20);
+
+
+    light1 = new Light(-30,20+15,15,Math.PI/3,Math.PI/5,target1);
+    light1.power();
+    scene.add(light1);
+
+    light2 = new Light(-20,45,45,Math.PI/2,Math.PI/8,target2);
+    light2.power();
+    scene.add(light2);
+
+    light3 = new Light(20,10+15,10,0,Math.PI/12,target3);
+    light3.power();
+    scene.add(light3);
+
+    light4 = new Light(20,45,45,Math.PI/2,Math.PI/12,target4);
+    light4.power();
+    scene.add(light4);
 
     directionalLight = new THREE.DirectionalLight( 0xffffff, 1);
-    directionalLight.position.set(0, 20, 100)
-    directionalLight.target.position.set(0,0,0)
+    directionalLight.position.set(0, 20, 20)
+    //directionalLight.target.position.set(0,0,0)
     directionalLight.castShadow = true;
 
     directionalLight.shadow.camera.near = 2;

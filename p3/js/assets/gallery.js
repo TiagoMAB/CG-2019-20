@@ -14,6 +14,8 @@ class Gallery extends THREE.Object3D {
         this.materialWallPhong = new THREE.MeshPhongMaterial( { color: 0xffffff } )
 
         this.gallery = new THREE.Object3D();
+        this.gallery.castShadow = true;
+        this.gallery.receiveShadow = true;
 
         this.createGallery(x,y,z);
 
@@ -21,14 +23,14 @@ class Gallery extends THREE.Object3D {
 
     createGallery(x,y,z) {
         var floor, wall;
-        floor = new THREE.Mesh(new THREE.BoxGeometry(200, 100, 1), this.materialFloorLambert);
+        floor = new THREE.Mesh(new THREE.BoxGeometry(200, 0, 100), this.materialFloorLambert);
         floor.position.set(x, y-38.5, z);
-        floor.rotation.x = Math.PI/2;
+        //floor.rotation.x = Math.PI/2;
         floor.receiveShadow = true;
         floor.castShadow = true;
 
         wall = new THREE.Mesh(new THREE.BoxGeometry(200, 100, 1), this.materialWallLambert);
-        wall.position.set(x, y+12, z-2);
+        wall.position.set(x, y+12.1, z-2);
         wall.receiveShadow = true;
         wall.castShadow = true;
 

@@ -1,7 +1,7 @@
 'use strict'
 
 class Light extends THREE.Object3D {
-    constructor(x, y, z, angle) {
+    constructor(x, y, z, angle, spotLightAngle, target) {
         super();
 
         this.material = new THREE.MeshBasicMaterial( { color: 0xD2691E } );
@@ -12,11 +12,11 @@ class Light extends THREE.Object3D {
         this.angle = angle;
         this.on = false;
 
-        this.createLight(x,y,z,angle);
+        this.createLight(x,y,z,angle,spotLightAngle,target);
 
     }
 
-    createLight(x,y,z,angle) {
+    createLight(x,y,z,angle,spotLightAngle,target) {
         var cone = new THREE.Mesh(new THREE.ConeGeometry( 5, 8, 32 ), this.material);
         cone.position.set(x,y,z)
         var sphere = new THREE.Mesh(new THREE.SphereGeometry( 3, 16, 16 ), this.material);
@@ -28,14 +28,17 @@ class Light extends THREE.Object3D {
         this.light.add(sphere);
 
         cone.add(this.spotLight);
-        this.spotLight.angle = Math.PI/4;
+        this.spotLight.target = target;
+        this.spotLight.angle = spotLightAngle;
         this.spotLight.castShadow = true;
 
-        this.light.position.set(x,y+10,z+30);
+        //this.light.position.set(x,y+10,z+30);
+        this.light.position.set(x,y,z);
         this.light.rotation.x = angle;
         
         //var spotter = new THREE.SpotLightHelper( this.spotLight );
         //this.add(spotter);
+        this.add(target)
 
         this.add(this.light);
 
