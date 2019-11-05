@@ -88,10 +88,17 @@ function createLights() {
     light4.power();
     scene.add(light4);
 
-    directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
-    directionalLight.position.set(0, 1, 1)
-    //directionalLight.target.position.set(0,0,0)
-    //directionalLight.castShadow = true;
+    directionalLight = new THREE.DirectionalLight( 0xffffff, 1);
+    directionalLight.position.set(0, 20, 100)
+    directionalLight.target.position.set(0,0,0)
+    directionalLight.castShadow = true;
+
+    directionalLight.shadowCameraNear = 2;
+    directionalLight.shadowCameraFar = 200;
+    directionalLight.shadowCameraLeft = -100;
+    directionalLight.shadowCameraRight = 100;
+    directionalLight.shadowCameraTop = 100;
+    directionalLight.shadowCameraBottom = -100;
 
     scene.add( directionalLight );
     //scene.add( directionalLight.target );
