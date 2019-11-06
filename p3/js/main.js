@@ -106,6 +106,7 @@ function createLights() {
 
 
     light1 = new Light(-30,20+15,15,Math.PI/3,Math.PI/5,target1);
+    //light1 = new Light(-20,-11,35,Math.PI - Math.PI/3,Math.PI/5,target1);
     light1.power();
     light1.power();
     scene.add(light1);
@@ -158,18 +159,24 @@ function createScene() {
 }
 
 function alternateMaterials() {
-    if(usingLambert) {
+    if(usingLambert && calculateIlumination) {
         gallery.alternateMaterials(usingLambert);
         portrait.alternateMaterials(usingLambert);
         sculpture.alternateMaterials(usingLambert);
         stand.children[0].material = standMaterialPhong;
         usingLambert = false;
     }
-    else {
+    else if(!usingLambert && calculateIlumination) {
         gallery.alternateMaterials(usingLambert);
         portrait.alternateMaterials(usingLambert);
         sculpture.alternateMaterials(usingLambert);
         stand.children[0].material = standMaterialLambert;
+        usingLambert = true;
+    }
+    else if(usingLambert && !calculateIlumination) {
+        usingLambert = false;
+    }
+    else if(!usingLambert && !calculateIlumination) {
         usingLambert = true;
     }
 }
