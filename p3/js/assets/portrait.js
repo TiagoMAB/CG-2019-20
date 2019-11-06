@@ -30,7 +30,7 @@ class Portrait extends THREE.Object3D {
 
     createPortrait(x,y,z) {
 
-        var background, square, circle, frame, xSquare, ySquare, xCircle, yCircle;
+        var background, square, circle, frame1, frame2, frame3, frame4, xSquare, ySquare, xCircle, yCircle;
         var squareSides = 2, radius = (squareSides*squareSides)/8, rows = 20, columns = 14, 
             distanceX = Math.cos(Math.PI/4)*(2*radius), distanceY = Math.sin(Math.PI/4)*(2*radius),
             width = distanceX + 2*(distanceX - radius) + (rows)*(squareSides + distanceX), 
@@ -73,11 +73,30 @@ class Portrait extends THREE.Object3D {
             xCircle+=squareSides + distanceX;
         }
         
-       // frame = new THREE.Mesh(new THREE.BoxGeometry(width+distanceX*4, height+distanceY*4, 1), this.materialFrameLambert)
-        //frame.position.set(x, y, z-1);
-        //frame.receiveShadow = true;
-        //frame.castShadow = true;
-        //this.portrait.add(frame);
+        frame1 = new THREE.Mesh(new THREE.BoxGeometry(width+distanceX*4-0.87, 1, 0.5), this.materialFrameLambert)
+        frame1.position.set(x, y+(height+distanceY*2)/2-0.21, z-1);
+        frame1.receiveShadow = true;
+        frame1.castShadow = true;
+        this.portrait.add(frame1);
+
+        frame2 = new THREE.Mesh(new THREE.BoxGeometry(width+distanceX*4-0.87, 1, 0.5), this.materialFrameLambert)
+        frame2.position.set(x, y-(height+distanceY*2)/2+0.21, z-1);
+        frame2.receiveShadow = true;
+        frame2.castShadow = true;
+        this.portrait.add(frame2);
+
+        frame3 = new THREE.Mesh(new THREE.BoxGeometry(1, height, 0.5), this.materialFrameLambert)
+        frame3.position.set(x+(width+distanceX*2)/2-0.21, y, z-1);
+        frame3.receiveShadow = true;
+        frame3.castShadow = true;
+        this.portrait.add(frame3);
+
+        frame4 = new THREE.Mesh(new THREE.BoxGeometry(1, height, 0.5), this.materialFrameLambert)
+        frame4.position.set(x-(width+distanceX*2)/2+0.21, y, z-1);
+        frame4.receiveShadow = true;
+        frame4.castShadow = true;
+        this.portrait.add(frame4);
+
 
         this.add(this.portrait);
     }
@@ -95,7 +114,10 @@ class Portrait extends THREE.Object3D {
             while(i < limit) {
                 this.portrait.children[i++].material = this.materialCirclePhong;
             }
-            //this.portrait.children[i].material = this.materialFramePhong;
+            this.portrait.children[i++].material = this.materialFramePhong;
+            this.portrait.children[i++].material = this.materialFramePhong;
+            this.portrait.children[i++].material = this.materialFramePhong;
+            this.portrait.children[i].material = this.materialFramePhong;
         }
         else {
             i = 0;
@@ -108,7 +130,10 @@ class Portrait extends THREE.Object3D {
             while(i < limit) {
                 this.portrait.children[i++].material = this.materialCircleLambert;
             }
-            //this.portrait.children[i].material = this.materialFrameLambert;
+            this.portrait.children[i++].material = this.materialFrameLambert;
+            this.portrait.children[i++].material = this.materialFrameLambert;
+            this.portrait.children[i++].material = this.materialFrameLambert;
+            this.portrait.children[i].material = this.materialFrameLambert;
         }
 
     }
@@ -126,7 +151,10 @@ class Portrait extends THREE.Object3D {
             while(i < limit) {
                 this.portrait.children[i++].material = this.materialCircleBasic;
             }
-            //this.portrait.children[i].material = this.materialFrameBasic;
+            this.portrait.children[i++].material = this.materialFrameBasic;
+            this.portrait.children[i++].material = this.materialFrameBasic;
+            this.portrait.children[i++].material = this.materialFrameBasic;
+            this.portrait.children[i].material = this.materialFrameBasic;
         }
         else {
             if(usingLambert) {
@@ -140,7 +168,11 @@ class Portrait extends THREE.Object3D {
                 while(i < limit) {
                     this.portrait.children[i++].material = this.materialCircleLambert;
                 }
-                //this.portrait.children[i].material = this.materialFrameLambert;
+                this.portrait.children[i++].material = this.materialFrameLambert;
+                this.portrait.children[i++].material = this.materialFrameLambert;
+                this.portrait.children[i++].material = this.materialFrameLambert;
+                this.portrait.children[i].material = this.materialFrameLambert;
+                
 
             }
             else {
@@ -154,7 +186,10 @@ class Portrait extends THREE.Object3D {
                 while(i < limit) {
                     this.portrait.children[i++].material = this.materialCirclePhong;
                 }
-                //this.portrait.children[i].material = this.materialFramePhong;
+                this.portrait.children[i++].material = this.materialFramePhong;
+                this.portrait.children[i++].material = this.materialFramePhong;
+                this.portrait.children[i++].material = this.materialFramePhong;
+                this.portrait.children[i].material = this.materialFramePhong;
             }            
         }
     }
