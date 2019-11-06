@@ -108,17 +108,21 @@ function createLights() {
     light1 = new Light(-30,20+15,15,Math.PI/3,Math.PI/5,target1);
     //light1 = new Light(-20,-11,35,Math.PI - Math.PI/3,Math.PI/5,target1);
     light1.power();
+    light1.power();
     scene.add(light1);
 
     light2 = new Light(-20,45,45,Math.PI/2,Math.PI/8,target2);
+    light2.power();
     light2.power();
     scene.add(light2);
 
     light3 = new Light(20,10+15,10,0,Math.PI/12,target3);
     light3.power();
+    light3.power();
     scene.add(light3);
 
     light4 = new Light(20,45,45,Math.PI/2,Math.PI/12,target4);
+    light4.power();
     light4.power();
     scene.add(light4);
 
@@ -136,7 +140,7 @@ function createLights() {
 
     scene.add( directionalLight );
     //scene.add( directionalLight.target );
-
+    render();
 }
 
 function createScene() {
