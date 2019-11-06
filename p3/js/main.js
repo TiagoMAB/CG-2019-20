@@ -73,27 +73,9 @@ function createPortrait() {
 
 function createLights() {
 
-    /*
-    light1 = new Light(-30,20,0,Math.PI/3);
-    light1.power();
-    scene.add(light1);
-
-    light2 = new Light(-15,10,5,Math.PI/3);
-    light2.power();
-    scene.add(light2);
-
-    light3 = new Light(15,10,5,Math.PI/3);
-    light3.power();
-    scene.add(light3);
-
-    light4 = new Light(30,20,0,Math.PI/3);
-    light4.power();
-    scene.add(light4);
-    */
-
     
     target1 = new THREE.Object3D();
-    target1.position.set(-40,0,0);
+    target1.position.set(-40,20,0);
 
     target2 = new THREE.Object3D();
     target2.position.set(-40,0,0);
@@ -105,28 +87,24 @@ function createLights() {
     target4.position.set(40,0,20);
 
 
-    light1 = new Light(-30,20+15,15,Math.PI/3,Math.PI/5,target1);
-    //light1 = new Light(-20,-11,35,Math.PI - Math.PI/3,Math.PI/5,target1);
-    light1.power();
+    //light1 = new Light(-30,20+15,15,Math.PI/3,Math.PI/5,target1);
+    light1 = new Light(-20,55,55,2*Math.PI/3,Math.PI/5,target1);
     light1.power();
     scene.add(light1);
 
     light2 = new Light(-20,45,45,Math.PI/2,Math.PI/8,target2);
     light2.power();
-    light2.power();
     scene.add(light2);
 
     light3 = new Light(20,10+15,10,0,Math.PI/12,target3);
-    light3.power();
     light3.power();
     scene.add(light3);
 
     light4 = new Light(20,45,45,Math.PI/2,Math.PI/12,target4);
     light4.power();
-    light4.power();
     scene.add(light4);
 
-    directionalLight = new THREE.DirectionalLight( 0xffffff, 1);
+    directionalLight = new THREE.DirectionalLight( 0xffffff, 0);
     directionalLight.position.set(0, 20, 20)
     //directionalLight.target.position.set(0,0,0)
     directionalLight.castShadow = true;
