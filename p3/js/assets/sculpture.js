@@ -19,7 +19,7 @@ class Sculpture extends THREE.Object3D {
     createSculpture(x,y,z) {
         //  Geometry
         var goldenRatio = (1 + Math.sqrt(5))/2
-        var deformityFactor = 1.43
+        var deformityFactor = 1.73
         var geometry = new THREE.Geometry();
         
         //  Vertices

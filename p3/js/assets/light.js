@@ -7,7 +7,7 @@ class Light extends THREE.Object3D {
         this.material = new THREE.MeshBasicMaterial( { color: 0xD2691E } );
 
         this.light = new THREE.Object3D();
-        this.spotLight = new THREE.SpotLight( 0xffffff, 1 )
+        this.spotLight = new THREE.SpotLight( 0xffffff, 0.75 )
         
         this.angle = angle;
         this.on = false;
@@ -31,7 +31,7 @@ class Light extends THREE.Object3D {
         this.spotLight.target = target;
         this.spotLight.angle = spotLightAngle;
         this.spotLight.castShadow = true;
-
+        this.spotLight.penumbra = 0.2
         //this.light.position.set(x,y+10,z+30);
         this.light.position.set(x,y,z);
         this.light.rotation.x = angle;
