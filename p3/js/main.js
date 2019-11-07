@@ -49,20 +49,13 @@ function createSculpture() {
 
     sculpture = new Sculpture(40,0,20)
     scene.add(sculpture);
-
-    stand = new THREE.Object3D();
-    standMaterialBasic = new THREE.MeshBasicMaterial( { color: 0xdaa520 } )
-    standMaterialLambert = new THREE.MeshLambertMaterial( { color: 0xdaa520 } )
-    standMaterialPhong = new THREE.MeshPhongMaterial( { color: 0xdaa520 } )
-
-    var cylinder = new THREE.Mesh(new THREE.CylinderGeometry(5, 5, 30, 16), standMaterialLambert);
-    cylinder.position.set(40,-23,20)
-
-    cylinder.castShadow = true;
-    cylinder.recieveShadow = true;
-    stand.add(cylinder)
-    scene.add(stand)
     
+}
+
+function createStand() {
+
+    stand = new Stand(40, -23, 20);
+    scene.add(stand)
 }
 
 function createPortrait() {
@@ -116,54 +109,39 @@ function createScene() {
     scene = new THREE.Scene();
 
     createGallery();
+    createStand();
     createSculpture();
     createPortrait();
     createLights();
 }
 
 function alternateMaterials() {
-    if(usingLambert && calculateIlumination) {
+    if (calculateIlumination) {
         gallery.alternateMaterials(usingLambert);
         portrait.alternateMaterials(usingLambert);
         sculpture.alternateMaterials(usingLambert);
-        stand.children[0].material = standMaterialPhong;
+        stand.alternateMaterials(usingLambert);
+    }
+
+    if(usingLambert) {
         usingLambert = false;
     }
-    else if(!usingLambert && calculateIlumination) {
-        gallery.alternateMaterials(usingLambert);
-        portrait.alternateMaterials(usingLambert);
-        sculpture.alternateMaterials(usingLambert);
-        stand.children[0].material = standMaterialLambert;
-        usingLambert = true;
-    }
-    else if(usingLambert && !calculateIlumination) {
-        usingLambert = false;
-    }
-    else if(!usingLambert && !calculateIlumination) {
+    else if(!usingLambert) {
         usingLambert = true;
     }
 }
 
 function toggleIluminationCalculation() {
-    if(calculateIlumination) {
-        gallery.toggleIluminationCalculation(calculateIlumination,usingLambert);
-        portrait.toggleIluminationCalculation(calculateIlumination,usingLambert);
-        sculpture.toggleIluminationCalculation(calculateIlumination,usingLambert);
-        stand.children[0].material = standMaterialBasic;
+
+    gallery.toggleIluminationCalculation(calculateIlumination,usingLambert);
+    portrait.toggleIluminationCalculation(calculateIlumination,usingLambert);
+    sculpture.toggleIluminationCalculation(calculateIlumination,usingLambert);
+    stand.toggleIluminationCalculation(calculateIlumination,usingLambert);
+
+    if (calculateIlumination)
         calculateIlumination = false;
-    }
-    else {
-        gallery.toggleIluminationCalculation(calculateIlumination,usingLambert);
-        portrait.toggleIluminationCalculation(calculateIlumination,usingLambert);
-        sculpture.toggleIluminationCalculation(calculateIlumination,usingLambert);
-        if(usingLambert) {
-            stand.children[0].material = standMaterialLambert;
-        }
-        else {
-            stand.children[0].material = standMaterialPhong;
-        }
+    else
         calculateIlumination = true;
-    }
 }
 
 function onResize() {
