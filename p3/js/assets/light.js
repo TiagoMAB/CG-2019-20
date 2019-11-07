@@ -10,7 +10,7 @@ class Light extends THREE.Object3D {
         this.spotLight = new THREE.SpotLight( 0xffffff, 0.75 )
         
         this.angle = angle;
-        this.on = true;
+        this.on = false;
 
         this.createLight(x,y,z,angle,spotLightAngle,target);
 

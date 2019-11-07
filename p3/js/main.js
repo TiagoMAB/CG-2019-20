@@ -116,7 +116,7 @@ function createLights() {
     directionalLight.shadow.camera.top = 100;
     directionalLight.shadow.camera.bottom = -100;
     
-    directionalLight.visible = false;
+    directionalLight.visible = true;
 
     scene.add( directionalLight );
     //scene.add( directionalLight.target );
