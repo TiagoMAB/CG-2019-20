@@ -104,7 +104,7 @@ function createLights() {
     light4.power();
     scene.add(light4);
 
-    directionalLight = new THREE.DirectionalLight( 0xffffff, 0);
+    directionalLight = new THREE.DirectionalLight( 0xffffff, 1);
     directionalLight.position.set(0, 20, 20)
     //directionalLight.target.position.set(0,0,0)
     directionalLight.castShadow = true;
@@ -115,6 +115,8 @@ function createLights() {
     directionalLight.shadow.camera.right = 100;
     directionalLight.shadow.camera.top = 100;
     directionalLight.shadow.camera.bottom = -100;
+    
+    directionalLight.visible = false;
 
     scene.add( directionalLight );
     //scene.add( directionalLight.target );
@@ -210,11 +212,11 @@ function onKeyDown(e) {
             
         /*  Toggle Directionl Light */
         case 81: //q
-            if(directionalLight.intensity) {
-                directionalLight.intensity = 0;
+            if(directionalLight.visible) {
+                directionalLight.visible = false;
             }
             else {
-                directionalLight.intensity = 1;
+                directionalLight.visible = true;
             }
             break;
     }
