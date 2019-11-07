@@ -31,7 +31,7 @@ function createCamera2() {
 
     var factor = 30
     camera2 = new THREE.OrthographicCamera( -window.innerWidth/factor, window.innerWidth/factor, window.innerHeight/factor, -window.innerHeight/factor, 1, 1000 );
-    camera2.position.set(-40, 0, 10);
+    camera2.position.set(-25, 0, 10);
 }
 
 function createCamera() {
@@ -67,7 +67,7 @@ function createSculpture() {
 
 function createPortrait() {
 
-    portrait = new Portrait(-40,0,0);
+    portrait = new Portrait(-25,0,0);
     scene.add(portrait);
 }
 
@@ -75,10 +75,10 @@ function createLights() {
 
     
     target1 = new THREE.Object3D();
-    target1.position.set(-40,20,0);
+    target1.position.set(-25,20,0);
 
     target2 = new THREE.Object3D();
-    target2.position.set(-40,0,0);
+    target2.position.set(-25,0,0);
 
     target3 = new THREE.Object3D();
     target3.position.set(40,0,20);
@@ -88,11 +88,11 @@ function createLights() {
 
 
     //light1 = new Light(-30,20+15,15,Math.PI/3,Math.PI/5,target1);
-    light1 = new Light(-20,55,55,2*Math.PI/3,Math.PI/5,target1);
+    light1 = new Light(-12.5,55,55,2*Math.PI/3,Math.PI/5,target1);
     light1.power();
     scene.add(light1);
 
-    light2 = new Light(-20,45,45,Math.PI/2,Math.PI/8,target2);
+    light2 = new Light(-12.5,45,45,Math.PI/2,Math.PI/8,target2);
     light2.power();
     scene.add(light2);
 
@@ -114,10 +114,6 @@ function createScene() {
     'use scrict';
 
     scene = new THREE.Scene();
-
-    clock = new THREE.Clock();
-
-    scene.add(new THREE.AxesHelper(10));
 
     createGallery();
     createSculpture();
@@ -255,8 +251,6 @@ function onKeyPress(e) {
 function animate() {
     'use strict';
     
-    //var delta = clock.getDelta() * 0.8; // *0.8 is to slow down simulation
-
     setTimeout( function() {
 
         requestAnimationFrame( animate );

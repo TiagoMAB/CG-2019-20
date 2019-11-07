@@ -4,14 +4,14 @@ class Gallery extends THREE.Object3D {
     constructor(x, y, z) {
         super();
 
-        this.materialFloorBasic = new THREE.MeshBasicMaterial( { color: 0xf20606 } )
-        this.materialWallBasic = new THREE.MeshBasicMaterial( { color: 0xf20606 } )
+        this.materialFloorBasic = new THREE.MeshBasicMaterial( { color: 0x9370DB } )
+        this.materialWallBasic = new THREE.MeshBasicMaterial( { color: 0x9370DB } )
 
-        this.materialFloorLambert = new THREE.MeshLambertMaterial( { color: 0xf20606 } )
-        this.materialWallLambert = new THREE.MeshLambertMaterial( { color: 0xf20606 } )
+        this.materialFloorLambert = new THREE.MeshLambertMaterial( { color: 0x9370DB } )
+        this.materialWallLambert = new THREE.MeshLambertMaterial( { color: 0x9370DB } )
 
-        this.materialFloorPhong = new THREE.MeshPhongMaterial( { color: 0xf20606 } )
-        this.materialWallPhong = new THREE.MeshPhongMaterial( { color: 0xf20606 } )
+        this.materialFloorPhong = new THREE.MeshPhongMaterial( { color: 0x9370DB } )
+        this.materialWallPhong = new THREE.MeshPhongMaterial( { color: 0x9370DB } )
 
         this.gallery = new THREE.Object3D();
         this.gallery.castShadow = true;
@@ -24,14 +24,14 @@ class Gallery extends THREE.Object3D {
     createGallery(x,y,z) {
         var floor, wall;
         floor = new THREE.Mesh(new THREE.BoxGeometry(150, 0, 100, 200, 1, 200), this.materialFloorLambert);
-        //floor = new THREE.Mesh(new THREE.BoxGeometry(200, 0, 100, 1, 1, 1), this.materialFloorLambert);
+        //floor = new THREE.Mesh(new THREE.BoxGeometry(150, 0, 100, 1, 1, 1), this.materialFloorLambert);
         floor.position.set(x, y-38.5, z);
         //floor.rotation.x = Math.PI/2;
         floor.receiveShadow = true;
         floor.castShadow = true;
 
         wall = new THREE.Mesh(new THREE.BoxGeometry(150, 100, 1, 200, 200, 1), this.materialWallLambert);
-        //wall = new THREE.Mesh(new THREE.BoxGeometry(200, 100, 1, 1, 1, 1), this.materialWallLambert);
+        //wall = new THREE.Mesh(new THREE.BoxGeometry(150, 100, 1, 1, 1, 1), this.materialWallLambert);
         wall.position.set(x, y+12, z-2);
         wall.receiveShadow = true;
         wall.castShadow = true;
