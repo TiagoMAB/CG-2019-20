@@ -37,7 +37,7 @@ class Portrait extends THREE.Object3D {
             height = distanceY + 2*(distanceY - radius) + (columns)*(squareSides + distanceY);
         
         /* Generate Squares */
-        background = new THREE.Mesh(new THREE.BoxGeometry(width, height, 1), this.materialBackgroundLambert);
+        background = new THREE.Mesh(new THREE.BoxGeometry(width, height, 1, 30, 30, 30), this.materialBackgroundLambert);
         background.position.set(x,y,z);
         background.receiveShadow = true;
         this.portrait.add(background);
