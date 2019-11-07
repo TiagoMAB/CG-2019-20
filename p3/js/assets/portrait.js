@@ -73,26 +73,26 @@ class Portrait extends THREE.Object3D {
             xCircle+=squareSides + distanceX;
         }
         
-        frame1 = new THREE.Mesh(new THREE.BoxGeometry(width+distanceX*4-0.87, 1, 0.5), this.materialFrameLambert)
-        frame1.position.set(x, y+(height+distanceY*2)/2-0.21, z-1);
+        frame1 = new THREE.Mesh(new THREE.BoxGeometry(width+distanceX*4-0.87, 1, 3), this.materialFrameLambert)
+        frame1.position.set(x, y+(height+distanceY*2)/2-0.215, z);
         frame1.receiveShadow = true;
         frame1.castShadow = true;
         this.portrait.add(frame1);
 
-        frame2 = new THREE.Mesh(new THREE.BoxGeometry(width+distanceX*4-0.87, 1, 0.5), this.materialFrameLambert)
-        frame2.position.set(x, y-(height+distanceY*2)/2+0.21, z-1);
+        frame2 = new THREE.Mesh(new THREE.BoxGeometry(width+distanceX*4-0.87, 1, 3), this.materialFrameLambert)
+        frame2.position.set(x, y-(height+distanceY*2)/2+0.215, z);
         frame2.receiveShadow = true;
         frame2.castShadow = true;
         this.portrait.add(frame2);
 
-        frame3 = new THREE.Mesh(new THREE.BoxGeometry(1, height, 0.5), this.materialFrameLambert)
-        frame3.position.set(x+(width+distanceX*2)/2-0.21, y, z-1);
+        frame3 = new THREE.Mesh(new THREE.BoxGeometry(1, height, 3), this.materialFrameLambert)
+        frame3.position.set(x+(width+distanceX*2)/2-0.215, y, z);
         frame3.receiveShadow = true;
         frame3.castShadow = true;
         this.portrait.add(frame3);
 
-        frame4 = new THREE.Mesh(new THREE.BoxGeometry(1, height, 0.5), this.materialFrameLambert)
-        frame4.position.set(x-(width+distanceX*2)/2+0.21, y, z-1);
+        frame4 = new THREE.Mesh(new THREE.BoxGeometry(1, height, 3), this.materialFrameLambert)
+        frame4.position.set(x-(width+distanceX*2)/2+0.215, y, z);
         frame4.receiveShadow = true;
         frame4.castShadow = true;
         this.portrait.add(frame4);
