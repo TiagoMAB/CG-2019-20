@@ -59,15 +59,13 @@ class Gallery extends THREE.Object3D {
             this.gallery.children[0].material = this.materialFloorBasic;
             this.gallery.children[1].material = this.materialWallBasic;
         }
+        else if(usingLambert) {
+            this.gallery.children[0].material = this.materialFloorLambert;
+            this.gallery.children[1].material = this.materialWallLambert;
+        }
         else {
-            if(usingLambert) {
-                this.gallery.children[0].material = this.materialFloorLambert;
-                this.gallery.children[1].material = this.materialWallLambert;
-            }
-            else {
-                this.gallery.children[0].material = this.materialFloorPhong;
-                this.gallery.children[1].material = this.materialWallPhong;
-            }            
+            this.gallery.children[0].material = this.materialFloorPhong;
+            this.gallery.children[1].material = this.materialWallPhong;
         }
     }
 

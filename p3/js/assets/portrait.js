@@ -102,96 +102,72 @@ class Portrait extends THREE.Object3D {
     }
 
     alternateMaterials(usingLambert) {
-        var i, limit;
-        if(usingLambert) {
-            i = 0;
-            this.portrait.children[i++].material = this.materialBackgroundPhong;
-            limit = this.numSquares + 1
-            while(i < limit) {
-                this.portrait.children[i++].material = this.materialSquarePhong;
-            }
-            limit = this.numSquares + this.numCircles + 1
-            while(i < limit) {
-                this.portrait.children[i++].material = this.materialCirclePhong;
-            }
-            this.portrait.children[i++].material = this.materialFramePhong;
-            this.portrait.children[i++].material = this.materialFramePhong;
-            this.portrait.children[i++].material = this.materialFramePhong;
-            this.portrait.children[i].material = this.materialFramePhong;
+        var i, limit, materialBackground, materialSquare, materialCircle, materialFrame;
+        if (usingLambert) {
+            materialBackground = this.materialBackgroundPhong
+            materialSquare = this.materialSquarePhong;
+            materialCircle = this.materialCirclePhong;
+            materialFrame = this.materialFramePhong;
         }
         else {
-            i = 0;
-            this.portrait.children[i++].material = this.materialBackgroundLambert;
-            limit = this.numSquares + 1
-            while(i < limit) {
-                this.portrait.children[i++].material = this.materialSquareLambert;
-            }
-            limit = this.numSquares + this.numCircles + 1
-            while(i < limit) {
-                this.portrait.children[i++].material = this.materialCircleLambert;
-            }
-            this.portrait.children[i++].material = this.materialFrameLambert;
-            this.portrait.children[i++].material = this.materialFrameLambert;
-            this.portrait.children[i++].material = this.materialFrameLambert;
-            this.portrait.children[i].material = this.materialFrameLambert;
+            materialBackground = this.materialBackgroundLambert;
+            materialSquare = this.materialSquareLambert;
+            materialCircle = this.materialCircleLambert;
+            materialFrame = this.materialFrameLambert;
         }
+
+        i = 0;
+        this.portrait.children[i++].material = materialBackground;
+        limit = this.numSquares + 1
+        while(i < limit) {
+            this.portrait.children[i++].material = materialSquare;
+        }
+        limit = this.numSquares + this.numCircles + 1
+        while(i < limit) {
+            this.portrait.children[i++].material = materialCircle;
+        }
+        this.portrait.children[i++].material = materialFrame;
+        this.portrait.children[i++].material = materialFrame;
+        this.portrait.children[i++].material = materialFrame;
+        this.portrait.children[i].material = materialFrame;
 
     }
 
     toggleIluminationCalculation(calculateIlumination, usingLambert) {
-        var i, limit;
-        if(calculateIlumination) {
-            i = 0;
-            this.portrait.children[i++].material = this.materialBackgroundBasic;
-            limit = this.numSquares + 1
-            while(i < limit) {
-                this.portrait.children[i++].material = this.materialSquareBasic;
-            }
-            limit = this.numSquares + this.numCircles + 1
-            while(i < limit) {
-                this.portrait.children[i++].material = this.materialCircleBasic;
-            }
-            this.portrait.children[i++].material = this.materialFrameBasic;
-            this.portrait.children[i++].material = this.materialFrameBasic;
-            this.portrait.children[i++].material = this.materialFrameBasic;
-            this.portrait.children[i].material = this.materialFrameBasic;
+        var i, limit, materialBackground, materialSquare, materialCircle, materialFrame;
+        if (calculateIlumination) {
+            materialBackground = this.materialBackgroundBasic;
+            materialSquare = this.materialSquareBasic;
+            materialCircle = this.materialCircleBasic;
+            materialFrame = this.materialFrameBasic;
+        }
+        else if (usingLambert) {
+            materialBackground = this.materialBackgroundLambert;
+            materialSquare = this.materialSquareLambert;
+            materialCircle = this.materialCircleLambert;
+            materialFrame = this.materialFrameLambert;
         }
         else {
-            if(usingLambert) {
-                i = 0;
-                this.portrait.children[i++].material = this.materialBackgroundLambert;
-                limit = this.numSquares + 1
-                while(i < limit) {
-                    this.portrait.children[i++].material = this.materialSquareLambert;
-                }
-                limit = this.numSquares + this.numCircles + 1
-                while(i < limit) {
-                    this.portrait.children[i++].material = this.materialCircleLambert;
-                }
-                this.portrait.children[i++].material = this.materialFrameLambert;
-                this.portrait.children[i++].material = this.materialFrameLambert;
-                this.portrait.children[i++].material = this.materialFrameLambert;
-                this.portrait.children[i].material = this.materialFrameLambert;
-                
-
-            }
-            else {
-                i = 0;
-                this.portrait.children[i++].material = this.materialBackgroundPhong;
-                limit = this.numSquares + 1
-                while(i < limit) {
-                    this.portrait.children[i++].material = this.materialSquarePhong;
-                }
-                limit = this.numSquares + this.numCircles + 1
-                while(i < limit) {
-                    this.portrait.children[i++].material = this.materialCirclePhong;
-                }
-                this.portrait.children[i++].material = this.materialFramePhong;
-                this.portrait.children[i++].material = this.materialFramePhong;
-                this.portrait.children[i++].material = this.materialFramePhong;
-                this.portrait.children[i].material = this.materialFramePhong;
-            }            
+            materialBackground = this.materialBackgroundPhong
+            materialSquare = this.materialSquarePhong;
+            materialCircle = this.materialCirclePhong;
+            materialFrame = this.materialFramePhong;
         }
+
+        i = 0;
+        this.portrait.children[i++].material = materialBackground;
+        limit = this.numSquares + 1
+        while(i < limit) {
+            this.portrait.children[i++].material = materialSquare;
+        }
+        limit = this.numSquares + this.numCircles + 1
+        while(i < limit) {
+            this.portrait.children[i++].material = materialCircle;
+        }
+        this.portrait.children[i++].material = materialFrame;
+        this.portrait.children[i++].material = materialFrame;
+        this.portrait.children[i++].material = materialFrame;
+        this.portrait.children[i].material = materialFrame;
     }
 
 }

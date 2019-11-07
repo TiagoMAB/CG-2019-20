@@ -92,13 +92,11 @@ class Sculpture extends THREE.Object3D {
         if(calculateIlumination) {
             this.sculpture.children[0].material = this.materialBasic;
         }
+        else if(usingLambert) {
+            this.sculpture.children[0].material = this.materialLambert;
+        }
         else {
-            if(usingLambert) {
-                this.sculpture.children[0].material = this.materialLambert;
-            }
-            else {
-                this.sculpture.children[0].material = this.materialPhong;
-            }            
+            this.sculpture.children[0].material = this.materialPhong;
         }
     }
 

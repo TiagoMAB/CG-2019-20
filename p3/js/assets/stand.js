@@ -36,13 +36,11 @@ class Stand extends THREE.Object3D {
         if(calculateIlumination) {
             this.stand.children[0].material = this.standMaterialBasic;
         }
+        else if(usingLambert) {
+            this.stand.children[0].material = this.standMaterialLambert;
+        }
         else {
-            if(usingLambert) {
-                this.stand.children[0].material = this.standMaterialLambert;
-            }
-            else {
-                this.stand.children[0].material = this.standMaterialPhong;
-            }            
+            this.stand.children[0].material = this.standMaterialPhong;
         }
     }
 
