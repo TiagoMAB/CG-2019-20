@@ -22,7 +22,7 @@ function createCamera1() {
 
     camera1 = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
 
-    camera1.position.set(0, 10, 120);
+    camera1.position.set(0, 30, 200);
     camera1.lookAt(scene.position);
 }
 
@@ -178,6 +178,7 @@ function onResize() {
     if(window.innerHeight > 0 && window.innerWidth > 0) {
         camera.aspect = renderer.getSize().width / renderer.getSize().height;
         camera.updateProjectionMatrix();
+        console.log("width" + renderer.getSize().width + " | height: " + renderer.getSize().height)
     }
 }
 
