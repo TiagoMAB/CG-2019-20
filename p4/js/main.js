@@ -1,20 +1,12 @@
 var camera, scene, renderer, clock;
 var camera1, camera2, isCamera2 = false;
-var portrait, sculpture, gallery;
-var stand, standMaterialBasic, standMaterialLambert, standMaterialPhong;
-var light1, light2, light3, light4, directionalLight;
-var target1, target2, target3, target4;
-var usingLambert = true, calculateIlumination = true;
-var factor = 30
-
+var ball;
+var factor = 20
 
 function render() {
     'use strict';
 
     renderer.render(scene, camera);
-
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.soft = true;
     
 }
 
@@ -40,123 +32,14 @@ function createCamera() {
     camera = camera1;
 }
 
-function createGallery() {
-
-    gallery = new Gallery(0,0,0)
-    scene.add(gallery)
-}
-
-function createSculpture() {
-
-    sculpture = new Sculpture(40,0,20)
-    scene.add(sculpture);
-    
-}
-
-function createStand() {
-
-    stand = new Stand(40, -23, 20);
-    scene.add(stand)
-}
-
-function createPortrait() {
-
-    portrait = new Portrait(-25,0,0);
-    scene.add(portrait);
-}
-
-function createLights() {
-    
-    target1 = new THREE.Object3D();
-    target1.position.set(-25,20,0);
-
-    target2 = new THREE.Object3D();
-    target2.position.set(-25,0,0);
-
-    target3 = new THREE.Object3D();
-    target3.position.set(40,0,20);
-
-    target4 = new THREE.Object3D();
-    target4.position.set(40,0,20);
-
-    light1 = new Light(-12.5,55,55,2*Math.PI/3,Math.PI/5,target1);
-    light1.power();
-    scene.add(light1);
-
-    light2 = new Light(-12.5,45,45,Math.PI/2,Math.PI/8,target2);
-    light2.power();
-    scene.add(light2);
-
-    light3 = new Light(20,10+15,10,0,Math.PI/12,target3);
-    light3.power();
-    scene.add(light3);
-
-    light4 = new Light(20,45,45,Math.PI/2,Math.PI/12,target4);
-    light4.power();
-    scene.add(light4);
-
-    directionalLight = new DirectionalLight(0, 20, 20);
-
-    scene.add(directionalLight);
-    render();
-}
 
 function createScene() {
     'use scrict';
 
     scene = new THREE.Scene();
-
-    createGallery();
-    createStand();
-    createSculpture();
-    createPortrait();
-    createLights();
-}
-
-function alternateMaterials() {
-    if (calculateIlumination) {
-        gallery.alternateMaterials(usingLambert);
-        portrait.alternateMaterials(usingLambert);
-        sculpture.alternateMaterials(usingLambert);
-        stand.alternateMaterials(usingLambert);
-    }
-
-    if(usingLambert) {
-        usingLambert = false;
-    }
-    else if(!usingLambert) {
-        usingLambert = true;
-    }
-}
-
-function toggleIluminationCalculation() {
-
-    gallery.toggleIluminationCalculation(calculateIlumination,usingLambert);
-    portrait.toggleIluminationCalculation(calculateIlumination,usingLambert);
-    sculpture.toggleIluminationCalculation(calculateIlumination,usingLambert);
-    stand.toggleIluminationCalculation(calculateIlumination,usingLambert);
-
-    if (calculateIlumination)
-        calculateIlumination = false;
-    else
-        calculateIlumination = true;
-}
-
-function onResize() {
-    'use strict';
-
-    renderer.setSize(window.innerWidth, window.innerHeight);
-
-    var screen_width = window.innerWidth;
-    var screen_height = window.innerHeight;
-    var aspect = screen_width/screen_height;
-
-    camera1.aspect = aspect;
-    camera1.updateProjectionMatrix();
-
-    camera2.left = 969 * aspect / -30;
-    camera2.right = 969 * aspect / 30;
-    camera2.updateProjectionMatrix();
+    scene.add(new THREE.AxesHelper(10));
+    ball = new Ball(0, 0, 0)
+    scene.add(ball)
 
 }
 
@@ -167,18 +50,18 @@ function onKeyDown(e) {
 
         /*  Alternate between Lambert & Phong   */
         case 69: //e
-            alternateMaterials()
+        
             
             break; 
 
         /*  Toggle Ilumination Calculation  */
         case 87: //w
-            toggleIluminationCalculation();
+          
             break; 
             
         /*  Toggle Directionl Light */
         case 81: //q
-            directionalLight.power();
+      
     }
 
 }
@@ -198,19 +81,19 @@ function onKeyPress(e) {
 
         /*  Lights  */
         case 49: //1
-            light1.power();
+
             break;
 
         case 50: //2
-            light2.power();
+ 
             break;
             
         case 51: //3
-            light3.power();
+
             break;
 
         case 52: //4
-            light4.power();
+ 
             break;
         
         
@@ -243,7 +126,17 @@ function animate() {
 
     render();
 }
+function onResize() {
+    'use strict';
 
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    if(window.innerHeight > 0 && window.innerWidth > 0) {
+        camera.aspect = renderer.getSize().width / renderer.getSize().height;
+        camera.updateProjectionMatrix();
+        console.log("width" + renderer.getSize().width + " | height: " + renderer.getSize().height)
+    }
+}
 function init() {
     'use strict';
 
