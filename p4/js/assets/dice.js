@@ -7,7 +7,7 @@ class Dice extends THREE.Object3D {
         this.materials = new Array(6)
         
         for (var i = 1; i <= 6; i++) {
-            this.materials[i-1] = new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load('textures/dice/dice0-' + i.toString(10) + '.jpg') })
+            this.materials[i-1] = new THREE.MeshPhongMaterial({ map: new THREE.TextureLoader().load('textures/dice/dice0-' + i.toString(10) + '.jpg'), bumpMap: new THREE.TextureLoader().load('textures/dice/dice1-' + i.toString(10) + '.jpg') })
         } 
 
         this.mesh = new THREE.Mesh(new THREE.BoxGeometry( 30, 30, 30), this.materials)

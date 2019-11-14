@@ -8,7 +8,7 @@ class Chessboard extends THREE.Object3D {
         this.materials[0] = new THREE.MeshPhongMaterial({ map: new THREE.TextureLoader().load('textures/chessboard/chessboard0.jpg'), bumpMap: new THREE.TextureLoader().load('textures/chessboard/chessboard1.jpg') })
 
         for (var i = 1; i < 6; i++) {
-            this.materials[i] = new THREE.MeshPhongMaterial( { color: 0x90d90d })
+            this.materials[i] = new THREE.MeshPhongMaterial( { color: 0x8b5a2b, bumpMap: new THREE.TextureLoader().load('textures/chessboard/chessboard1.jpg')})
         } 
 
         this.mesh = new THREE.Mesh(new THREE.BoxGeometry( 10, 300, 300), this.materials)

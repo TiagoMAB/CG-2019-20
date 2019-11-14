@@ -55,16 +55,16 @@ function createScene() {
 
     scene = new THREE.Scene();
     scene.add(new THREE.AxesHelper(10));
-    ball = new Ball(0, 0, 0)
-    scene.add(ball)
+    //ball = new Ball(0, 0, 0)
+    //scene.add(ball)
 
-    dice = new Dice(10, 0, 10)
+    dice = new Dice(10, 30, 10)
     scene.add(dice)
 
     chessboard = new Chessboard(10, 0, 10)
     scene.add(chessboard)
 
-    directionalLight = new DirectionalLight(0, 20, 0);
+    directionalLight = new DirectionalLight(0, 20, 20);
 
     scene.add(directionalLight);
     
