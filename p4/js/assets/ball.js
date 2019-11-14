@@ -4,9 +4,9 @@ class Ball extends THREE.Object3D {
     constructor(x, y, z) {
         super()
 
-        this.texture = new THREE.TextureLoader().load('textures/ball.jpg')
-        this.material = new THREE.MeshBasicMaterial( { map: this.texture })
-        
+        this.texture = new THREE.TextureLoader().load('textures/ball/ball.jpg')
+        this.material = new THREE.MeshPhongMaterial( { map: this.texture })
+
         this.mesh = new THREE.Mesh(new THREE.SphereGeometry( 15, 32, 32), this.material)
         this.mesh.receiveShadow = true
         this.mesh.castShadow = true
