@@ -12,11 +12,14 @@ class Chessboard extends THREE.Object3D {
         } 
 
         this.mesh = new THREE.Mesh(new THREE.BoxGeometry( 10, 300, 300), this.materials)
+        this.mesh.receiveShadow = true
+
         this.add(this.mesh)
+    
         this.position.set(x, y, z)
         this.rotation.x = Math.PI/2;
         this.rotation.y = Math.PI/2;
-
+        
     }
 
 }

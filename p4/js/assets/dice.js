@@ -11,12 +11,14 @@ class Dice extends THREE.Object3D {
         } 
 
         this.mesh = new THREE.Mesh(new THREE.BoxGeometry( 30, 30, 30), this.materials)
-
+        this.mesh.receiveShadow = true
+        this.mesh.castShadow = true
+        
         this.add(this.mesh)
-        this.position.set(x, y, z)
-//        this.rotation.z = Math.PI/6;
-//        this.rotation.x = Math.PI/6;
 
+        this.position.set(x, y, z)
+        this.rotation.z = Math.PI/4;
+        this.rotation.x = Math.PI/4;
     }
 
 }

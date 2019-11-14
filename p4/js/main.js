@@ -19,12 +19,12 @@ function createCameras() {
         cameras[i] = new THREE.OrthographicCamera( -window.innerWidth/factor, window.innerWidth/factor, window.innerHeight/factor, -window.innerHeight/factor, 1, 1000 );
     }
 
-    cameras[0].position.set(0, 0, 50);
-    cameras[1].position.set(0, 0, -50);
-    cameras[2].position.set(-50, 0, 0);
-    cameras[3].position.set(50, 0, 0);
-    cameras[4].position.set(0, -50, 0);
-    cameras[5].position.set(0, 50, 0);
+    cameras[0].position.set(0, 0, 90);
+    cameras[1].position.set(0, 0, -90);
+    cameras[2].position.set(-90, 0, 0);
+    cameras[3].position.set(90, 0, 0);
+    cameras[4].position.set(0, -90, 0);
+    cameras[5].position.set(0, 90, 0);
     
     for (var i = 0; i < 6; i++) {
         cameras[i].lookAt(0, 0, 0)
@@ -58,9 +58,9 @@ function createScene() {
     //ball = new Ball(0, 0, 0)
     //scene.add(ball)
 
-    dice = new Dice(10, 30, 10)
+    dice = new Dice(10, 30.9, 10)
     scene.add(dice)
-
+ 
     chessboard = new Chessboard(10, 0, 10)
     scene.add(chessboard)
 
