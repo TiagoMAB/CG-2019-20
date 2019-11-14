@@ -7,6 +7,8 @@ function render() {
     'use strict';
 
     renderer.render(scene, camera);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.soft = true;
     
 }
 
@@ -27,17 +29,13 @@ function createCameras() {
     for (var i = 0; i < 6; i++) {
         cameras[i].lookAt(0, 0, 0)
     }
+
+    cameras[6] = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
+
+    cameras[6].position.set(0, 30, 200);
+    cameras[6].lookAt(scene.position);
 }
 /*
-function createCamera1() {
-    'use scrict';
-
-    cameras[1] = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
-
-    cameras[1].position.set(0, 30, 200);
-    cameras[1].lookAt(scene.position);
-}
-
 function createCamera2() {
     'use scrict';
 
@@ -66,6 +64,10 @@ function createScene() {
     chessboard = new Chessboard(10, 0, 10)
     scene.add(chessboard)
 
+    directionalLight = new DirectionalLight(0, 20, 0);
+
+    scene.add(directionalLight);
+    
 }
 
 function onKeyDown(e) {
@@ -126,6 +128,10 @@ function onKeyPress(e) {
 
         case 54: //6
             camera = cameras[5]
+            break;
+
+        case 55: //6
+            camera = cameras[6]
             break;
 
     }
