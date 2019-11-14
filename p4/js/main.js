@@ -1,6 +1,6 @@
 var camera, scene, renderer, clock;
 var camera1, camera2, isCamera2 = false;
-var ball;
+var ball, dice;
 var factor = 20
 
 function render() {
@@ -40,6 +40,9 @@ function createScene() {
     scene.add(new THREE.AxesHelper(10));
     ball = new Ball(0, 0, 0)
     scene.add(ball)
+
+    dice = new Dice(10, 0, 10)
+    scene.add(dice)
 
 }
 
