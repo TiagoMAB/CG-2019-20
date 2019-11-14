@@ -1,7 +1,7 @@
 var camera, scene, renderer, clock;
-var camera1, camera2, isCamera2 = false;
+var cameras = new Array(7); 
 var ball, dice;
-var factor = 20
+var factor = 5
 
 function render() {
     'use strict';
@@ -10,26 +10,45 @@ function render() {
     
 }
 
+function createCameras() {
+    'use scrict';
+
+    for (var i = 0; i < 6; i++) {
+        cameras[i] = new THREE.OrthographicCamera( -window.innerWidth/factor, window.innerWidth/factor, window.innerHeight/factor, -window.innerHeight/factor, 1, 1000 );
+    }
+
+    cameras[0].position.set(0, 0, 50);
+    cameras[1].position.set(0, 0, -50);
+    cameras[2].position.set(-50, 0, 0);
+    cameras[3].position.set(50, 0, 0);
+    cameras[4].position.set(0, -50, 0);
+    cameras[5].position.set(0, 50, 0);
+    
+    for (var i = 0; i < 6; i++) {
+        cameras[i].lookAt(0, 0, 0)
+    }
+}
+/*
 function createCamera1() {
     'use scrict';
 
-    camera1 = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
+    cameras[1] = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
 
-    camera1.position.set(0, 30, 200);
-    camera1.lookAt(scene.position);
+    cameras[1].position.set(0, 30, 200);
+    cameras[1].lookAt(scene.position);
 }
 
 function createCamera2() {
     'use scrict';
 
-    camera2 = new THREE.OrthographicCamera( -window.innerWidth/factor, window.innerWidth/factor, window.innerHeight/factor, -window.innerHeight/factor, 1, 1000 );
+    cameras[2] = new THREE.OrthographicCamera( -window.innerWidth/factor, window.innerWidth/factor, window.innerHeight/factor, -window.innerHeight/factor, 1, 1000 );
     console.log("1 " + -window.innerWidth/factor + " 3 e 4 (+/-) " + window.innerHeight/factor)
-    camera2.position.set(-25, 0, 10);
+    cameras[2].position.set(-25, 0, 10);
 }
-
+*/
 function createCamera() {
     'use scrict';
-    camera = camera1;
+    camera = cameras[0];
 }
 
 
@@ -43,6 +62,9 @@ function createScene() {
 
     dice = new Dice(10, 0, 10)
     scene.add(dice)
+
+    chessboard = new Chessboard(10, 0, 10)
+    scene.add(chessboard)
 
 }
 
@@ -82,40 +104,32 @@ function onKeyPress(e) {
 
     switch (e.keyCode) {
 
-        /*  Lights  */
         case 49: //1
-
-            break;
+            camera = cameras[0]
+            break
 
         case 50: //2
- 
+            camera = cameras[1]
             break;
             
         case 51: //3
-
+            camera = cameras[2]
             break;
 
         case 52: //4
- 
+            camera = cameras[3]   
             break;
         
-        
-        /*  Camera  */
         case 53: //5
-            camera = camera1;
-            isCamera2 = false;
+            camera = cameras[4]
             break;
 
         case 54: //6
-            camera = camera2;
-            isCamera2 = true;
+            camera = cameras[5]
             break;
 
-
-        
-
     }
-
+    render()
 }
 
 function animate() {
@@ -151,8 +165,7 @@ function init() {
 
     createScene();
 
-    createCamera1();
-    createCamera2();
+    createCameras();
     createCamera();
     
     window.addEventListener("resize", onResize);
