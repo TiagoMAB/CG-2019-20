@@ -5,6 +5,7 @@ var rotationPoint1, rotationPoint1
 const FACTOR = 5
 var DICE_ROTATION = Math.PI/120
 var BALL_ROTATION = Math.PI/120
+var usingPhong = true;
 
 
 function render() {
@@ -73,10 +74,23 @@ function toggleWireframe() {
     chessboard.toggleWireframe()
 }
 
+function alternateMaterials() {
+    ball.alternateMaterials(usingPhong);
+    dice.alternateMaterials(usingPhong);
+    chessboard.alternateMaterials(usingPhong);
+    usingPhong = !usingPhong;
+}
+
 function onKeyDown(e) {
     'use strict'
 
     switch (e.keyCode) {
+
+        case 76: //l
+            if(!pause) {
+                alternateMaterials()
+            }
+            break
 
         case 80: //p
             if (!pause) {
