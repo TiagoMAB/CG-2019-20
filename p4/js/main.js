@@ -1,4 +1,4 @@
-var camera, scene, renderer, clock
+var camera, scene, renderer, clock, delta
 var cameras = new Array(7)  
 var ball, dice, chessboard, spotLight, directionalLight
 var rotationPoint1, rotationPoint1
@@ -61,11 +61,11 @@ function createScene() {
     scene.add(new THREE.AxesHelper(10)) 
     
     ball = new Ball(0, 20, 75)
-    rotationPoint1 = new RotationPoint(0, 0, 0, ball, false)
+    rotationPoint1 = new RotationPoint(0, 0, 0, ball, false, BALL_ROTATION, 0)
     scene.add(rotationPoint1)
 
     dice = new Dice(0, 30.9, 0)
-    rotationPoint2 = new RotationPoint(0, 0, 0, dice, true)
+    rotationPoint2 = new RotationPoint(0, 0, 0, dice, true, DICE_ROTATION, 1)
     scene.add(rotationPoint2)
 
     chessboard = new Chessboard(0, 0, 0)
@@ -91,6 +91,11 @@ function onKeyDown(e) {
         case 68: //q
             directionalLight.power()
             break
+
+        case 66: //b
+            rotationPoint1.startAndStop()
+            console.log("Logged " + rotationPoint1.rotating)
+            break 
     }
 
 }
@@ -132,22 +137,23 @@ function onKeyPress(e) {
         case 55: //6
             camera = cameras[6]
             break 
-
     }
 }
 
 function animate() {
     'use strict' 
     
-    rotationPoint1.rotate(DICE_ROTATION)
-    rotationPoint2.rotate(BALL_ROTATION)
+
+    rotationPoint2.rotate()
+    rotationPoint1.updateRotation()
+
     render() 
 
-    setTimeout( function() {
+    //setTimeout( function() {
 
         requestAnimationFrame( animate ) 
 
-    }, 1000 / 60 )
+    //}, 1000 / 60 )
 
 }
 function onResize() {
@@ -165,7 +171,7 @@ function init() {
     'use strict' 
 
     renderer = new THREE.WebGLRenderer({ antialias: true }) 
-
+    clock = new THREE.Clock()
     renderer.setSize(window.innerWidth, window.innerHeight) 
 
     document.body.appendChild(renderer.domElement) 
