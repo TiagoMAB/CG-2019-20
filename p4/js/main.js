@@ -98,7 +98,9 @@ function onKeyDown(e) {
             break
 
         case 87: //w
-            toggleWireframe()
+            if (!pause) {
+                toggleWireframe()
+            }
             break
 
         case 68: //d
