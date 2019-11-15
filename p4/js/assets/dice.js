@@ -25,4 +25,10 @@ class Dice extends THREE.Object3D {
         this.rotateOnAxis(axis, angle);
     }
 
+    toggleWireframe() {
+        for(var i = 0; i < 6; i++) {
+            this.children[0].material[i].wireframe = !this.children[0].material[i].wireframe
+        }
+        
+    }
 }

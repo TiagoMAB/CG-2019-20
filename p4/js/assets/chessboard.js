@@ -22,4 +22,10 @@ class Chessboard extends THREE.Object3D {
         
     }
 
+    toggleWireframe() {
+        for(var i = 0; i < 6; i++) {
+            this.children[0].material[i].wireframe = !this.children[0].material[i].wireframe
+        }
+        
+    }
 }

@@ -16,4 +16,7 @@ class Ball extends THREE.Object3D {
         this.position.set(x, y, z)
     }
 
+    toggleWireframe() {
+        this.children[0].material.wireframe = !this.children[0].material.wireframe
+    }
 }
