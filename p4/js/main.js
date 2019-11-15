@@ -74,7 +74,7 @@ function createScene() {
     spotLight = new Light(0, 80, 0)
     scene.add(spotLight)
 
-    directionalLight = new DirectionalLight(0, 20, 20)
+    directionalLight = new DirectionalLight(0, 70, 70)
     scene.add(directionalLight)
 
 }
@@ -101,6 +101,7 @@ function onKeyDown(e) {
             console.log("Logged " + rotationPoint1.rotating)
             break 
     }
+    render()
 
 }
 
@@ -146,19 +147,19 @@ function onKeyPress(e) {
 
 function animate() {
     'use strict' 
+    var delta = clock.getDelta()
     
     if (!pause) {
-        rotationPoint2.rotate()
-        rotationPoint1.updateRotation()
+        rotationPoint2.rotate(delta*30)
+        rotationPoint1.updateRotation(delta*30)
     }
-    render() 
 
     //setTimeout( function() {
 
         requestAnimationFrame( animate ) 
 
     //}, 1000 / 60 )
-
+    render() 
 }
 function onResize() {
     'use strict' 

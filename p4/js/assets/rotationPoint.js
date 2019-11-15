@@ -14,15 +14,15 @@ class RotationPoint extends THREE.Object3D {
         this.add(object)
     }
 
-    rotate() {
+    rotate(delta) {
         if (this.rotating || this.speed) {
-            this.rotation.y += this.angle * this.speed
+            this.rotation.y += this.angle * this.speed * delta
         }
     }
 
-    spin() {
+    spin(delta) {
         if (this.rotating || this.speed) {
-            this.object.rotation.z -= this.angle * this.speed
+            this.object.rotation.z -= this.angle * this.speed * delta
         }
     }
 
@@ -30,14 +30,14 @@ class RotationPoint extends THREE.Object3D {
         this.rotating = !this.rotating;
     }
 
-    updateRotation() {
-        var signal = this.rotating ? 1 : -1
+    updateRotation(delta) {
+        var signal = this.rotating ? delta * 1 : delta * -1
 
         this.speed += signal * 0.005
 
         if(this.speed > TOP_SPEED) this.speed = TOP_SPEED
         if(this.speed < 0) this.speed = 0
-        this.rotate()
-        this.spin()
+        this.rotate(delta)
+        this.spin(delta)
     }
 }
