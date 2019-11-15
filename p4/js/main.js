@@ -1,4 +1,4 @@
-var camera, scene, renderer, clock, delta
+var camera, scene, renderer, clock, pause = false
 var cameras = new Array(7)  
 var ball, dice, chessboard, spotLight, directionalLight
 var rotationPoint1, rotationPoint1
@@ -84,11 +84,15 @@ function onKeyDown(e) {
 
     switch (e.keyCode) {
 
-        case 80: //d
+        case 80: //p
             spotLight.power()
-            break 
+            break
+        
+        case 83: //s
+            pause = !pause
+            break
 
-        case 68: //q
+        case 68: //d
             directionalLight.power()
             break
 
@@ -143,10 +147,10 @@ function onKeyPress(e) {
 function animate() {
     'use strict' 
     
-
-    rotationPoint2.rotate()
-    rotationPoint1.updateRotation()
-
+    if (!pause) {
+        rotationPoint2.rotate()
+        rotationPoint1.updateRotation()
+    }
     render() 
 
     //setTimeout( function() {
