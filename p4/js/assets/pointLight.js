@@ -1,11 +1,12 @@
-class Light extends THREE.Object3D {
+class PointLight extends THREE.Object3D {
     constructor(x, y, z) {
-        super();
+        super()
 
-        this.pointLight = new THREE.PointLight(0xffd21c, 1, 200)
+        this.pointLight = new THREE.PointLight(0xffffff, 1, 300)
         this.pointLight.position.set(x, y, z)           
 
-        this.pointLight.visible = true;             //MISSING: Shadows 
+        this.pointLight.castShadow = true
+        this.pointLight.visible = true             
         this.add(this.pointLight)
     }
 

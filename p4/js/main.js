@@ -23,12 +23,13 @@ function createCameras() {
         cameras[i] = new THREE.OrthographicCamera( -window.innerWidth/FACTOR, window.innerWidth/FACTOR, window.innerHeight/FACTOR, -window.innerHeight/FACTOR, 1, 1000 ) 
     }
 
-    cameras[0].position.set(0, 0, 90) 
-    cameras[1].position.set(0, 0, -90) 
-    cameras[2].position.set(-90, 0, 0) 
-    cameras[3].position.set(90, 0, 0) 
-    cameras[4].position.set(0, -90, 0) 
-    cameras[5].position.set(0, 90, 0) 
+    var d = 110
+    cameras[0].position.set(0, 0, d) 
+    cameras[1].position.set(0, 0, -d) 
+    cameras[2].position.set(-d, 0, 0) 
+    cameras[3].position.set(d, 0, 0) 
+    cameras[4].position.set(0, -d, 0) 
+    cameras[5].position.set(0, d, 0) 
     
     for (var i = 0;  i < 6;  i++) {
         cameras[i].lookAt(0, 0, 0)
@@ -71,7 +72,7 @@ function createScene() {
     chessboard = new Chessboard(0, 0, 0)
     scene.add(chessboard)
 
-    spotLight = new Light(0, 80, 0)
+    spotLight = new PointLight(40, 20, 0)
     scene.add(spotLight)
 
     directionalLight = new DirectionalLight(0, 70, 70)
@@ -147,18 +148,18 @@ function onKeyPress(e) {
 
 function animate() {
     'use strict' 
-    var delta = clock.getDelta()
+    //var delta = clock.getDelta()
     
     if (!pause) {
-        rotationPoint2.rotate(delta*30)
-        rotationPoint1.updateRotation(delta*30)
+        rotationPoint2.rotate(1)
+        rotationPoint1.updateRotation(1)
     }
 
-    //setTimeout( function() {
+    setTimeout( function() {
 
         requestAnimationFrame( animate ) 
 
-    //}, 1000 / 60 )
+    }, 1000 / 120 )
     render() 
 }
 function onResize() {
