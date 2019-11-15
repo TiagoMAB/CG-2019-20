@@ -20,3 +20,6 @@ class Ball extends THREE.Object3D {
         this.children[0].material.wireframe = !this.children[0].material.wireframe
     }
 }
+
+
+//CHANGE SPECULAR STUFF TO MAKE MATERIAL LOOK LIKE METAL

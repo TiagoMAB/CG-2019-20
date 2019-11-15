@@ -31,9 +31,7 @@ class RotationPoint extends THREE.Object3D {
     }
 
     updateRotation(delta) {
-        var signal = this.rotating ? delta * 1 : delta * -1
-
-        this.speed += signal * 0.005
+        this.speed += this.rotating ? delta * 0.005 : delta * -0.005
 
         if(this.speed > TOP_SPEED) this.speed = TOP_SPEED
         if(this.speed < 0) this.speed = 0
