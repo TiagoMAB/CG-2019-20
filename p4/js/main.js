@@ -39,27 +39,14 @@ function createCameras() {
 
     cameras[6].position.set(0, 30, 200) 
     cameras[6].lookAt(scene.position) 
-}
-/*
-function createCamera2() {
-    'use scrict' 
 
-    cameras[2] = new THREE.OrthographicCamera( -window.innerWidth/FACTOR, window.innerWidth/FACTOR, window.innerHeight/FACTOR, -window.innerHeight/FACTOR, 1, 1000 ) 
-    console.log("1 " + -window.innerWidth/FACTOR + " 3 e 4 (+/-) " + window.innerHeight/FACTOR)
-    cameras[2].position.set(-25, 0, 10) 
-}
-*/
-function createCamera() {
-    'use scrict' 
     camera = cameras[0] 
 }
-
 
 function createScene() {
     'use scrict' 
 
     scene = new THREE.Scene() 
-    scene.add(new THREE.AxesHelper(10)) 
     
     ball = new Ball(0, 20, 75)
     rotationPoint1 = new RotationPoint(0, 0, 0, ball, false, BALL_ROTATION, 0)
@@ -88,7 +75,16 @@ function onKeyDown(e) {
         case 80: //p
             spotLight.power()
             break
-        
+
+        case 82: //r
+            if (pause) {
+                createScene()
+                createCameras() 
+                render()
+                pause = !pause
+            }
+            break
+            
         case 83: //s
             pause = !pause
             break
@@ -102,7 +98,6 @@ function onKeyDown(e) {
             console.log("Logged " + rotationPoint1.rotating)
             break 
     }
-    render()
 
 }
 
@@ -184,7 +179,6 @@ function init() {
     createScene() 
 
     createCameras() 
-    createCamera() 
     render()
     
     window.addEventListener("resize", onResize) 
