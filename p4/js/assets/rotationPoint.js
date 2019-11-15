@@ -22,7 +22,7 @@ class RotationPoint extends THREE.Object3D {
 
     spin(delta) {
         if (this.rotating || this.speed) {
-            this.object.rotation.z -= this.angle * this.speed * delta
+            this.object.rotation.z -= this.angle * 3 * this.speed * delta
         }
     }
 

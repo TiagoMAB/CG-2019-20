@@ -40,7 +40,7 @@ function createCameras() {
     cameras[6].position.set(0, 30, 200) 
     cameras[6].lookAt(scene.position) 
 
-    camera = cameras[0] 
+    camera = cameras[6] 
 }
 
 function createScene() {
