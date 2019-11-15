@@ -73,7 +73,9 @@ function onKeyDown(e) {
     switch (e.keyCode) {
 
         case 80: //p
-            spotLight.power()
+            if (!pause) {
+                spotLight.power()
+            }
             break
 
         case 82: //r
@@ -90,7 +92,9 @@ function onKeyDown(e) {
             break
 
         case 68: //d
-            directionalLight.power()
+            if (!pause) {
+                directionalLight.power()
+            }
             break
 
         case 66: //b
