@@ -67,6 +67,12 @@ function createScene() {
 
 }
 
+function toggleWireframe() {
+    ball.toggleWireframe();
+    dice.toggleWireframe()
+    chessboard.toggleWireframe()
+}
+
 function onKeyDown(e) {
     'use strict'
 
@@ -89,6 +95,10 @@ function onKeyDown(e) {
             
         case 83: //s
             pause = !pause
+            break
+
+        case 87: //w
+            toggleWireframe()
             break
 
         case 68: //d
