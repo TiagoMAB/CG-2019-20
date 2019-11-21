@@ -5,7 +5,7 @@ class Ball extends THREE.Object3D {
         super()
 
         this.texture = new THREE.TextureLoader().load('textures/ball/ball.jpg')
-        this.materialPhong = new THREE.MeshPhongMaterial( { map: this.texture })
+        this.materialPhong = new THREE.MeshPhongMaterial( { map: this.texture, shininess: 76.8, specular: 0x888888})
         this.materialBasic = new THREE.MeshBasicMaterial( { map: this.texture })
 
         this.mesh = new THREE.Mesh(new THREE.SphereGeometry( 15, 32, 32), this.materialPhong)
