@@ -1,10 +1,11 @@
 var camera, scene, renderer, clock;
-var camera1, camera2;
+var camera1, camera2, isCamera2 = false;
 var portrait, sculpture, gallery;
 var stand, standMaterialBasic, standMaterialLambert, standMaterialPhong;
 var light1, light2, light3, light4, directionalLight;
 var target1, target2, target3, target4;
 var usingLambert = true, calculateIlumination = true;
+var factor = 30
 
 
 function render() {
@@ -29,8 +30,8 @@ function createCamera1() {
 function createCamera2() {
     'use scrict';
 
-    var factor = 30
     camera2 = new THREE.OrthographicCamera( -window.innerWidth/factor, window.innerWidth/factor, window.innerHeight/factor, -window.innerHeight/factor, 1, 1000 );
+    console.log("1 " + -window.innerWidth/factor + " 3 e 4 (+/-) " + window.innerHeight/factor)
     camera2.position.set(-25, 0, 10);
 }
 
@@ -65,7 +66,6 @@ function createPortrait() {
 }
 
 function createLights() {
-
     
     target1 = new THREE.Object3D();
     target1.position.set(-25,20,0);
@@ -79,8 +79,6 @@ function createLights() {
     target4 = new THREE.Object3D();
     target4.position.set(40,0,20);
 
-
-    //light1 = new Light(-30,20+15,15,Math.PI/3,Math.PI/5,target1);
     light1 = new Light(-12.5,55,55,2*Math.PI/3,Math.PI/5,target1);
     light1.power();
     scene.add(light1);
@@ -149,11 +147,17 @@ function onResize() {
 
     renderer.setSize(window.innerWidth, window.innerHeight);
 
-    if(window.innerHeight > 0 && window.innerWidth > 0) {
-        camera.aspect = renderer.getSize().width / renderer.getSize().height;
-        camera.updateProjectionMatrix();
-        console.log("width" + renderer.getSize().width + " | height: " + renderer.getSize().height)
-    }
+    var screen_width = window.innerWidth;
+    var screen_height = window.innerHeight;
+    var aspect = screen_width/screen_height;
+
+    camera1.aspect = aspect;
+    camera1.updateProjectionMatrix();
+
+    camera2.left = 969 * aspect / -30;
+    camera2.right = 969 * aspect / 30;
+    camera2.updateProjectionMatrix();
+
 }
 
 function onKeyDown(e) {
@@ -176,7 +180,7 @@ function onKeyDown(e) {
         case 81: //q
             directionalLight.power();
     }
-    render();
+
 }
 
 function onKeyUp(e) {
@@ -213,17 +217,19 @@ function onKeyPress(e) {
         /*  Camera  */
         case 53: //5
             camera = camera1;
+            isCamera2 = false;
             break;
 
         case 54: //6
             camera = camera2;
+            isCamera2 = true;
             break;
 
 
         
 
     }
-    render();
+
 }
 
 function animate() {
@@ -259,123 +265,3 @@ function init() {
     window.addEventListener("keypress", onKeyPress);   
     
 }
-
-/*
-// O código abaixo é do prof do exemplo que forneceu no fénix
-
-
-// WithBug - R69
-'use strict';
-
-var dx  = 620;
-var x_p = 0;
-var z_p = 0;
-var y_p = 10;
-
-var scene, camera, orthoCamera, perspectiveCamera, renderer, spotLight;
-var geometry, material, mesh;
-var spotter;
-
-init();
-animate();
-
-function switchCamera() {
-    if ( camera instanceof THREE.PerspectiveCamera )
-        camera = orthoCamera;
-    else
-        camera = perspectiveCamera;
-    resizeCamera();
-}
-
-function resizeCamera() {
-    renderer.setSize( window.innerWidth, window.innerHeight);
-    var aspect = window.innerWidth / window.innerHeight;
-    if ( camera instanceof THREE.PerspectiveCamera )
-        camera.aspect = aspect;
-    else {
-        var dy = 620 / aspect;
-        camera.left   = -310;
-        camera.right  =  310;
-        camera.top    =  0.5 * dy;
-        camera.bottom = -0.5 * dy;
-    }
-    camera.updateProjectionMatrix();
-}
-
-function init() {
-    scene = new THREE.Scene();
-
-    renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);   
-
-    var target = new THREE.Object3D();
-    target.position.set( 0, 0, 0);
-
-    perspectiveCamera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
-    perspectiveCamera.position.z = 200;
-    perspectiveCamera.position.y = 200;
-    perspectiveCamera.lookAt( target.position);
-    scene.add( perspectiveCamera);
-
-    orthoCamera = new THREE.OrthographicCamera( -300, 300, 600, -600, -500, 500);
-    orthoCamera.position.y = 200;
-    orthoCamera.position.z = 0;
-    orthoCamera.lookAt( target.position);
-    scene.add( orthoCamera);
-
-    camera = perspectiveCamera;
-    resizeCamera();
-
-    var helper = new THREE.AxisHelper( 100);
-    helper.translateY( .1);
-    scene.add( helper);
-
-    var planeGeo = new THREE.PlaneGeometry(600,900);
-    var planeMaterial = new THREE.MeshPhongMaterial( { color: 0xff0000, specular: 0x112211, shininess: 5, wireframe: false } );
-    planeMaterial.side = THREE.DoubleSide;
-    var planeMesh = new THREE.Mesh( planeGeo, planeMaterial);
-    planeMesh.rotation.x = Math.PI * .5;
-    scene.add( planeMesh );
-    
-    spotLight = new THREE.SpotLight( 0xffffff, 5, 90, Math.PI / 6, 10); 
-    spotLight.position.set( 0, y_p, 0 );
-    spotLight.target.position.set( 0, 0, 0 );
-    spotLight.penumbra = .2;	
-    scene.add( spotLight );	
-    scene.add( spotLight.target);
-    spotter = new THREE.SpotLightHelper( spotLight);
-    scene.add( spotter);
-    
-    var directionalLight = new THREE.directionalLight( 0x777777 ); 
-    scene.add( directionalLight );
-            
-    document.body.appendChild(renderer.domElement);
-    window.addEventListener("resize", resizeCamera);
-    window.addEventListener("keydown", switchCamera);
-}
-
-function animate() {
-
-    requestAnimationFrame( animate );
-    spotter.update();
-
-    x_p += 0.3;
-    if ( x_p >= 250)
-        x_p = -250;
-    y_p += 0.1;
-    if ( y_p >= 100 )
-        y_p = 0.1;
-    z_p += 0.2;
-    if ( z_p >= 100)
-        z_p = -100;
-    
-    spotLight.position.set( x_p, y_p, z_p);
-    spotLight.target.position.set( x_p, 0, z_p);
-    //spotLight.target.updateMatrixWorld();
-
-    renderer.render( scene, camera );
-}			
-		
-
-
-*/

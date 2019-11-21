@@ -1,47 +1,43 @@
-var camera, scene, renderer, clock, pause = false
-var cameras = new Array(7)  
-var ball, dice, chessboard, spotLight, directionalLight
-var rotationPoint1, rotationPoint1
+var camera, previousCamera, scene, renderer, clock, pause = false
+var cameras = new Array(3)  
+var ball, dice, chessboard, spotLight, directionalLight, rotationPoint1, rotationPoint1
+var usingPhong = true
+var ASPECT = 1.9875776397515528
 const FACTOR = 5
-var DICE_ROTATION = Math.PI/120
-var BALL_ROTATION = Math.PI/120
-var usingPhong = true;
+const DICE_ROTATION = Math.PI/120
+const BALL_ROTATION = Math.PI/120
+const PAUSE_POSITION = 300
 
 
 function render() {
     'use strict' 
 
-    renderer.render(scene, camera) 
     renderer.shadowMap.enabled = true 
     renderer.shadowMap.soft = true 
-    
+    renderer.render(scene, camera)     
 }
 
 function createCameras() {
     'use scrict' 
 
-    for (var i = 0;  i < 6;  i++) {
+    for (var i = 0;  i < 2;  i++) {
         cameras[i] = new THREE.OrthographicCamera( -window.innerWidth/FACTOR, window.innerWidth/FACTOR, window.innerHeight/FACTOR, -window.innerHeight/FACTOR, 1, 1000 ) 
     }
 
-    var d = 110
-    cameras[0].position.set(0, 0, d) 
-    cameras[1].position.set(0, 0, -d) 
-    cameras[2].position.set(-d, 0, 0) 
-    cameras[3].position.set(d, 0, 0) 
-    cameras[4].position.set(0, -d, 0) 
-    cameras[5].position.set(0, d, 0) 
+    cameras[0].position.set(0, PAUSE_POSITION - 5, 0)
+    cameras[1].position.set(0, PAUSE_POSITION + 105, 0)  
     
-    for (var i = 0;  i < 6;  i++) {
+    for (var i = 0;  i < 2;  i++) {
         cameras[i].lookAt(0, 0, 0)
     }
 
-    cameras[6] = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000) 
+    cameras[2] = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000) 
 
-    cameras[6].position.set(0, 30, 200) 
-    cameras[6].lookAt(scene.position) 
-
-    camera = cameras[6] 
+    cameras[2].position.set(0, 100, 250) 
+    cameras[2].lookAt(scene.position) 
+    
+    camera = cameras[0] 
+    previousCamera = 0
 }
 
 function createScene() {
@@ -65,6 +61,9 @@ function createScene() {
 
     directionalLight = new DirectionalLight(0, 70, 70)
     scene.add(directionalLight)
+
+    paused = new Pause(0, PAUSE_POSITION, 175)
+    scene.add(paused)
 
 }
 
@@ -108,7 +107,13 @@ function onKeyDown(e) {
             break
             
         case 83: //s
-            pause = !pause
+            if (!pause) {
+                camera = cameras[1]
+            }
+            else {
+                camera = cameras[previousCamera]
+            }
+            pause = !pause       
             break
 
         case 87: //w
@@ -131,42 +136,23 @@ function onKeyDown(e) {
 
 }
 
-function onKeyUp(e) {
-    'use strict' 
-
-}
-
 function onKeyPress(e) {
     'use strict' 
 
     switch (e.keyCode) {
 
         case 49: //1
-            camera = cameras[0]
+            if (!pause) {
+                camera = cameras[0]
+                previousCamera = 0
+            }
             break
 
         case 50: //2
-            camera = cameras[1]
-            break 
-            
-        case 51: //3
-            camera = cameras[2]
-            break 
-
-        case 52: //4
-            camera = cameras[3]   
-            break 
-        
-        case 53: //5
-            camera = cameras[4]
-            break 
-
-        case 54: //6
-            camera = cameras[5]
-            break 
-
-        case 55: //6
-            camera = cameras[6]
+            if (!pause) {
+                camera = cameras[2]
+                previousCamera = 2
+            }
             break 
     }
 }
@@ -174,7 +160,7 @@ function onKeyPress(e) {
 function animate() {
     'use strict' 
     //var delta = clock.getDelta()
-    
+
     if (!pause) {
         rotationPoint2.rotate(1)
         rotationPoint1.updateRotation(1)
@@ -187,17 +173,31 @@ function animate() {
     }, 1000 / 120 )
     render() 
 }
+
 function onResize() {
     'use strict' 
 
     renderer.setSize(window.innerWidth, window.innerHeight) 
 
-    if(window.innerHeight > 0 && window.innerWidth > 0) {
-        camera.aspect = renderer.getSize().width / renderer.getSize().height 
-        camera.updateProjectionMatrix() 
-        console.log("width" + renderer.getSize().width + " | height: " + renderer.getSize().height)
+    var aspect = window.innerWidth/window.innerHeight;
+
+    cameras[2].aspect = aspect
+    if (aspect < 1.78 || aspect == ASPECT) {
+        cameras[2].zoom = aspect/ ASPECT
     }
+    cameras[2].updateProjectionMatrix() 
+
+    for (var i = 0; i < 2; i++) {
+        cameras[i].left = 966 * aspect / -FACTOR;
+        cameras[i].right = 966 * aspect / FACTOR;
+        if (aspect < 1.78 || aspect == ASPECT) {
+            cameras[i].zoom = aspect/ ASPECT
+        }
+        cameras[i].updateProjectionMatrix();
+    }
+    console.log("Width: " + window.innerWidth + "Height " + window.innerHeight)
 }
+
 function init() {
     'use strict' 
 
@@ -206,14 +206,13 @@ function init() {
     renderer.setSize(window.innerWidth, window.innerHeight) 
 
     document.body.appendChild(renderer.domElement) 
+    
     createScene() 
-
     createCameras() 
     render()
-    
+
     window.addEventListener("resize", onResize) 
-    window.addEventListener("keydown", onKeyDown) 
-    window.addEventListener("keyup", onKeyUp)    
+    window.addEventListener("keydown", onKeyDown)  
     window.addEventListener("keypress", onKeyPress)    
     
 }
