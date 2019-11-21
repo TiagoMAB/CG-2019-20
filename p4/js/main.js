@@ -129,9 +129,11 @@ function onKeyDown(e) {
             break
 
         case 66: //b
-            rotationPoint1.startAndStop()
-            console.log("Logged " + rotationPoint1.rotating)
-            break 
+            if (!pause) {
+                rotationPoint1.startAndStop()
+                console.log("Logged " + rotationPoint1.rotating)
+            }
+            break
     }
 
 }
